@@ -1,4 +1,4 @@
-package com.label305.stan.ui;
+package com.label305.stan.ui.widget;
 
 import com.label305.stan.asyncutils.ImageLoader;
 
