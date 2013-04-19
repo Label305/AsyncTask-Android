@@ -108,6 +108,10 @@ public abstract class SafeAsyncTask<ResultT> implements Callable<ResultT> {
 		return future.cancel(mayInterruptIfRunning);
 	}
 
+	public boolean isCancelled() {
+		return future.isCancelled();
+	}
+
 	/**
 	 * @throws Exception
 	 *             , captured on passed to onException() if present.
