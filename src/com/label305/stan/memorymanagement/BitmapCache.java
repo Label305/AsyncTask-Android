@@ -1,4 +1,4 @@
-package com.label305.stan.memorymgmt;
+package com.label305.stan.memorymanagement;
 
 import android.graphics.Bitmap;
 import android.support.v4.util.LruCache;
