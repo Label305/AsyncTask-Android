@@ -40,7 +40,7 @@ public class ImageLoader {
 		final int cacheSize = maxMemory / 8;
 		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context).taskExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
 				.taskExecutorForCachedImages(AsyncTask.THREAD_POOL_EXECUTOR).memoryCache(new LruMemoryCache(cacheSize)).memoryCacheSize(cacheSize)
-				.enableLogging().build();
+				.build();
 		com.nostra13.universalimageloader.core.ImageLoader.getInstance().init(config);
 	}
 
