@@ -8,14 +8,14 @@ import android.view.LayoutInflater;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-public class SimpleImageHolder extends AbstractImageHolder {
+public class SimpleImageView extends AbstractImageHolder {
 
-	public SimpleImageHolder(Context context, AttributeSet attrs) {
+	public SimpleImageView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		init();
 	}
 
-	public SimpleImageHolder(Context context) {
+	public SimpleImageView(Context context) {
 		super(context);
 		init();
 	}
