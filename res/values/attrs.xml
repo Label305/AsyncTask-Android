@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="CustomFontTextView">
+        <attr name="font" format="string" />
+        <attr name="capitalize" format="boolean" />
+        <attr name="lowercase" format="boolean" />
+        <attr name="text" format="reference" />
+    </declare-styleable>
+
+</resources>
