@@ -60,7 +60,7 @@ public class CustomFontButton extends Button {
 
 	private void setLowercase(AttributeSet attrs) {
 		final TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.CustomFontTextView);
-		mShouldCapitalize = a.getBoolean(R.styleable.CustomFontTextView_lowercase, false);
+		mShouldLowercase = a.getBoolean(R.styleable.CustomFontTextView_lowercase, false);
 		a.recycle();
 	}
 
