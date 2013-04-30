@@ -83,4 +83,13 @@ public class CustomFontTextView extends TextView {
 			super.setText(text);
 		}
 	}
+
+	public boolean shouldCapitalize() {
+		return mShouldCapitalize;
+	}
+
+	public boolean shouldLowercase() {
+		return mShouldLowercase;
+	}
+
 }
