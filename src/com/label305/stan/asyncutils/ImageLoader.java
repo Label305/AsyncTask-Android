@@ -10,6 +10,7 @@ import android.widget.ProgressBar;
 
 import com.label305.stan.utils.VersionUtils;
 import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration.Builder;
 import com.nostra13.universalimageloader.core.assist.FailReason;
@@ -41,6 +42,10 @@ public class ImageLoader {
 		final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
 		final int cacheSize = maxMemory / 8;
 
+		DisplayImageOptions.Builder displayImageOptionsBuilder = new DisplayImageOptions.Builder();
+		displayImageOptionsBuilder.cacheInMemory();
+		displayImageOptionsBuilder.cacheOnDisc();
+
 		Builder builder = new ImageLoaderConfiguration.Builder(context);
 		builder.memoryCache(new LruMemoryCache(cacheSize));
 		builder.memoryCacheSize(cacheSize);
@@ -49,6 +54,8 @@ public class ImageLoader {
 			builder.taskExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 			builder.taskExecutorForCachedImages(AsyncTask.THREAD_POOL_EXECUTOR);
 		}
+
+		builder.defaultDisplayImageOptions(displayImageOptionsBuilder.build());
 
 		ImageLoaderConfiguration config = builder.build();
 		com.nostra13.universalimageloader.core.ImageLoader.getInstance().init(config);
