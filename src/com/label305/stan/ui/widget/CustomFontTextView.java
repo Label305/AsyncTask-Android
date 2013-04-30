@@ -17,18 +17,18 @@ public class CustomFontTextView extends TextView {
 
 	public CustomFontTextView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		init(context, attrs);
+		init(attrs);
 	}
 
 	public CustomFontTextView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		init(context, attrs);
+		init(attrs);
 	}
 
 	public CustomFontTextView(Context context, String fontPath, boolean shouldCapitalize, boolean shouldLowercase) {
 		super(context);
 
-		setTypeface(Typeface.createFromAsset(context.getAssets(), fontPath));
+		setTypeface(Typeface.createFromAsset(getContext().getAssets(), fontPath));
 		mShouldCapitalize = shouldCapitalize;
 		mShouldLowercase = shouldLowercase;
 
@@ -36,36 +36,36 @@ public class CustomFontTextView extends TextView {
 			throw new IllegalArgumentException("Cannot both capitalize and lowercase text!");
 	}
 
-	private void init(Context context, AttributeSet attrs) {
+	private void init(AttributeSet attrs) {
 		if (!isInEditMode()) {
-			setFont(context, attrs);
-			setCapitalize(context, attrs);
-			setLowercase(context, attrs);
-			setText(context, attrs);
+			setFont(attrs);
+			setCapitalize(attrs);
+			setLowercase(attrs);
+			setText(attrs);
 			setIncludeFontPadding(false);
 		}
 	}
 
-	private void setFont(Context context, AttributeSet attrs) {
-		final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CustomFontTextView);
-		setTypeface(Typeface.createFromAsset(context.getAssets(), a.getString(R.styleable.CustomFontTextView_font)));
+	private void setFont(AttributeSet attrs) {
+		final TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.CustomFontTextView);
+		setTypeface(Typeface.createFromAsset(getContext().getAssets(), a.getString(R.styleable.CustomFontTextView_font)));
 		a.recycle();
 	}
 
-	private void setCapitalize(Context context, AttributeSet attrs) {
-		final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CustomFontTextView);
+	private void setCapitalize(AttributeSet attrs) {
+		final TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.CustomFontTextView);
 		mShouldCapitalize = a.getBoolean(R.styleable.CustomFontTextView_capitalize, false);
 		a.recycle();
 	}
 
-	private void setLowercase(Context context, AttributeSet attrs) {
-		final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CustomFontTextView);
+	private void setLowercase(AttributeSet attrs) {
+		final TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.CustomFontTextView);
 		mShouldCapitalize = a.getBoolean(R.styleable.CustomFontTextView_lowercase, false);
 		a.recycle();
 	}
 
-	private void setText(Context context, AttributeSet attrs) {
-		final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CustomFontTextView);
+	private void setText(AttributeSet attrs) {
+		final TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.CustomFontTextView);
 		CharSequence text = a.getText(R.styleable.CustomFontTextView_text);
 		if (text != null)
 			setText(text.toString());
