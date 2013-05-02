@@ -31,7 +31,7 @@ public class Logger {
 
 			if (context != null) {
 				try {
-					Toast.makeText(context, msg.toString(), Toast.LENGTH_LONG).show();
+					Toast.makeText(context, msg.toString(), Toast.LENGTH_SHORT).show();
 				} catch (Exception e) {
 				}
 			}
