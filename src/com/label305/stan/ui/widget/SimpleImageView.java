@@ -10,6 +10,9 @@ import android.widget.ProgressBar;
 
 public class SimpleImageView extends AbstractImageHolder {
 
+	private ImageView mImageView;
+	private ProgressBar mProgressBar;
+
 	public SimpleImageView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		init();
@@ -22,16 +25,18 @@ public class SimpleImageView extends AbstractImageHolder {
 
 	private void init() {
 		LayoutInflater.from(getContext()).inflate(R.layout.simpleimageholder, this, true);
+		mImageView = (ImageView) findViewById(R.id.stan_simpleimageholder_imageview);
+		mProgressBar = (ProgressBar) findViewById(R.id.stan_simpleimageholder_progressbar);
 	}
 
 	@Override
 	protected ImageView getImageView() {
-		return (ImageView) findViewById(R.id.stan_simpleimageholder_imageview);
+		return mImageView;
 	}
 
 	@Override
 	protected ProgressBar getProgressBar() {
-		return (ProgressBar) findViewById(R.id.stan_simpleimageholder_progressbar);
+		return mProgressBar;
 	}
 
 }

@@ -6,8 +6,8 @@
     <ImageView
         android:id="@+id/stan_simpleimageholder_imageview"
         android:layout_width="match_parent"
-        android:scaleType="centerCrop"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop" />
 
     <ProgressBar
         android:id="@+id/stan_simpleimageholder_progressbar"
