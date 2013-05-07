@@ -37,23 +37,30 @@ public abstract class DoubleItemArrayAdapter<T> extends ArrayAdapter<T> {
 		return mContext;
 	}
 
-	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		final ViewGroup view = (ViewGroup) LayoutInflater.from(mContext).inflate(R.layout.doubleitemarrayadapter_rowview, parent, false);
+		ViewGroup rowView = (ViewGroup) convertView;
 
-		ViewGroup leftViewGroup = (ViewGroup) view.findViewById(R.id.doubleitemarrayadapter_rowview_leftviewgroup);
-		leftViewGroup.addView(getItemView(getLeftItem(position), leftViewGroup));
+		if (rowView == null) {
+			rowView = (ViewGroup) LayoutInflater.from(mContext).inflate(R.layout.doubleitemarrayadapter_rowview, parent, false);
+		}
 
-		ViewGroup rightViewGroup = (ViewGroup) view.findViewById(R.id.doubleitemarrayadapter_rowview_rightviewgroup);
+		ViewGroup leftViewGroup = (ViewGroup) rowView.findViewById(R.id.doubleitemarrayadapter_rowview_leftviewgroup);
+		View leftView = leftViewGroup.getChildAt(0);
+		leftViewGroup.removeAllViews();
+		leftViewGroup.addView(getItemView(getLeftItem(position), leftView, parent));
+
+		ViewGroup rightViewGroup = (ViewGroup) rowView.findViewById(R.id.doubleitemarrayadapter_rowview_rightviewgroup);
 		if (position * 2 + 1 < super.getCount()) {
+			View rightView = rightViewGroup.getChildAt(0);
+			rightViewGroup.removeAllViews();
 			rightViewGroup.setVisibility(View.VISIBLE);
-			rightViewGroup.addView(getItemView(getRightItem(position), leftViewGroup));
+			rightViewGroup.addView(getItemView(getRightItem(position), rightView, parent));
 		} else {
 			rightViewGroup.setVisibility(View.INVISIBLE);
 		}
 
-		return view;
+		return rowView;
 	}
 
-	protected abstract View getItemView(T item, ViewGroup parent);
+	protected abstract View getItemView(T item, View convertView, ViewGroup parent);
 }
