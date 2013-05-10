@@ -62,10 +62,12 @@ public class ImageLoader {
 	}
 
 	public static void loadImage(String uri, ProgressBar progressBar, ImageView imageView) {
+		com.nostra13.universalimageloader.core.ImageLoader.getInstance().cancelDisplayTask(imageView);
 		com.nostra13.universalimageloader.core.ImageLoader.getInstance().loadImage(uri, new ImageLoadingListener(progressBar, imageView));
 	}
 
 	public static void loadImage(String uri, ImageLoadingListener imageLoadingListener) {
+		com.nostra13.universalimageloader.core.ImageLoader.getInstance().cancelDisplayTask(imageLoadingListener.getImageView());
 		com.nostra13.universalimageloader.core.ImageLoader.getInstance().loadImage(uri, imageLoadingListener);
 	}
 
