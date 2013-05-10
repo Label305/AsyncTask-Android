@@ -3,17 +3,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <ImageView
-        android:id="@+id/stan_simpleimageholder_imageview"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop" />
+        android:layout_height="match_parent" >
 
-    <ProgressBar
-        android:id="@+id/stan_simpleimageholder_progressbar"
-        style="?android:attr/progressBarStyleInverse"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center" />
+        <ImageView
+            android:id="@+id/stan_simpleimageholder_imageview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop" />
+
+        <ProgressBar
+            android:id="@+id/stan_simpleimageholder_progressbar"
+            style="?android:attr/progressBarStyleInverse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+    </FrameLayout>
 
 </merge>
