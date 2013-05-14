@@ -48,7 +48,12 @@ public class CustomFontEditText extends EditText {
 
 	private void setFont(AttributeSet attrs) {
 		final TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.CustomFontTextView);
-		setTypeface(Typeface.createFromAsset(getContext().getAssets(), a.getString(R.styleable.CustomFontTextView_font)));
+		String font = a.getString(R.styleable.CustomFontTextView_font);
+		if (font != null) {
+			setTypeface(Typeface.createFromAsset(getContext().getAssets(), font));
+		} else {
+			System.err.println("WARNING: No font specified for CustomFontEditText!");
+		}
 		a.recycle();
 	}
 
