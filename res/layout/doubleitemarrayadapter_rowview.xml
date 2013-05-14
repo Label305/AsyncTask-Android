@@ -7,7 +7,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:baselineAligned="false"
         tools:ignore="UselessParent" >
 
@@ -15,7 +14,6 @@
             android:id="@+id/doubleitemarrayadapter_rowview_leftviewgroup"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginRight="8dp"
             android:layout_weight="1" />
 
         <LinearLayout
