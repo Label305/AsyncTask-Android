@@ -1,11 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- CustomFontViews -->
     <declare-styleable name="CustomFontTextView">
         <attr name="font" format="string" />
         <attr name="capitalize" format="boolean" />
         <attr name="lowercase" format="boolean" />
         <attr name="text" format="reference" />
+    </declare-styleable>
+
+    <!-- ExpandableTitleView -->
+    <declare-styleable name="ExpandableTitleView">
+        <attr name="bg" format="color" />
+        <attr name="icon" format="reference" />
+        <attr name="titleText" format="string" />
+        <attr name="titleTextColor" format="color" />
+        <attr name="titleTextFont" format="string" />
+        <attr name="titleTextSize" format="dimension" />
+        <attr name="arrow" format="reference" />
+        <attr name="contentVisible" format="boolean" />
     </declare-styleable>
 
 </resources>
