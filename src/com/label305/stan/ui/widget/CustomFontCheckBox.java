@@ -3,26 +3,25 @@ package com.label305.stan.ui.widget;
 import java.util.Locale;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.widget.CheckBox;
 
-import com.label305.stan.R;
+import com.label305.stan.ui.widget.CustomFontHelper.CustomFontInterface;
 
-public class CustomFontCheckBox extends CheckBox {
+public class CustomFontCheckBox extends CheckBox implements CustomFontInterface {
 
 	private boolean mShouldCapitalize;
 	private boolean mShouldLowercase;
 
 	public CustomFontCheckBox(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		init(attrs);
+		CustomFontHelper.init(this, attrs);
 	}
 
 	public CustomFontCheckBox(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		init(attrs);
+		CustomFontHelper.init(this, attrs);
 	}
 
 	public CustomFontCheckBox(Context context, String fontPath, boolean shouldCapitalize, boolean shouldLowercase) {
@@ -36,45 +35,12 @@ public class CustomFontCheckBox extends CheckBox {
 			throw new IllegalArgumentException("Cannot both capitalize and lowercase text!");
 	}
 
-	private void init(AttributeSet attrs) {
-		if (!isInEditMode()) {
-			setFont(attrs);
-			setCapitalize(attrs);
-			setLowercase(attrs);
-			setText(attrs);
-			setIncludeFontPadding(false);
-		}
+	public void setShouldCapitalize(boolean mShouldCapitalize) {
+		this.mShouldCapitalize = mShouldCapitalize;
 	}
 
-	private void setFont(AttributeSet attrs) {
-		final TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.CustomFontTextView);
-		String font = a.getString(R.styleable.CustomFontTextView_font);
-		if (font != null) {
-			setTypeface(Typeface.createFromAsset(getContext().getAssets(), font));
-		} else {
-			System.err.println("WARNING: No font specified for CustomFontCheckBox!");
-		}
-		a.recycle();
-	}
-
-	private void setCapitalize(AttributeSet attrs) {
-		final TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.CustomFontTextView);
-		mShouldCapitalize = a.getBoolean(R.styleable.CustomFontTextView_capitalize, false);
-		a.recycle();
-	}
-
-	private void setLowercase(AttributeSet attrs) {
-		final TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.CustomFontTextView);
-		mShouldLowercase = a.getBoolean(R.styleable.CustomFontTextView_lowercase, false);
-		a.recycle();
-	}
-
-	private void setText(AttributeSet attrs) {
-		final TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.CustomFontTextView);
-		CharSequence text = a.getText(R.styleable.CustomFontTextView_text);
-		if (text != null)
-			setText(text.toString());
-		a.recycle();
+	public void setShouldLowercase(boolean mShouldLowercase) {
+		this.mShouldLowercase = mShouldLowercase;
 	}
 
 	public void setText(String text) {
