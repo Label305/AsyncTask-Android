@@ -44,8 +44,7 @@
             android:layout_toRightOf="@id/view_expandabletitle_iconiv"
             android:ellipsize="end"
             android:padding="@dimen/spacing_micro"
-            android:singleLine="true"
-            app:capitalize="true" />
+            android:singleLine="true" />
     </RelativeLayout>
 
     <FrameLayout

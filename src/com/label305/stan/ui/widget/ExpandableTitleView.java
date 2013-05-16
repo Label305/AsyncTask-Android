@@ -75,9 +75,9 @@ public class ExpandableTitleView extends LinearLayout {
 		mTitleTV = (CustomFontTextView) findViewById(R.id.view_expandabletitle_titletv);
 		mTitleTV.setFont(mTextFont);
 		mTitleTV.setTextColor(mTextColor);
-		mTitleTV.setText(mText);
 		mTitleTV.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTextSize);
-
+		mTitleTV.setText(mText);
+		
 		mIconIV = (ImageView) findViewById(R.id.view_expandabletitle_iconiv);
 		mIconIV.setImageResource(mIconResId);
 
@@ -91,8 +91,6 @@ public class ExpandableTitleView extends LinearLayout {
 		if (mContentVisible) {
 			mContentVG.setVisibility(View.VISIBLE);
 			mMoreImageButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.rotatecw90));
-		} else {
-			//
 		}
 	}
 

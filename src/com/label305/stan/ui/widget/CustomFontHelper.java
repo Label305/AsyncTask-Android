@@ -6,6 +6,7 @@ import android.graphics.Typeface;
 import android.util.AttributeSet;
 
 import com.label305.stan.R;
+import com.label305.stan.utils.StringUtils;
 
 public class CustomFontHelper {
 	
@@ -20,7 +21,7 @@ public class CustomFontHelper {
 	private static  void setFont(CustomFontInterface cfi, AttributeSet attrs) {
 		final TypedArray a = cfi.getContext().obtainStyledAttributes(attrs, R.styleable.CustomFontTextView);
 		String font = a.getString(R.styleable.CustomFontTextView_font);
-		if (font != null) {
+		if (!StringUtils.isNullOrEmpty(font)) {
 			cfi.setTypeface(Typeface.createFromAsset(cfi.getContext().getAssets(), font));
 		} else {
 			System.err.println("WARNING: No font specified for CustomFontInterface!");
