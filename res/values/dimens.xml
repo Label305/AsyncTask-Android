@@ -12,4 +12,7 @@
     <dimen name="textsize_large">22sp</dimen>
     <dimen name="textsize_huge">30sp</dimen>
     <dimen name="textsize_enormous">35sp</dimen>
+
+    <!-- Dimensions -->
+    <dimen name="view_expandabletitle_bannerheight">48dp</dimen>
 </resources>

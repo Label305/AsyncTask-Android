@@ -8,6 +8,8 @@ import android.util.AttributeSet;
 import android.widget.TextView;
 
 import com.label305.stan.ui.widget.CustomFontHelper.CustomFontInterface;
+import com.label305.stan.utils.Logger;
+import com.label305.stan.utils.StringUtils;
 
 public class CustomFontTextView extends TextView implements CustomFontInterface {
 
@@ -44,9 +46,11 @@ public class CustomFontTextView extends TextView implements CustomFontInterface 
 	}
 
 	public void setFont(String font) {
-		if (font != null) {
+		if (!StringUtils.isNullOrEmpty(font)) {
 			setTypeface(Typeface.createFromAsset(getContext().getAssets(), font));
-		}
+		}else{
+            Logger.log(getContext(), "Invalid font: " + font);
+        }
 	}
 
 	public void setText(String text) {

@@ -11,7 +11,7 @@
 
     <!-- ExpandableTitleView -->
     <declare-styleable name="ExpandableTitleView">
-        <attr name="bg" format="color" />
+        <attr name="background" format="color|reference" />
         <attr name="icon" format="reference" />
         <attr name="titleText" format="string" />
         <attr name="titleTextColor" format="color" />

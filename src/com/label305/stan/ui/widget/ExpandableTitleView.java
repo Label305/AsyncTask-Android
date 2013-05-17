@@ -1,6 +1,7 @@
 package com.label305.stan.ui.widget;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -9,167 +10,183 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-
 import com.label305.stan.R;
 import com.label305.stan.ui.anim.ExpandViewAnimation;
 
 public class ExpandableTitleView extends LinearLayout {
 
-	private static final int ANIMATIONDURATION = 400;
+    private static final int ANIMATIONDURATION = 400;
 
-	private View mBannerView;
-	private CustomFontTextView mTitleTV;
-	private ImageView mIconIV;
-	private ImageView mMoreImageButton;
-	private ProgressBar mProgressBar;
+    private View mBannerView;
+    private CustomFontTextView mTitleTV;
+    private ImageView mIconIV;
+    private ImageView mMoreImageButton;
+    private ProgressBar mProgressBar;
+    private ViewGroup mContentVG;
+    private boolean mExpanded = false;
+    private int mBackgroundColor;
+    private int mBackgroundDrawableResId;
+    private int mIconResId;
+    private String mText;
+    private int mTextColor;
+    private String mTextFont;
+    private int mTextSize;
+    private int mArrowResId;
+    private boolean mContentVisible;
+    private boolean mDataAvailable = true;
 
-	private ViewGroup mContentVG;
+    private Context mContext;
 
-	private boolean mExpanded = false;
+    public ExpandableTitleView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        mContext = context;
+        init(attrs);
+    }
 
-	private int mBackgroundColor;
-	private int mIconResId;
-	private String mText;
-	private int mTextColor;
-	private String mTextFont;
-	private int mTextSize;
-	private int mArrowResId;
-	private boolean mContentVisible;
-	private boolean mDataAvailable = true;
+    private void init(AttributeSet attrs) {
+        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        inflater.inflate(R.layout.view_expandabletitle, this);
+        setOrientation(VERTICAL);
 
-	public ExpandableTitleView(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		init(attrs);
-	}
+        TypedArray a = mContext.obtainStyledAttributes(attrs, R.styleable.ExpandableTitleView);
+        if (a != null) {
+            try {
+                mBackgroundColor = a.getColor(R.styleable.ExpandableTitleView_background, R.color.transparent);
+            } catch (Resources.NotFoundException e) {
+                mBackgroundDrawableResId = a.getResourceId(R.styleable.ExpandableTitleView_background, 0);
+            }
 
-	private void init(AttributeSet attrs) {
-		LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		inflater.inflate(R.layout.view_expandabletitle, this);
-		setOrientation(VERTICAL);
+            mIconResId = a.getResourceId(R.styleable.ExpandableTitleView_icon, 0);
+            mText = a.getString(R.styleable.ExpandableTitleView_titleText);
+            mTextColor = a.getColor(R.styleable.ExpandableTitleView_titleTextColor, R.color.black);
+            mTextFont = a.getString(R.styleable.ExpandableTitleView_titleTextFont);
+            mTextSize = a.getDimensionPixelSize(R.styleable.ExpandableTitleView_titleTextSize,
+                    mContext.getResources().getDimensionPixelSize(R.dimen.textsize_medium));
+            mArrowResId = a.getResourceId(R.styleable.ExpandableTitleView_arrow, 0);
+            mContentVisible = a.getBoolean(R.styleable.ExpandableTitleView_contentVisible, true);
+            mExpanded = mContentVisible;
+            a.recycle();
 
-		TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.ExpandableTitleView);
-		mBackgroundColor = a.getColor(R.styleable.ExpandableTitleView_bg, R.color.transparent);
-		mIconResId = a.getResourceId(R.styleable.ExpandableTitleView_icon, 0);
-		mText = a.getString(R.styleable.ExpandableTitleView_titleText);
-		mTextColor = a.getColor(R.styleable.ExpandableTitleView_titleTextColor, R.color.black);
-		mTextFont = a.getString(R.styleable.ExpandableTitleView_titleTextFont);
-		mTextSize = a.getDimensionPixelSize(R.styleable.ExpandableTitleView_titleTextSize,
-				getResources().getDimensionPixelSize(R.dimen.textsize_medium));
-		mArrowResId = a.getResourceId(R.styleable.ExpandableTitleView_arrow, 0);
-		mContentVisible = a.getBoolean(R.styleable.ExpandableTitleView_contentVisible, true);
-		mExpanded = mContentVisible;
-		a.recycle();
+            setupViews();
+        }
+    }
 
-		setupViews();
-	}
+    private void setupViews() {
+        mBannerView = findViewById(R.id.view_expandabletitle_banner);
 
-	private void setupViews() {
-		mBannerView = findViewById(R.id.view_expandabletitle_banner);
-		mBannerView.setBackgroundColor(mBackgroundColor);
-		mBannerView.setOnClickListener(new BannerOnClickListener());
+        if (mBackgroundColor != 0) {
+            mBannerView.setBackgroundColor(mBackgroundColor);
+        } else {
+            mBannerView.setBackgroundResource(mBackgroundDrawableResId);
+        }
+        mBannerView.setOnClickListener(new BannerOnClickListener());
 
-		mTitleTV = (CustomFontTextView) findViewById(R.id.view_expandabletitle_titletv);
-		mTitleTV.setFont(mTextFont);
-		mTitleTV.setTextColor(mTextColor);
-		mTitleTV.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTextSize);
-		mTitleTV.setText(mText);
-		
-		mIconIV = (ImageView) findViewById(R.id.view_expandabletitle_iconiv);
-		mIconIV.setImageResource(mIconResId);
+        mTitleTV = (CustomFontTextView) findViewById(R.id.view_expandabletitle_titletv);
+        mTitleTV.setFont(mTextFont);
+        mTitleTV.setTextColor(mTextColor);
+        mTitleTV.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTextSize);
+        mTitleTV.setText(mText);
 
-		mMoreImageButton = (ImageView) findViewById(R.id.view_expandabletitle_morebutton);
-		mMoreImageButton.setImageResource(mArrowResId);
+        mIconIV = (ImageView) findViewById(R.id.view_expandabletitle_iconiv);
+        mIconIV.setImageResource(mIconResId);
 
-		mProgressBar = (ProgressBar) findViewById(R.id.view_expandabletitle_progressbar);
+        mMoreImageButton = (ImageView) findViewById(R.id.view_expandabletitle_morebutton);
+        mMoreImageButton.setImageResource(mArrowResId);
 
-		mContentVG = (ViewGroup) findViewById(R.id.view_expandabletitle_expandedcontent);
+        mProgressBar = (ProgressBar) findViewById(R.id.view_expandabletitle_progressbar);
 
-		if (mContentVisible) {
-			mContentVG.setVisibility(View.VISIBLE);
-			mMoreImageButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.rotatecw90));
-		}
-	}
+        mContentVG = (ViewGroup) findViewById(R.id.view_expandabletitle_expandedcontent);
 
-	public void setTitle(String title) {
-		mTitleTV.setText(title);
-	}
+        if (mContentVisible) {
+            mContentVG.setVisibility(View.VISIBLE);
+                Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.rotatecw90);
+                if (animation != null) {
+                    mMoreImageButton.startAnimation(animation);
+                }
+        }
+    }
 
-	public void setIcon(int resId) {
-		mIconIV.setImageResource(resId);
-	}
+    public void setTitle(String title) {
+        mTitleTV.setText(title);
+    }
 
-	public void setIcon(Drawable drawable) {
-		mIconIV.setImageDrawable(drawable);
-	}
+    public void setIcon(int resId) {
+        mIconIV.setImageResource(resId);
+    }
 
-	public void setIcon(Bitmap bitmap) {
-		mIconIV.setImageBitmap(bitmap);
-	}
+    public void setIcon(Drawable drawable) {
+        mIconIV.setImageDrawable(drawable);
+    }
 
-	public void setContent(View view) {
-		mContentVG.removeAllViews();
-		mContentVG.addView(view);
-	}
+    public void setIcon(Bitmap bitmap) {
+        mIconIV.setImageBitmap(bitmap);
+    }
 
-	public ViewGroup getContent() {
-		return mContentVG;
-	}
+    public ViewGroup getContent() {
+        return mContentVG;
+    }
 
-	/**
-	 * If !mDataAvailable, will show a indeterminate spinner instead of an arrow
-	 * until setDataAvailable(true);
-	 */
-	public void setDataAvailable(boolean dataAvailable) {
-		this.mDataAvailable = dataAvailable;
+    public void setContent(View view) {
+        mContentVG.removeAllViews();
+        mContentVG.addView(view);
+    }
 
-		if (dataAvailable) {
-			mProgressBar.setVisibility(View.GONE);
-			mMoreImageButton.setVisibility(View.VISIBLE);
-		} else {
-			mProgressBar.setVisibility(View.VISIBLE);
-			mMoreImageButton.setVisibility(View.GONE);
-		}
-	}
+    /**
+     * If !mDataAvailable, will show a indeterminate spinner instead of an arrow
+     * until setDataAvailable(true);
+     */
+    public void setDataAvailable(boolean dataAvailable) {
+        this.mDataAvailable = dataAvailable;
 
-	public boolean hasDataAvailable() {
-		return mDataAvailable;
-	}
+        if (dataAvailable) {
+            mProgressBar.setVisibility(View.GONE);
+            mMoreImageButton.setVisibility(View.VISIBLE);
+        } else {
+            mProgressBar.setVisibility(View.VISIBLE);
+            mMoreImageButton.setVisibility(View.GONE);
+        }
+    }
 
-	public void expandContent() {
-		final int widthSpec = MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.EXACTLY);
-		final int heightSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
-		mContentVG.measure(widthSpec, heightSpec);
+    public boolean hasDataAvailable() {
+        return mDataAvailable;
+    }
 
-		ExpandViewAnimation a = new ExpandViewAnimation(mContentVG, ANIMATIONDURATION, ExpandViewAnimation.EXPAND);
-		a.setHeight(mContentVG.getMeasuredHeight());
-		mContentVG.startAnimation(a);
+    public void expandContent() {
+        final int widthSpec = MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.EXACTLY);
+        final int heightSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
+        mContentVG.measure(widthSpec, heightSpec);
 
-		mMoreImageButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.rotatecw90));
-		mExpanded = true;
-	}
+        ExpandViewAnimation a = new ExpandViewAnimation(mContentVG, ANIMATIONDURATION, ExpandViewAnimation.EXPAND);
+        a.setHeight(mContentVG.getMeasuredHeight());
+        mContentVG.startAnimation(a);
 
-	public void collapseContent() {
-		ExpandViewAnimation a = new ExpandViewAnimation(mContentVG, ANIMATIONDURATION, ExpandViewAnimation.COLLAPSE);
-		mContentVG.startAnimation(a);
+        mMoreImageButton.startAnimation(AnimationUtils.loadAnimation(mContext, R.anim.rotatecw90));
+        mExpanded = true;
+    }
 
-		mMoreImageButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.rotateccw90));
-		mExpanded = false;
-	}
+    public void collapseContent() {
+        ExpandViewAnimation a = new ExpandViewAnimation(mContentVG, ANIMATIONDURATION, ExpandViewAnimation.COLLAPSE);
+        mContentVG.startAnimation(a);
 
-	private class BannerOnClickListener implements OnClickListener {
-		@Override
-		public void onClick(View v) {
-			if (mDataAvailable) {
-				if (mExpanded) {
-					collapseContent();
-				} else {
-					expandContent();
-				}
-			}
-		}
-	}
+        mMoreImageButton.startAnimation(AnimationUtils.loadAnimation(mContext, R.anim.rotateccw90));
+        mExpanded = false;
+    }
+
+    private class BannerOnClickListener implements OnClickListener {
+        @Override
+        public void onClick(View v) {
+            if (mDataAvailable) {
+                if (mExpanded) {
+                    collapseContent();
+                } else {
+                    expandContent();
+                }
+            }
+        }
+    }
 }
