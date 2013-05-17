@@ -9,10 +9,16 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * A class to report unexpected errors to Buggy.
+ * To use this class, one must first initialize Buggy using Buggy.init(Context).
+ */
 public class Buggy {
 
     private static final String PLATFORM = "Android";
@@ -21,12 +27,20 @@ public class Buggy {
     private static final String PARAM_PACKAGE = "package";
     private static final String PARAM_VERSION = "version";
     private static final String PARAM_ERRORTYPE = "error_type";
+    private static final String PARAM_CONTENT = "content";
     private static final String PARAM_LABEL = "label";
     private static final String PARAM_PLATFORMVERSION = "os_version";
+    private static Context sContext;
 
-    public static void report(final Context context, final Exception exception, final String label) {
-        if (context == null)
+    public static void init(Context context) {
+        sContext = context;
+    }
+
+    public static void report(final Exception exception, final String label) {
+        if (sContext == null) {
+            Logger.log(null, "Not initialized!");
             return;
+        }
 
         new Thread(new Runnable() {
             @Override
@@ -34,16 +48,17 @@ public class Buggy {
                 List<NameValuePair> data = new ArrayList<NameValuePair>();
 
                 data.add(new BasicNameValuePair(PARAM_PLATFORM, PLATFORM));
-                data.add(new BasicNameValuePair(PARAM_PACKAGE, context.getPackageName()));
-                data.add(new BasicNameValuePair(PARAM_VERSION, getVersionName(context)));
+                data.add(new BasicNameValuePair(PARAM_PACKAGE, sContext.getPackageName()));
+                data.add(new BasicNameValuePair(PARAM_VERSION, getVersionName(sContext)));
                 data.add(new BasicNameValuePair(PARAM_ERRORTYPE, exception.getClass().getName()));
+                data.add(new BasicNameValuePair(PARAM_CONTENT, stackTraceToString(exception)));
                 data.add(new BasicNameValuePair(PARAM_LABEL, label));
                 data.add(new BasicNameValuePair(PARAM_PLATFORMVERSION, Build.VERSION.RELEASE));
 
                 try {
                     new HttpHelper().post(URL, new HashMap<String, String>(), data);
                 } catch (IOException e) {
-                    Logger.log(context, e);
+                    Logger.log(sContext, e);
                 }
             }
         }).start();
@@ -56,6 +71,12 @@ public class Buggy {
             Logger.log(context, e);
             return "?";
         }
+    }
+
+    private static String stackTraceToString(Exception e) {
+        StringWriter sw = new StringWriter();
+        e.printStackTrace(new PrintWriter(sw));
+        return sw.toString();
     }
 
 }
