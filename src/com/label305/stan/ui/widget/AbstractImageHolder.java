@@ -1,5 +1,7 @@
 package com.label305.stan.ui.widget;
 
+import android.annotation.TargetApi;
+import android.os.Build;
 import com.label305.stan.asyncutils.ImageLoader;
 
 import android.content.Context;
@@ -17,6 +19,11 @@ public abstract class AbstractImageHolder extends LinearLayout {
 	public AbstractImageHolder(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public AbstractImageHolder(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+    }
 
 	protected abstract ImageView getImageView();
 
