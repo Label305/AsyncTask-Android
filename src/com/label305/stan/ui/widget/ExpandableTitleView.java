@@ -108,6 +108,8 @@ public class ExpandableTitleView extends LinearLayout {
                 if (animation != null) {
                     mMoreImageButton.startAnimation(animation);
                 }
+        }else{
+            mContentVG.setVisibility(View.GONE);
         }
     }
 
