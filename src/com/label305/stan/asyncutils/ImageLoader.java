@@ -14,6 +14,7 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration.Builder;
 import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 
 /**
  * An implementation of the Universal Image Loader which handles showing of a
@@ -45,6 +46,8 @@ public class ImageLoader {
 		DisplayImageOptions.Builder displayImageOptionsBuilder = new DisplayImageOptions.Builder();
 		displayImageOptionsBuilder.cacheInMemory();
 		displayImageOptionsBuilder.cacheOnDisc();
+		displayImageOptionsBuilder.bitmapConfig(Bitmap.Config.RGB_565);
+		displayImageOptionsBuilder.displayer(new FadeInBitmapDisplayer(1000));
 
 		Builder builder = new ImageLoaderConfiguration.Builder(context);
 		builder.memoryCache(new LruMemoryCache(cacheSize));
@@ -54,6 +57,7 @@ public class ImageLoader {
 			builder.taskExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 			builder.taskExecutorForCachedImages(AsyncTask.THREAD_POOL_EXECUTOR);
 		}
+		builder.threadPoolSize(1);
 
 		builder.defaultDisplayImageOptions(displayImageOptionsBuilder.build());
 
@@ -63,12 +67,12 @@ public class ImageLoader {
 
 	public static void loadImage(String uri, ProgressBar progressBar, ImageView imageView) {
 		com.nostra13.universalimageloader.core.ImageLoader.getInstance().cancelDisplayTask(imageView);
-		com.nostra13.universalimageloader.core.ImageLoader.getInstance().loadImage(uri, new ImageLoadingListener(progressBar, imageView));
+		com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(uri, imageView, new ImageLoadingListener(progressBar, imageView));
 	}
 
 	public static void loadImage(String uri, ImageLoadingListener imageLoadingListener) {
 		com.nostra13.universalimageloader.core.ImageLoader.getInstance().cancelDisplayTask(imageLoadingListener.getImageView());
-		com.nostra13.universalimageloader.core.ImageLoader.getInstance().loadImage(uri, imageLoadingListener);
+		com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(uri, imageLoadingListener.getImageView(), imageLoadingListener);
 	}
 
 	public static void cancelDisplayTask(ImageView imageView) {
@@ -87,17 +91,14 @@ public class ImageLoader {
 
 		@Override
 		public void onLoadingStarted(String imageUri, View view) {
-			if (mProgressBar != null)
+			if (mProgressBar != null) {
 				mProgressBar.setVisibility(View.VISIBLE);
-
-			mImageView.setImageResource(sUnavailableImageResource);
-			mImageView.setVisibility(View.VISIBLE);
+			}
 		}
 
 		@Override
 		public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
 			mImageView.setImageResource(sUnavailableImageResource);
-			mImageView.setVisibility(View.VISIBLE);
 
 			if (mProgressBar != null) {
 				mProgressBar.setVisibility(View.GONE);
@@ -110,9 +111,6 @@ public class ImageLoader {
 				if (mProgressBar != null) {
 					mProgressBar.setVisibility(View.GONE);
 				}
-
-				mImageView.setImageBitmap(bitmap);
-				mImageView.setVisibility(View.VISIBLE);
 			} else {
 				onLoadingFailed(imageUri, view, null);
 			}
