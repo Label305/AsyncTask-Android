@@ -47,7 +47,7 @@ public class ImageLoader {
 		displayImageOptionsBuilder.cacheInMemory();
 		displayImageOptionsBuilder.cacheOnDisc();
 		displayImageOptionsBuilder.bitmapConfig(Bitmap.Config.RGB_565);
-		displayImageOptionsBuilder.displayer(new FadeInBitmapDisplayer(1000));
+		displayImageOptionsBuilder.displayer(new FadeInBitmapDisplayer(500));
 
 		Builder builder = new ImageLoaderConfiguration.Builder(context);
 		builder.memoryCache(new LruMemoryCache(cacheSize));
@@ -91,6 +91,7 @@ public class ImageLoader {
 
 		@Override
 		public void onLoadingStarted(String imageUri, View view) {
+			mImageView.setImageBitmap(null);
 			if (mProgressBar != null) {
 				mProgressBar.setVisibility(View.VISIBLE);
 			}
