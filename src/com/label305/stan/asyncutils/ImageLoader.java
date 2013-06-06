@@ -51,7 +51,6 @@ public class ImageLoader {
 
 		Builder builder = new ImageLoaderConfiguration.Builder(context);
 		builder.memoryCache(new LruMemoryCache(cacheSize));
-		builder.memoryCacheSize(cacheSize);
 
 		if (VersionUtils.isV11OrHigher()) {
 			builder.taskExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
