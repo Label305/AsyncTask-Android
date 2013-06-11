@@ -14,13 +14,15 @@
             android:id="@+id/doubleitemarrayadapter_rowview_leftviewgroup"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:orientation="horizontal" />
 
         <LinearLayout
             android:id="@+id/doubleitemarrayadapter_rowview_rightviewgroup"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:orientation="horizontal" />
     </LinearLayout>
 
 </FrameLayout>
