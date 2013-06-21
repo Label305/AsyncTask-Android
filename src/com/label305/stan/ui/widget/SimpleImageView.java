@@ -37,12 +37,12 @@ public class SimpleImageView extends AbstractImageHolder {
     }
 
     @Override
-    protected ImageView getImageView() {
+    public ImageView getImageView() {
         return mImageView;
     }
 
     @Override
-    protected ProgressBar getProgressBar() {
+    public ProgressBar getProgressBar() {
         return mProgressBar;
     }
 }
