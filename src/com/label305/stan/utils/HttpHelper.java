@@ -13,9 +13,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.http.AndroidHttpClient;
 
 /**
@@ -111,28 +108,6 @@ public class HttpHelper {
 
     public void close() {
         mHttpClient.close();
-    }
-    
-    /* Checks if we have a valid Internet Connection on the device.
-    * 
-    * @param cxt
-    * @return True if device has internet
-    * 
-    *         Code from: http://www.androidsnippets.org/snippets/131/
-    */
-    public static boolean hasInternet(Context cxt) {
-
-    	NetworkInfo info = (NetworkInfo) ((ConnectivityManager) cxt.getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
-
-    	if (info == null || !info.isConnected()) {
-    		return false;
-    	}
-    	if (info.isRoaming()) {
-    		// here is the roaming option you can change it if you want to
-    		// disable internet while roaming, just return false
-    		return true;
-    	}
-    	return true;
     }
 
 }
