@@ -25,6 +25,7 @@ public class CustomFontHelper {
 			cfi.setTypeface(Typeface.createFromAsset(cfi.getContext().getAssets(), font));
 		} else {
 			System.err.println("WARNING: No font specified for CustomFontInterface!");
+			new RuntimeException().printStackTrace();
 		}
 		a.recycle();
 	}
