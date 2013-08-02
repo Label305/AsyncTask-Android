@@ -27,9 +27,14 @@ private static LruCache<String, Bitmap> mCache;
 	 * @param context
 	 */
 	public static void initialize(Context context) {
-		cacheDir = context.getExternalCacheDir();
-		isDiskWritable = cacheDir.canWrite();
-		isDiskReadable = cacheDir.canRead();
+		try {
+			cacheDir = context.getExternalCacheDir();
+			isDiskWritable = cacheDir.canWrite();
+			isDiskReadable = cacheDir.canRead();
+		} catch(Exception e) {
+			e.printStackTrace();
+			return;
+		}
 	}
 	
 
