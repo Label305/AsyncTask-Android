@@ -22,7 +22,15 @@ public class Logger {
 		log(String.valueOf(msg));
 	}
 
+	public static void log(Exception e) {
+		log(null, e);
+	}
+
 	public static void log(Context context, Object msg) {
+		if (msg == null) {
+			msg = "null";
+		}
+
 		if (msg.toString().trim().equals(""))
 			msg = "No message";
 
