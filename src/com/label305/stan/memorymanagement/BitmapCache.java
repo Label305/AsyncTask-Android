@@ -107,7 +107,6 @@ private static LruCache<String, Bitmap> mCache;
 						fOut.flush();
 						fOut.close();
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
