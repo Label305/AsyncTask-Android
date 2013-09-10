@@ -2,6 +2,7 @@ package com.label305.stan.ui.widget;
 
 import java.util.Locale;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
@@ -71,5 +72,11 @@ public class CustomFontTextView extends TextView implements CustomFontInterface 
 
 	public boolean shouldLowercase() {
 		return mShouldLowercase;
+	}
+	
+	@TargetApi(14)
+	@Override
+	public boolean canScrollHorizontally(int direction) {
+	    return false;
 	}
 }
