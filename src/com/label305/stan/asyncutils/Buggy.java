@@ -39,6 +39,10 @@ public class Buggy {
 	}
 
 	public static void report(final Throwable e, final String label) {
+		report(stackTraceToString(e), e.getClass().getName(), label);
+	}
+
+	public static void report(final String stackTrace, final String errorType, final String label) {
 		if (sContext == null) {
 			Logger.log(null, "Not initialized!");
 			return;
@@ -52,8 +56,8 @@ public class Buggy {
 				data.add(new BasicNameValuePair(PARAM_PLATFORM, PLATFORM));
 				data.add(new BasicNameValuePair(PARAM_PACKAGE, sContext.getPackageName()));
 				data.add(new BasicNameValuePair(PARAM_VERSION, getVersionName(sContext)));
-				data.add(new BasicNameValuePair(PARAM_ERRORTYPE, e.getClass().getName()));
-				data.add(new BasicNameValuePair(PARAM_CONTENT, stackTraceToString(e)));
+				data.add(new BasicNameValuePair(PARAM_ERRORTYPE, errorType));
+				data.add(new BasicNameValuePair(PARAM_CONTENT, stackTrace));
 				data.add(new BasicNameValuePair(PARAM_LABEL, label));
 				data.add(new BasicNameValuePair(PARAM_PLATFORMVERSION, Build.VERSION.RELEASE));
 
