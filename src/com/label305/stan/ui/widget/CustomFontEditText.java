@@ -3,7 +3,6 @@ package com.label305.stan.ui.widget;
 import java.util.Locale;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.widget.EditText;
 
@@ -27,12 +26,7 @@ public class CustomFontEditText extends EditText implements CustomFontInterface 
 	public CustomFontEditText(Context context, String fontPath, boolean shouldCapitalize, boolean shouldLowercase) {
 		super(context);
 
-		setTypeface(Typeface.createFromAsset(getContext().getAssets(), fontPath));
-		mShouldCapitalize = shouldCapitalize;
-		mShouldLowercase = shouldLowercase;
-
-		if (shouldCapitalize && shouldLowercase)
-			throw new IllegalArgumentException("Cannot both capitalize and lowercase text!");
+		CustomFontHelper.init(this, fontPath, shouldCapitalize, shouldLowercase);
 	}
 
 	public void setShouldCapitalize(boolean mShouldCapitalize) {

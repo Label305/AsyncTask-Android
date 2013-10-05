@@ -1,5 +1,8 @@
 package com.label305.stan.ui.widget;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
@@ -9,24 +12,42 @@ import com.label305.stan.R;
 import com.label305.stan.utils.StringUtils;
 
 public class CustomFontHelper {
-	
-	public static void init(CustomFontInterface cfi, AttributeSet attrs){
-		setFont(cfi,attrs);
-		setCapitalize(cfi,attrs);
-		setLowercase(cfi,attrs);
-		setText(cfi,attrs);
+
+	private static Map<String, Typeface> fontCache = new HashMap<String, Typeface>();
+
+	public static void init(CustomFontInterface cfi, AttributeSet attrs) {
+		setFont(cfi, attrs);
+		setCapitalize(cfi, attrs);
+		setLowercase(cfi, attrs);
+		setText(cfi, attrs);
 		cfi.setIncludeFontPadding(false);
 	}
-	
-	private static  void setFont(CustomFontInterface cfi, AttributeSet attrs) {
-		final TypedArray a = cfi.getContext().obtainStyledAttributes(attrs, R.styleable.CustomFontTextView);
-		String font = a.getString(R.styleable.CustomFontTextView_font);
+
+	public static void init(CustomFontInterface cfi, String fontPath, boolean shouldCapitalize, boolean shouldLowercase) {
+		setFont(cfi, fontPath);
+		cfi.setShouldCapitalize(shouldCapitalize);
+		cfi.setShouldLowercase(shouldLowercase);
+		cfi.setIncludeFontPadding(false);
+	}
+
+	public static void setFont(CustomFontInterface cfi, String font) {
 		if (!StringUtils.isNullOrEmpty(font)) {
-			cfi.setTypeface(Typeface.createFromAsset(cfi.getContext().getAssets(), font));
+			Typeface typeface = fontCache.get(font);
+			if (typeface == null) {
+				typeface = Typeface.createFromAsset(cfi.getContext().getAssets(), font);
+				fontCache.put(font, typeface);
+			}
+			cfi.setTypeface(typeface);
 		} else {
 			System.err.println("WARNING: No font specified for CustomFontInterface!");
-//			new RuntimeException().printStackTrace();
+			// new RuntimeException().printStackTrace();
 		}
+	}
+
+	private static void setFont(CustomFontInterface cfi, AttributeSet attrs) {
+		final TypedArray a = cfi.getContext().obtainStyledAttributes(attrs, R.styleable.CustomFontTextView);
+		String font = a.getString(R.styleable.CustomFontTextView_font);
+		setFont(cfi, font);
 		a.recycle();
 	}
 
@@ -46,22 +67,22 @@ public class CustomFontHelper {
 		final TypedArray a = cfi.getContext().obtainStyledAttributes(attrs, R.styleable.CustomFontTextView);
 		CharSequence text = a.getText(R.styleable.CustomFontTextView_text);
 		if (text != null)
-			cfi.	setText(text.toString());
+			cfi.setText(text.toString());
 		a.recycle();
 	}
-	
-	public interface CustomFontInterface{
+
+	public interface CustomFontInterface {
 		public void setTypeface(Typeface tf);
-		
+
 		public void setIncludeFontPadding(boolean include);
-		
+
 		public void setShouldLowercase(boolean shouldLowercase);
-		
+
 		public void setShouldCapitalize(boolean shouldCapitalize);
-		
+
 		public Context getContext();
-		
+
 		public void setText(String text);
-		
+
 	}
 }
