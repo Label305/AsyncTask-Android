@@ -88,6 +88,28 @@ public class HttpHelper {
     }
     
     /**
+     * Execute a DELETE request with body on the url configured
+     *
+     * @return response data
+     */
+    public HttpResponse delete(String url, Map<String, String> headerData, List<NameValuePair> deleteData) throws IOException {
+    	HttpDeleteWithBody httpDelete = new HttpDeleteWithBody(url);
+    	Iterator<String> keys = headerData.keySet().iterator();
+    	Iterator<String> values = headerData.values().iterator();
+    	
+    	while (keys.hasNext() && values.hasNext()) {
+    		httpDelete.setHeader(keys.next(), values.next());
+    	}
+    	
+    	if (deleteData != null) {
+    		httpDelete.setEntity(new UrlEncodedFormEntity(deleteData));
+    	}
+    	
+    	AndroidHttpClient.modifyRequestToAcceptGzipResponse(httpDelete);
+    	return mHttpClient.execute(httpDelete);
+    }
+    
+    /**
      * Execute a GET request on the url configured
      *
      * @return response data
