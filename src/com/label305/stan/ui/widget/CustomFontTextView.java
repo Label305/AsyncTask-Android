@@ -2,14 +2,12 @@ package com.label305.stan.ui.widget;
 
 import java.util.Locale;
 
+import android.annotation.TargetApi;
 import android.content.Context;
-import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
 import com.label305.stan.ui.widget.CustomFontHelper.CustomFontInterface;
-import com.label305.stan.utils.Logger;
-import com.label305.stan.utils.StringUtils;
 
 public class CustomFontTextView extends TextView implements CustomFontInterface {
 
@@ -29,12 +27,7 @@ public class CustomFontTextView extends TextView implements CustomFontInterface 
 	public CustomFontTextView(Context context, String fontPath, boolean shouldCapitalize, boolean shouldLowercase) {
 		super(context);
 
-		setTypeface(Typeface.createFromAsset(getContext().getAssets(), fontPath));
-		mShouldCapitalize = shouldCapitalize;
-		mShouldLowercase = shouldLowercase;
-
-		if (shouldCapitalize && shouldLowercase)
-			throw new IllegalArgumentException("Cannot both capitalize and lowercase text!");
+		CustomFontHelper.init(this, fontPath, shouldCapitalize, shouldLowercase);
 	}
 
 	public void setShouldCapitalize(boolean mShouldCapitalize) {
@@ -46,11 +39,7 @@ public class CustomFontTextView extends TextView implements CustomFontInterface 
 	}
 
 	public void setFont(String font) {
-		if (!StringUtils.isNullOrEmpty(font)) {
-			setTypeface(Typeface.createFromAsset(getContext().getAssets(), font));
-		}else{
-            Logger.log(getContext(), "Invalid font: " + font);
-        }
+		CustomFontHelper.setFont(this, font);
 	}
 
 	public void setText(String text) {
@@ -73,4 +62,9 @@ public class CustomFontTextView extends TextView implements CustomFontInterface 
 		return mShouldLowercase;
 	}
 
+	@TargetApi(14)
+	@Override
+	public boolean canScrollHorizontally(int direction) {
+		return false;
+	}
 }
