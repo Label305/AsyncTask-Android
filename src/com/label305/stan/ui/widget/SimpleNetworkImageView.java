@@ -11,10 +11,10 @@ import com.android.volley.toolbox.Volley;
 import com.label305.stan.memorymanagement.BitmapCache;
 
 /**
- * A {@link NetworkImageView} which handles the ImageLoader, and properly
+ * A {@link StanNetworkImageView} which handles the ImageLoader, and properly
  * handles image resource ids.
  */
-public class SimpleNetworkImageView extends NetworkImageView {
+public class SimpleNetworkImageView extends StanNetworkImageView {
 
 	private int mDefaultImageResId;
 	private int mErrorImageResId;
@@ -54,7 +54,7 @@ public class SimpleNetworkImageView extends NetworkImageView {
 		super.setImageResource(mErrorImageResId);
 	}
 
-	public int getmResId() {
+	public int getResId() {
 		return mResId;
 	}
 
@@ -94,6 +94,10 @@ public class SimpleNetworkImageView extends NetworkImageView {
 		mResId = resId;
 	}
 
+	/**
+	 * A helper class for managing an {@link ImageLoader} and a
+	 * {@link BitmapCache}.
+	 */
 	private static class NetworkImageHelper {
 
 		private static ImageLoader sImageLoader;
@@ -104,10 +108,10 @@ public class SimpleNetworkImageView extends NetworkImageView {
 			}
 
 			if (sImageLoader == null) {
+				BitmapCache.initialize(context);
 				sImageLoader = new ImageLoader(Volley.newRequestQueue(context), new BitmapCache());
 			}
 			return sImageLoader;
 		}
 	}
-
 }
