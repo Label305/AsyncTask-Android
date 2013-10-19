@@ -141,6 +141,12 @@ public class StanNetworkImageView extends ImageView {
 		return mErrorImageId;
 	}
 
+	@Override
+	public void setImageResource(int resId) {
+		mResId = resId;
+		super.setImageResource(resId);
+	}
+
 	/**
 	 * Returns the resource id that is used for this view.
 	 */
