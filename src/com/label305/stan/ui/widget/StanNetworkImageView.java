@@ -2,6 +2,9 @@ package com.label305.stan.ui.widget;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.TransitionDrawable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.widget.ImageView;
@@ -11,6 +14,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageLoader.ImageContainer;
 import com.android.volley.toolbox.ImageLoader.ImageListener;
+import com.android.volley.toolbox.NetworkImageView;
 
 /**
  * <i>This is a modified copy of the NetworkImageView class,
@@ -20,6 +24,17 @@ import com.android.volley.toolbox.ImageLoader.ImageListener;
  * request.
  */
 public class StanNetworkImageView extends ImageView {
+
+	private static final long FADE_TRESHOLD_MS = 250;
+
+	/** The start time stamp of the url request */
+	private long mRequestMillis;
+
+	/**
+	 * Whether the requested image should fade in if the request takes longer
+	 * than {@value #FADE_TRESHOLD_MS} ms.
+	 */
+	private boolean mShouldFade = true;
 
 	/** The URL of the network image to load */
 	private String mUrl;
@@ -61,6 +76,14 @@ public class StanNetworkImageView extends ImageView {
 	}
 
 	/**
+	 * Set whether the requested image should fade in if the request takes
+	 * longer than {@value #FADE_TRESHOLD_MS} ms.
+	 */
+	public void setShouldFade(boolean shouldFade) {
+		mShouldFade = shouldFade;
+	}
+
+	/**
 	 * Sets URL of the image that should be loaded into this view. Note that
 	 * calling this will immediately either set the cached image (if available)
 	 * or the default image specified by
@@ -81,6 +104,7 @@ public class StanNetworkImageView extends ImageView {
 		}
 		mUrl = url;
 		mImageLoader = imageLoader;
+		mRequestMillis = System.currentTimeMillis();
 		// The URL has potentially changed. See if we need to load it.
 		loadImageIfNecessary(false);
 	}
@@ -156,7 +180,11 @@ public class StanNetworkImageView extends ImageView {
 			if (bm == null) {
 				showDefaultImage();
 			} else {
-				super.setImageBitmap(bm);
+				if (mShouldFade && System.currentTimeMillis() - mRequestMillis > FADE_TRESHOLD_MS) {
+					setImageDrawableWithFade(new BitmapDrawable(getResources(), bm));
+				} else {
+					super.setImageBitmap(bm);
+				}
 			}
 		}
 	}
@@ -171,7 +199,7 @@ public class StanNetworkImageView extends ImageView {
 		int width = getWidth();
 		int height = getHeight();
 
-		boolean isFullyWrapContent = getLayoutParams().height == LayoutParams.WRAP_CONTENT && getLayoutParams().width == LayoutParams.WRAP_CONTENT;
+		boolean isFullyWrapContent = getLayoutParams() != null && getLayoutParams().height == LayoutParams.WRAP_CONTENT && getLayoutParams().width == LayoutParams.WRAP_CONTENT;
 		// if the view's bounds aren't known yet, and this is not a
 		// wrap-content/wrap-content
 		// view, hold off on loading the image.
@@ -265,6 +293,25 @@ public class StanNetworkImageView extends ImageView {
 	protected void drawableStateChanged() {
 		super.drawableStateChanged();
 		invalidate();
+	}
+
+	private void setImageDrawableWithFade(final Drawable drawable) {
+		Drawable currentDrawable = getDrawable();
+		if (currentDrawable != null) {
+			Drawable[] arrayDrawable = new Drawable[2];
+			if (currentDrawable instanceof TransitionDrawable) {
+				currentDrawable = ((TransitionDrawable) currentDrawable).getDrawable(1);
+			}
+
+			arrayDrawable[0] = currentDrawable;
+			arrayDrawable[1] = drawable;
+			TransitionDrawable transitionDrawable = new TransitionDrawable(arrayDrawable);
+			transitionDrawable.setCrossFadeEnabled(true);
+			setImageDrawable(transitionDrawable);
+			transitionDrawable.startTransition(250);
+		} else {
+			setImageDrawable(drawable);
+		}
 	}
 
 	private class DefaultImageResponseListener implements ImageResponseListener {
