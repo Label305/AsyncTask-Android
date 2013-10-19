@@ -1,6 +1,7 @@
 package com.label305.stan.ui.widget;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.widget.ImageView;
@@ -22,6 +23,9 @@ public class StanNetworkImageView extends ImageView {
 
 	/** The URL of the network image to load */
 	private String mUrl;
+
+	/** The image resource id that is shown */
+	private int mResId;
 
 	/**
 	 * Resource ID of the image to be used as a placeholder until the network
@@ -72,6 +76,9 @@ public class StanNetworkImageView extends ImageView {
 	 *            ImageLoader that will be used to make the request.
 	 */
 	public void setImageUrl(String url, ImageLoader imageLoader) {
+		if (url != null) {
+			mResId = -1;
+		}
 		mUrl = url;
 		mImageLoader = imageLoader;
 		// The URL has potentially changed. See if we need to load it.
@@ -111,6 +118,25 @@ public class StanNetworkImageView extends ImageView {
 	}
 
 	/**
+	 * Returns the resource id that is used for this view.
+	 */
+	public int getResId() {
+		return mResId;
+	}
+
+	public void showDefaultImage() {
+		mResId = -1;
+		mUrl = null;
+		super.setImageResource(getDefaultImageResId());
+	}
+
+	public void showErrorImage() {
+		mResId = -1;
+		mUrl = null;
+		super.setImageResource(getErrorImageResId());
+	}
+
+	/**
 	 * Sets the {@link ImageResponseListener} that handles image responses.
 	 * 
 	 * @param listener
@@ -121,6 +147,17 @@ public class StanNetworkImageView extends ImageView {
 			mImageResponseListener = listener;
 		} else {
 			mImageResponseListener = new DefaultImageResponseListener();
+		}
+	}
+
+	@Override
+	public void setImageBitmap(Bitmap bm) {
+		if (mResId <= 0 || mResId == mDefaultImageId || mResId == mErrorImageId) {
+			if (bm == null) {
+				showDefaultImage();
+			} else {
+				super.setImageBitmap(bm);
+			}
 		}
 	}
 
