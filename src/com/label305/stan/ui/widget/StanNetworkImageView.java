@@ -99,9 +99,7 @@ public class StanNetworkImageView extends ImageView {
 	 *            ImageLoader that will be used to make the request.
 	 */
 	public void setImageUrl(String url, ImageLoader imageLoader) {
-		if (url != null) {
-			mResId = -1;
-		}
+		mResId = -1;
 		mUrl = url;
 		mImageLoader = imageLoader;
 		mRequestMillis = System.currentTimeMillis();
@@ -155,8 +153,14 @@ public class StanNetworkImageView extends ImageView {
 	}
 
 	public void showDefaultImage() {
+		showDefaultImage(true);
+	}
+
+	private void showDefaultImage(boolean resetUrl) {
 		mResId = -1;
-		mUrl = null;
+		if (resetUrl) {
+			mUrl = null;
+		}
 		super.setImageResource(getDefaultImageResId());
 	}
 
@@ -184,7 +188,7 @@ public class StanNetworkImageView extends ImageView {
 	public void setImageBitmap(Bitmap bm) {
 		if (mResId <= 0 || mResId == mDefaultImageId || mResId == mErrorImageId) {
 			if (bm == null) {
-				showDefaultImage();
+				showDefaultImage(false);
 			} else {
 				if (mShouldFade && System.currentTimeMillis() - mRequestMillis > FADE_TRESHOLD_MS) {
 					setImageDrawableWithFade(new BitmapDrawable(getResources(), bm));
