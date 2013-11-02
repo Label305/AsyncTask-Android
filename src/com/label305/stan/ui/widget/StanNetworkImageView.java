@@ -146,7 +146,6 @@ public class StanNetworkImageView extends ImageView {
 	@Override
 	public void setImageResource(int resId) {
 		mResId = resId;
-		mUrl = null;
 		mBitmap = null;
 		super.setImageResource(resId);
 	}
@@ -358,7 +357,7 @@ public class StanNetworkImageView extends ImageView {
 			if (response.getBitmap() != null) {
 				setImageBitmap(response.getBitmap());
 			} else if (mDefaultImageId != 0) {
-				setImageResource(mDefaultImageId);
+				showDefaultImage(false);
 			}
 		}
 
