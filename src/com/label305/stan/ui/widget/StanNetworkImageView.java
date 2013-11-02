@@ -42,6 +42,9 @@ public class StanNetworkImageView extends ImageView {
 	/** The image resource id that is shown */
 	private int mResId;
 
+	/** The image bitmap that is shown */
+	private Bitmap mBitmap;
+
 	/**
 	 * Resource ID of the image to be used as a placeholder until the network
 	 * image is loaded.
@@ -100,6 +103,7 @@ public class StanNetworkImageView extends ImageView {
 	 */
 	public void setImageUrl(String url, ImageLoader imageLoader) {
 		mResId = -1;
+		mBitmap = null;
 		mUrl = url;
 		mImageLoader = imageLoader;
 		mRequestMillis = System.currentTimeMillis();
@@ -142,7 +146,22 @@ public class StanNetworkImageView extends ImageView {
 	@Override
 	public void setImageResource(int resId) {
 		mResId = resId;
+		mUrl = null;
+		mBitmap = null;
 		super.setImageResource(resId);
+	}
+
+	/**
+	 * Sets a Bitmap as the content of this StanNetworkImageView.
+	 * 
+	 * @param bm
+	 *            the Bitmap to set.
+	 */
+	public void setBitmap(Bitmap bm) {
+		mResId = -1;
+		mUrl = null;
+		mBitmap = bm;
+		setImageBitmap(bm);
 	}
 
 	/**
@@ -184,7 +203,11 @@ public class StanNetworkImageView extends ImageView {
 		}
 	}
 
+	/**
+	 * @deprecated Use {@link StanNetworkImageView#setBitmap(Bitmap)} instead.
+	 */
 	@Override
+	@Deprecated
 	public void setImageBitmap(Bitmap bm) {
 		if (mResId <= 0 || mResId == mDefaultImageId || mResId == mErrorImageId) {
 			if (bm == null) {
@@ -206,6 +229,10 @@ public class StanNetworkImageView extends ImageView {
 	 *            True if this was invoked from a layout pass, false otherwise.
 	 */
 	private void loadImageIfNecessary(final boolean isInLayoutPass) {
+		if (mBitmap != null) {
+			return;
+		}
+
 		int width = getWidth();
 		int height = getHeight();
 
