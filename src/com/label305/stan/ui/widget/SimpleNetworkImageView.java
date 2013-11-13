@@ -2,7 +2,6 @@ package com.label305.stan.ui.widget;
 
 import android.app.Application;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.util.AttributeSet;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -11,14 +10,9 @@ import com.android.volley.toolbox.Volley;
 import com.label305.stan.memorymanagement.BitmapCache;
 
 /**
- * A {@link NetworkImageView} which handles the ImageLoader, and properly
- * handles image resource ids.
+ * A {@link StanNetworkImageView} which handles the ImageLoader.
  */
-public class SimpleNetworkImageView extends NetworkImageView {
-
-	private int mDefaultImageResId;
-	private int mErrorImageResId;
-	private int mResId;
+public class SimpleNetworkImageView extends StanNetworkImageView {
 
 	public SimpleNetworkImageView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
@@ -27,35 +21,9 @@ public class SimpleNetworkImageView extends NetworkImageView {
 	public SimpleNetworkImageView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
-
+ 
 	public SimpleNetworkImageView(Context context) {
 		super(context);
-	}
-
-	@Override
-	public void setDefaultImageResId(int defaultImage) {
-		super.setDefaultImageResId(defaultImage);
-		mDefaultImageResId = defaultImage;
-	}
-
-	@Override
-	public void setErrorImageResId(int errorImage) {
-		super.setErrorImageResId(errorImage);
-		mErrorImageResId = errorImage;
-	}
-
-	public void showDefaultImage() {
-		mResId = -1;
-		super.setImageResource(mDefaultImageResId);
-	}
-
-	public void showErrorImage() {
-		mResId = -1;
-		super.setImageResource(mErrorImageResId);
-	}
-
-	public int getmResId() {
-		return mResId;
 	}
 
 	/**
@@ -71,29 +39,18 @@ public class SimpleNetworkImageView extends NetworkImageView {
 	 *            The URL that should be loaded into this ImageView.
 	 */
 	public void setImageUrl(String url) {
-		if (url != null) {
-			mResId = -1;
-		}
 		super.setImageUrl(url, NetworkImageHelper.getImageLoader(getContext().getApplicationContext()));
-	}
-
-	@Override
-	public void setImageBitmap(Bitmap bm) {
-		if (mResId <= 0 || mResId == mDefaultImageResId || mResId == mErrorImageResId) {
-			if (bm == null) {
-				showDefaultImage();
-			} else {
-				super.setImageBitmap(bm);
-			}
-		}
 	}
 
 	@Override
 	public void setImageResource(int resId) {
 		super.setImageResource(resId);
-		mResId = resId;
 	}
 
+	/**
+	 * A helper class for managing an {@link ImageLoader} and a
+	 * {@link BitmapCache}.
+	 */
 	private static class NetworkImageHelper {
 
 		private static ImageLoader sImageLoader;
@@ -104,10 +61,10 @@ public class SimpleNetworkImageView extends NetworkImageView {
 			}
 
 			if (sImageLoader == null) {
+				BitmapCache.initialize(context);
 				sImageLoader = new ImageLoader(Volley.newRequestQueue(context), new BitmapCache());
 			}
 			return sImageLoader;
 		}
 	}
-
 }
