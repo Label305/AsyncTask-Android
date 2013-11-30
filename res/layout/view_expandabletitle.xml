@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
+
+    <RelativeLayout
+        android:id="@+id/view_expandabletitle_banner"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:padding="@dimen/spacing_micro" >
+
+        <ImageView
+            android:id="@+id/view_expandabletitle_iconiv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:padding="@dimen/spacing_micro" />
+
+        <ImageView
+            android:id="@+id/view_expandabletitle_morebutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@null"
+            android:clickable="false"
+            android:padding="@dimen/spacing_micro" />
+
+        <ProgressBar
+            android:id="@+id/view_expandabletitle_progressbar"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/spacing_micro"
+            android:visibility="gone" />
+
+        <com.label305.stan.ui.widget.CustomFontTextView
+            android:id="@+id/view_expandabletitle_titletv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/view_expandabletitle_morebutton"
+            android:layout_toRightOf="@id/view_expandabletitle_iconiv"
+            android:ellipsize="end"
+            android:padding="@dimen/spacing_micro"
+            android:singleLine="true" />
+    </RelativeLayout>
+
+    <FrameLayout
+        android:id="@+id/view_expandabletitle_expandedcontent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</merge>
