@@ -57,7 +57,7 @@ public class GCMUtils {
 	 * @return registration ID, or empty string if there is no existing
 	 *         registration ID.
 	 */
-	private static String getRegistrationId(Activity activity) {
+	public static String getRegistrationId(Activity activity) {
 		final SharedPreferences prefs = getGCMPreferences(activity);
 		String registrationId = prefs.getString(PROPERTY_REG_ID, "");
 		if (registrationId.isEmpty()) {
