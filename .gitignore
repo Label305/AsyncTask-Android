@@ -2,6 +2,8 @@
 */.settings/org.eclipse.jdt.core.prefs
 **/bin/*
 **/gen/*
+**/build/*
+**/*.iml
 .gradle
 /local.properties
 /.idea/workspace.xml
