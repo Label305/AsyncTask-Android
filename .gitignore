@@ -3,6 +3,7 @@
 **/bin/*
 **/gen/*
 **/build/*
+**/.idea/*
 **/*.iml
 .gradle
 /local.properties
