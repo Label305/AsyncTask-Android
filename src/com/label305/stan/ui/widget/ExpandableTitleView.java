@@ -11,7 +11,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -19,6 +18,7 @@ import android.widget.ProgressBar;
 
 import com.label305.stan.R;
 import com.label305.stan.ui.anim.ExpandViewAnimation;
+import com.label305.stan.utils.PixelUtils;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.Animator.AnimatorListener;
 import com.nineoldandroids.animation.AnimatorSet;
@@ -28,6 +28,7 @@ import com.nineoldandroids.animation.ValueAnimator.AnimatorUpdateListener;
 public class ExpandableTitleView extends LinearLayout {
 
 	private static final int ANIMATIONDURATION = 400;
+	private static final int HEADERHEIGHTDP = 48;
 
 	private View mBannerView;
 	private CustomFontTextView mTitleTV;
@@ -36,6 +37,7 @@ public class ExpandableTitleView extends LinearLayout {
 	private ProgressBar mProgressBar;
 	private ViewGroup mContentVG;
 	private boolean mExpanded = false;
+	private int mHeaderHeight;
 	private int mBackgroundColor;
 	private int mBackgroundDrawableResId;
 	private int mIconResId;
@@ -69,6 +71,7 @@ public class ExpandableTitleView extends LinearLayout {
 				mBackgroundDrawableResId = a.getResourceId(R.styleable.ExpandableTitleView_background, 0);
 			}
 
+			mHeaderHeight = (int) a.getDimension(R.styleable.ExpandableTitleView_headerHeight, PixelUtils.dpToPx(mContext, HEADERHEIGHTDP));
 			mIconResId = a.getResourceId(R.styleable.ExpandableTitleView_icon, 0);
 			mText = a.getString(R.styleable.ExpandableTitleView_titleText);
 			mTextColor = a.getColor(R.styleable.ExpandableTitleView_titleTextColor, R.color.black);
@@ -86,6 +89,9 @@ public class ExpandableTitleView extends LinearLayout {
 
 	private void setupViews() {
 		mBannerView = findViewById(R.id.view_expandabletitle_banner);
+		LinearLayout.LayoutParams layoutParams = (LayoutParams) mBannerView.getLayoutParams();
+		layoutParams.height = mHeaderHeight;
+		mBannerView.setLayoutParams(layoutParams);
 
 		if (mBackgroundColor != 0) {
 			mBannerView.setBackgroundColor(mBackgroundColor);
@@ -116,13 +122,7 @@ public class ExpandableTitleView extends LinearLayout {
 		mContentVG = (ViewGroup) findViewById(R.id.view_expandabletitle_expandedcontent);
 
 		if (mContentVisible) {
-			mContentVG.setVisibility(View.VISIBLE);
-			Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.rotatecw90);
-			if (animation != null) {
-				mMoreImageButton.startAnimation(animation);
-			}
-		} else {
-			mContentVG.setVisibility(View.GONE);
+			mContentVG.setVisibility(mContentVisible?VISIBLE: GONE);
 		}
 	}
 
