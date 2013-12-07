@@ -3,12 +3,7 @@ package com.label305.stan.asyncutils;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -51,18 +46,18 @@ public class Buggy {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				List<NameValuePair> data = new ArrayList<NameValuePair>();
+				HashMap<String, Object> data = new HashMap<String, Object>();
 
-				data.add(new BasicNameValuePair(PARAM_PLATFORM, PLATFORM));
-				data.add(new BasicNameValuePair(PARAM_PACKAGE, sContext.getPackageName()));
-				data.add(new BasicNameValuePair(PARAM_VERSION, getVersionName(sContext)));
-				data.add(new BasicNameValuePair(PARAM_ERRORTYPE, errorType));
-				data.add(new BasicNameValuePair(PARAM_CONTENT, stackTrace));
-				data.add(new BasicNameValuePair(PARAM_LABEL, label));
-				data.add(new BasicNameValuePair(PARAM_PLATFORMVERSION, Build.VERSION.RELEASE));
+				data.put(PARAM_PLATFORM, PLATFORM);
+				data.put(PARAM_PACKAGE, sContext.getPackageName());
+				data.put(PARAM_VERSION, getVersionName(sContext));
+				data.put(PARAM_ERRORTYPE, errorType);
+				data.put(PARAM_CONTENT, stackTrace);
+				data.put(PARAM_LABEL, label);
+				data.put(PARAM_PLATFORMVERSION, Build.VERSION.RELEASE);
 
 				try {
-					new HttpHelper().post(URL, new HashMap<String, String>(), data);
+					new HttpHelper().post(URL, new HashMap<String, Object>(), data);
 				} catch (IOException e) {
 					Logger.log(sContext, e);
 				}
