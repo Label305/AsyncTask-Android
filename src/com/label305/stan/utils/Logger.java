@@ -1,5 +1,6 @@
 package com.label305.stan.utils;
 
+import com.crashlytics.android.Crashlytics;
 import com.label305.stan.BuildConfig;
 
 import android.content.Context;
@@ -14,8 +15,10 @@ public class Logger {
 	public static String TAG = "StanLogger";
 
 	public static void log(String msg) {
-		if (isDebug())
+		if (isDebug()) {
 			Log.v(TAG, msg);
+			Crashlytics.log(msg);
+		}
 	}
 
 	public static void log(int msg) {
@@ -36,6 +39,7 @@ public class Logger {
 
 		if (isDebug()) {
 			Log.v(TAG, msg.toString());
+			Crashlytics.log(msg.toString());
 
 			if (context != null) {
 				try {
