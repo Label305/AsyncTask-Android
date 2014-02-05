@@ -3,18 +3,22 @@ apply plugin: 'android-library'
 
 dependencies {
     compile "com.android.support:support-v4:18.0.+"
+    compile "com.nineoldandroids:library:2.4.0"
 
     compile files('libs/joda-convert-1.3.1.jar')
     compile files('libs/joda-time-2.1.jar')
-    compile files('libs/nineoldandroids-2.4.0.jar')
     compile files('libs/ormlite-android-4.46.jar')
     compile files('libs/ormlite-core-4.46.jar')
     compile files('libs/volley.jar')
 }
 
+repositories {
+    mavenCentral()
+}
+
 android {
     compileSdkVersion 19
-    buildToolsVersion '19.0.0'
+    buildToolsVersion '19.0.1'
 
     sourceSets {
         main {
