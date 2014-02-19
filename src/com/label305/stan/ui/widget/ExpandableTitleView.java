@@ -20,336 +20,318 @@ import com.label305.stan.R;
 import com.label305.stan.ui.anim.ExpandViewAnimation;
 import com.label305.stan.utils.PixelUtils;
 import com.nineoldandroids.animation.Animator;
-import com.nineoldandroids.animation.Animator.AnimatorListener;
+import com.nineoldandroids.animation.AnimatorListenerAdapter;
 import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ValueAnimator;
 import com.nineoldandroids.animation.ValueAnimator.AnimatorUpdateListener;
 
 public class ExpandableTitleView extends LinearLayout {
 
-	private static final int ANIMATIONDURATION = 400;
-	private static final int HEADERHEIGHTDP = 48;
+    private static final int ANIMATIONDURATION = 400;
+    private static final int HEADERHEIGHTDP = 48;
 
-	private View mBannerView;
-	private CustomFontTextView mTitleTV;
-	private ImageView mIconIV;
-	private ImageView mMoreImageButton;
-	private ProgressBar mProgressBar;
-	private ViewGroup mContentVG;
-	private boolean mExpanded = false;
-	private int mHeaderHeight;
-	private int mBackgroundColor;
-	private int mBackgroundDrawableResId;
-	private int mIconResId;
-	private String mText;
-	private int mTextColor;
-	private String mTextFont;
-	private int mTextSize;
-	private int mTextGravity;
-	private int mArrowResId;
-	private boolean mContentVisible;
-	private boolean mDataAvailable = true;
+    private CustomFontTextView mTitleTV;
+    private ImageView mIconIV;
+    private ImageView mMoreImageButton;
+    private ProgressBar mProgressBar;
+    private ViewGroup mContentVG;
+    private boolean mExpanded;
+    private int mHeaderHeight;
+    private int mBackgroundColor;
+    private int mBackgroundDrawableResId;
+    private int mIconResId;
+    private String mText;
+    private int mTextColor;
+    private String mTextFont;
+    private int mTextSize;
+    private int mTextGravity;
+    private int mArrowResId;
+    private boolean mContentVisible;
+    private boolean mDataAvailable = true;
 
-	private Context mContext;
 
-	public ExpandableTitleView(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		mContext = context;
-		init(attrs);
-	}
+    public ExpandableTitleView(final Context context, final AttributeSet attrs) {
+        super(context, attrs);
+        init(attrs);
+    }
 
-	private void init(AttributeSet attrs) {
-		LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		inflater.inflate(R.layout.view_expandabletitle, this);
-		setOrientation(VERTICAL);
+    private void init(final AttributeSet attrs) {
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        inflater.inflate(R.layout.view_expandabletitle, this);
+        setOrientation(VERTICAL);
 
-		TypedArray a = mContext.obtainStyledAttributes(attrs, R.styleable.ExpandableTitleView);
-		if (a != null) {
-			try {
-				mBackgroundColor = a.getColor(R.styleable.ExpandableTitleView_background, R.color.transparent);
-			} catch (Resources.NotFoundException e) {
-				mBackgroundDrawableResId = a.getResourceId(R.styleable.ExpandableTitleView_background, 0);
-			}
+        TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.ExpandableTitleView);
+        if (a != null) {
+            try {
+                mBackgroundColor = a.getColor(R.styleable.ExpandableTitleView_background, R.color.transparent);
+            } catch (Resources.NotFoundException e) {
+                mBackgroundDrawableResId = a.getResourceId(R.styleable.ExpandableTitleView_background, 0);
+            }
 
-			mHeaderHeight = (int) a.getDimension(R.styleable.ExpandableTitleView_headerHeight, PixelUtils.dpToPx(mContext, HEADERHEIGHTDP));
-			mIconResId = a.getResourceId(R.styleable.ExpandableTitleView_icon, 0);
-			mText = a.getString(R.styleable.ExpandableTitleView_titleText);
-			mTextColor = a.getColor(R.styleable.ExpandableTitleView_titleTextColor, R.color.black);
-			mTextFont = a.getString(R.styleable.ExpandableTitleView_titleTextFont);
-			mTextSize = a.getDimensionPixelSize(R.styleable.ExpandableTitleView_titleTextSize, mContext.getResources().getDimensionPixelSize(R.dimen.textsize_medium));
-			mTextGravity = a.getInt(R.styleable.ExpandableTitleView_titleGravity, Gravity.LEFT);
-			mArrowResId = a.getResourceId(R.styleable.ExpandableTitleView_arrow, 0);
-			mContentVisible = a.getBoolean(R.styleable.ExpandableTitleView_contentVisible, true);
-			mExpanded = mContentVisible;
-			a.recycle();
+            mHeaderHeight = (int) a.getDimension(R.styleable.ExpandableTitleView_headerHeight, PixelUtils.dpToPx(getContext(), HEADERHEIGHTDP));
+            mIconResId = a.getResourceId(R.styleable.ExpandableTitleView_icon, 0);
+            mText = a.getString(R.styleable.ExpandableTitleView_titleText);
+            mTextColor = a.getColor(R.styleable.ExpandableTitleView_titleTextColor, R.color.black);
+            mTextFont = a.getString(R.styleable.ExpandableTitleView_titleTextFont);
+            mTextSize = a.getDimensionPixelSize(R.styleable.ExpandableTitleView_titleTextSize, getContext().getResources().getDimensionPixelSize(R.dimen.textsize_medium));
+            mTextGravity = a.getInt(R.styleable.ExpandableTitleView_titleGravity, Gravity.LEFT);
+            mArrowResId = a.getResourceId(R.styleable.ExpandableTitleView_arrow, 0);
+            mContentVisible = a.getBoolean(R.styleable.ExpandableTitleView_contentVisible, true);
+            mExpanded = mContentVisible;
+            a.recycle();
 
-			setupViews();
-		}
-	}
+            setupViews();
+        }
+    }
 
-	private void setupViews() {
-		mBannerView = findViewById(R.id.view_expandabletitle_banner);
-		LinearLayout.LayoutParams layoutParams = (LayoutParams) mBannerView.getLayoutParams();
-		layoutParams.height = mHeaderHeight;
-		mBannerView.setLayoutParams(layoutParams);
+    private void setupViews() {
+        View bannerView = findViewById(R.id.view_expandabletitle_banner);
+        LinearLayout.LayoutParams layoutParams = (LayoutParams) bannerView.getLayoutParams();
+        layoutParams.height = mHeaderHeight;
+        bannerView.setLayoutParams(layoutParams);
 
-		if (mBackgroundColor != 0) {
-			mBannerView.setBackgroundColor(mBackgroundColor);
-		} else {
-			mBannerView.setBackgroundResource(mBackgroundDrawableResId);
-		}
-		mBannerView.setOnClickListener(new BannerOnClickListener());
+        if (mBackgroundColor == 0) {
+            bannerView.setBackgroundResource(mBackgroundDrawableResId);
+        } else {
+            bannerView.setBackgroundColor(mBackgroundColor);
+        }
+        bannerView.setOnClickListener(new BannerOnClickListener());
 
-		mTitleTV = (CustomFontTextView) findViewById(R.id.view_expandabletitle_titletv);
-		mTitleTV.setFont(mTextFont);
-		mTitleTV.setTextColor(mTextColor);
-		mTitleTV.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTextSize);
-		mTitleTV.setText(mText);
-		mTitleTV.setGravity(mTextGravity);
+        mTitleTV = (CustomFontTextView) findViewById(R.id.view_expandabletitle_titletv);
+        mTitleTV.setFont(mTextFont);
+        mTitleTV.setTextColor(mTextColor);
+        mTitleTV.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTextSize);
+        mTitleTV.setText(mText);
+        mTitleTV.setGravity(mTextGravity);
 
-		mIconIV = (ImageView) findViewById(R.id.view_expandabletitle_iconiv);
-		mIconIV.setImageResource(mIconResId);
+        mIconIV = (ImageView) findViewById(R.id.view_expandabletitle_iconiv);
+        mIconIV.setImageResource(mIconResId);
 
-		mMoreImageButton = (ImageView) findViewById(R.id.view_expandabletitle_morebutton);
-		if (mArrowResId != 0) {
-			mMoreImageButton.setImageResource(mArrowResId);
-		} else {
-			mMoreImageButton.setImageDrawable(null);
-		}
+        mMoreImageButton = (ImageView) findViewById(R.id.view_expandabletitle_morebutton);
+        if (mArrowResId == 0) {
+            mMoreImageButton.setImageDrawable(null);
+        } else {
+            mMoreImageButton.setImageResource(mArrowResId);
+        }
 
-		mProgressBar = (ProgressBar) findViewById(R.id.view_expandabletitle_progressbar);
+        mProgressBar = (ProgressBar) findViewById(R.id.view_expandabletitle_progressbar);
 
-		mContentVG = (ViewGroup) findViewById(R.id.view_expandabletitle_expandedcontent);
+        mContentVG = (ViewGroup) findViewById(R.id.view_expandabletitle_expandedcontent);
+        mContentVG.setVisibility(mContentVisible ? VISIBLE : GONE);
+    }
 
-		if (mContentVisible) {
-			mContentVG.setVisibility(mContentVisible?VISIBLE: GONE);
-		}
-	}
+    public void setTitle(final String title) {
+        mTitleTV.setText(title);
+    }
 
-	public void setTitle(String title) {
-		mTitleTV.setText(title);
-	}
+    public void setIcon(final int resId) {
+        mIconIV.setImageResource(resId);
+    }
 
-	public void setIcon(int resId) {
-		mIconIV.setImageResource(resId);
-	}
+    public void setIcon(final Drawable drawable) {
+        mIconIV.setImageDrawable(drawable);
+    }
 
-	public void setIcon(Drawable drawable) {
-		mIconIV.setImageDrawable(drawable);
-	}
+    public void setIcon(final Bitmap bitmap) {
+        mIconIV.setImageBitmap(bitmap);
+    }
 
-	public void setIcon(Bitmap bitmap) {
-		mIconIV.setImageBitmap(bitmap);
-	}
+    public ViewGroup getContent() {
+        return mContentVG;
+    }
 
-	public ViewGroup getContent() {
-		return mContentVG;
-	}
+    public void setContent(final View view) {
+        mContentVG.removeAllViews();
+        mContentVG.addView(view);
+    }
 
-	public void setContent(View view) {
-		mContentVG.removeAllViews();
-		mContentVG.addView(view);
-	}
+    /**
+     * If !mDataAvailable, will show a indeterminate spinner instead of an arrow
+     * until setDataAvailable(true);
+     */
+    public void setDataAvailable(final boolean dataAvailable) {
+        this.mDataAvailable = dataAvailable;
 
-	/**
-	 * If !mDataAvailable, will show a indeterminate spinner instead of an arrow
-	 * until setDataAvailable(true);
-	 */
-	public void setDataAvailable(boolean dataAvailable) {
-		this.mDataAvailable = dataAvailable;
+        if (dataAvailable) {
+            mProgressBar.setVisibility(View.GONE);
+            mMoreImageButton.setVisibility(View.VISIBLE);
+        } else {
+            mProgressBar.setVisibility(View.VISIBLE);
+            mMoreImageButton.setVisibility(View.GONE);
+        }
+    }
 
-		if (dataAvailable) {
-			mProgressBar.setVisibility(View.GONE);
-			mMoreImageButton.setVisibility(View.VISIBLE);
-		} else {
-			mProgressBar.setVisibility(View.VISIBLE);
-			mMoreImageButton.setVisibility(View.GONE);
-		}
-	}
+    public boolean hasDataAvailable() {
+        return mDataAvailable;
+    }
 
-	public boolean hasDataAvailable() {
-		return mDataAvailable;
-	}
+    public void expandContent() {
+        final int widthSpec = MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.EXACTLY);
+        final int heightSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
+        mContentVG.measure(widthSpec, heightSpec);
 
-	public void expandContent() {
-		final int widthSpec = MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.EXACTLY);
-		final int heightSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
-		mContentVG.measure(widthSpec, heightSpec);
+        ExpandViewAnimation a = new ExpandViewAnimation(mContentVG, ANIMATIONDURATION, ExpandViewAnimation.EXPAND);
+        a.setHeight(mContentVG.getMeasuredHeight());
+        mContentVG.startAnimation(a);
 
-		ExpandViewAnimation a = new ExpandViewAnimation(mContentVG, ANIMATIONDURATION, ExpandViewAnimation.EXPAND);
-		a.setHeight(mContentVG.getMeasuredHeight());
-		mContentVG.startAnimation(a);
+        mMoreImageButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.rotatecw90));
+        mExpanded = true;
+    }
 
-		mMoreImageButton.startAnimation(AnimationUtils.loadAnimation(mContext, R.anim.rotatecw90));
-		mExpanded = true;
-	}
+    public void collapseContent() {
+        ExpandViewAnimation a = new ExpandViewAnimation(mContentVG, ANIMATIONDURATION, ExpandViewAnimation.COLLAPSE);
+        mContentVG.startAnimation(a);
 
-	public void collapseContent() {
-		ExpandViewAnimation a = new ExpandViewAnimation(mContentVG, ANIMATIONDURATION, ExpandViewAnimation.COLLAPSE);
-		mContentVG.startAnimation(a);
+        mMoreImageButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.rotateccw90));
+        mExpanded = false;
+    }
 
-		mMoreImageButton.startAnimation(AnimationUtils.loadAnimation(mContext, R.anim.rotateccw90));
-		mExpanded = false;
-	}
+    @Override
+    public void setVisibility(final int visibility) {
+        if (visibility == View.GONE && getVisibility() != View.GONE) {
+            collapseETV();
+        } else if (visibility == View.VISIBLE && getVisibility() != View.VISIBLE) {
+            expandETV();
+        } else {
+            super.setVisibility(visibility);
+        }
+    }
 
-	@Override
-	public void setVisibility(int visibility) {
-		if (visibility == View.GONE && getVisibility() != View.GONE) {
-			collapseETV();
-		} else if (visibility == View.VISIBLE && getVisibility() != View.VISIBLE) {
-			expandETV();
-		} else {
-			super.setVisibility(visibility);
-		}
-	}
+    private void collapseETV() {
+        LinearLayout.LayoutParams layoutParams = ((LinearLayout.LayoutParams) getLayoutParams());
+        final int origHeight = getHeight();
+        final int origTopMargin = layoutParams == null ? 0 : layoutParams.topMargin;
+        final int origBottomMargin = layoutParams == null ? 0 : layoutParams.bottomMargin;
 
-	private void collapseETV() {
-		LinearLayout.LayoutParams layoutParams = ((LinearLayout.LayoutParams) getLayoutParams());
-		final int origHeight = getHeight();
-		final int origTopMargin = layoutParams == null ? 0 : layoutParams.topMargin;
-		final int origBottomMargin = layoutParams == null ? 0 : layoutParams.bottomMargin;
+        ValueAnimator etvAnimator = ValueAnimator.ofInt(origHeight, 0);
+        etvAnimator.addUpdateListener(new AnimatorUpdateListener() {
 
-		ValueAnimator etvAnimator = ValueAnimator.ofInt(origHeight, 0);
-		etvAnimator.addUpdateListener(new AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(final ValueAnimator animator) {
+                if (getLayoutParams() == null) {
+                    return;
+                }
 
-			@Override
-			public void onAnimationUpdate(ValueAnimator animator) {
-				if (getLayoutParams() == null) {
-					return;
-				}
+                LinearLayout.LayoutParams layoutParams = (LayoutParams) getLayoutParams();
+                layoutParams.height = (Integer) animator.getAnimatedValue();
+                setLayoutParams(layoutParams);
+            }
+        });
 
-				LinearLayout.LayoutParams layoutParams = (LayoutParams) getLayoutParams();
-				layoutParams.height = (Integer) animator.getAnimatedValue();
-				setLayoutParams(layoutParams);
-			}
-		});
+        ValueAnimator topMarginAnimator = ValueAnimator.ofInt(origTopMargin, 0);
+        topMarginAnimator.addUpdateListener(new AnimatorUpdateListener() {
 
-		ValueAnimator topMarginAnimator = ValueAnimator.ofInt(origTopMargin, 0);
-		topMarginAnimator.addUpdateListener(new AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(final ValueAnimator animator) {
+                if (getLayoutParams() == null) {
+                    return;
+                }
 
-			@Override
-			public void onAnimationUpdate(ValueAnimator animator) {
-				if (getLayoutParams() == null) {
-					return;
-				}
+                LinearLayout.LayoutParams layoutParams = (LayoutParams) getLayoutParams();
+                layoutParams.topMargin = (Integer) animator.getAnimatedValue();
+                setLayoutParams(layoutParams);
+            }
+        });
 
-				LinearLayout.LayoutParams layoutParams = (LayoutParams) getLayoutParams();
-				layoutParams.topMargin = (Integer) animator.getAnimatedValue();
-				setLayoutParams(layoutParams);
-			}
-		});
+        ValueAnimator bottomMarginAnimator = ValueAnimator.ofInt(origBottomMargin, 0);
+        bottomMarginAnimator.addUpdateListener(new AnimatorUpdateListener() {
 
-		ValueAnimator bottomMarginAnimator = ValueAnimator.ofInt(origBottomMargin, 0);
-		bottomMarginAnimator.addUpdateListener(new AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(final ValueAnimator animator) {
+                if (getLayoutParams() == null) {
+                    return;
+                }
 
-			@Override
-			public void onAnimationUpdate(ValueAnimator animator) {
-				if (getLayoutParams() == null) {
-					return;
-				}
+                LinearLayout.LayoutParams layoutParams = (LayoutParams) getLayoutParams();
+                layoutParams.bottomMargin = (Integer) animator.getAnimatedValue();
+                setLayoutParams(layoutParams);
+            }
+        });
 
-				LinearLayout.LayoutParams layoutParams = (LayoutParams) getLayoutParams();
-				layoutParams.bottomMargin = (Integer) animator.getAnimatedValue();
-				setLayoutParams(layoutParams);
-			}
-		});
+        AnimatorSet set = new AnimatorSet();
+        set.playTogether(etvAnimator, topMarginAnimator, bottomMarginAnimator);
+        set.addListener(new AnimatorListenerAdapter() {
 
-		AnimatorSet set = new AnimatorSet();
-		set.playTogether(etvAnimator, topMarginAnimator, bottomMarginAnimator);
-		set.addListener(new AnimatorListener() {
+            @Override
+            public void onAnimationEnd(final Animator animator) {
+                ExpandableTitleView.super.setVisibility(View.GONE);
+                LinearLayout.LayoutParams layoutParams = (LayoutParams) getLayoutParams();
+                layoutParams.height = origHeight;
+                layoutParams.topMargin = origTopMargin;
+                layoutParams.bottomMargin = origBottomMargin;
+                setLayoutParams(layoutParams);
+            }
+        });
+        set.start();
+    }
 
-			@Override
-			public void onAnimationStart(Animator arg0) {
-			}
+    private void expandETV() {
+        super.setVisibility(View.VISIBLE);
 
-			@Override
-			public void onAnimationRepeat(Animator arg0) {
-			}
+        int origHeight = getLayoutParams().height;
+        int origTopMargin = ((MarginLayoutParams) getLayoutParams()).topMargin;
+        int origBottomMargin = ((MarginLayoutParams) getLayoutParams()).bottomMargin;
 
-			@Override
-			public void onAnimationEnd(Animator arg0) {
-				ExpandableTitleView.super.setVisibility(View.GONE);
-				LinearLayout.LayoutParams layoutParams = (LayoutParams) getLayoutParams();
-				layoutParams.height = origHeight;
-				layoutParams.topMargin = origTopMargin;
-				layoutParams.bottomMargin = origBottomMargin;
-				setLayoutParams(layoutParams);
-			}
+        ValueAnimator etvAnimator = ValueAnimator.ofInt(0, origHeight);
+        etvAnimator.addUpdateListener(new AnimatorUpdateListener() {
 
-			@Override
-			public void onAnimationCancel(Animator arg0) {
-			}
-		});
-		set.start();
-	}
+            @Override
+            public void onAnimationUpdate(final ValueAnimator animator) {
+                if (getLayoutParams() == null) {
+                    return;
+                }
 
-	private void expandETV() {
-		super.setVisibility(View.VISIBLE);
+                LinearLayout.LayoutParams layoutParams = (LayoutParams) getLayoutParams();
+                layoutParams.height = (Integer) animator.getAnimatedValue();
+                setLayoutParams(layoutParams);
+            }
+        });
 
-		int origHeight = getLayoutParams().height;
-		int origTopMargin = ((LinearLayout.LayoutParams) getLayoutParams()).topMargin;
-		int origBottomMargin = ((LinearLayout.LayoutParams) getLayoutParams()).bottomMargin;
+        ValueAnimator topMarginAnimator = ValueAnimator.ofInt(0, origTopMargin);
+        topMarginAnimator.addUpdateListener(new AnimatorUpdateListener() {
 
-		ValueAnimator etvAnimator = ValueAnimator.ofInt(0, origHeight);
-		etvAnimator.addUpdateListener(new AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(final ValueAnimator animator) {
+                if (getLayoutParams() == null) {
+                    return;
+                }
 
-			@Override
-			public void onAnimationUpdate(ValueAnimator animator) {
-				if (getLayoutParams() == null) {
-					return;
-				}
+                LinearLayout.LayoutParams layoutParams = (LayoutParams) getLayoutParams();
+                layoutParams.topMargin = (Integer) animator.getAnimatedValue();
+                setLayoutParams(layoutParams);
+            }
+        });
 
-				LinearLayout.LayoutParams layoutParams = (LayoutParams) getLayoutParams();
-				layoutParams.height = (Integer) animator.getAnimatedValue();
-				setLayoutParams(layoutParams);
-			}
-		});
+        ValueAnimator bottomMarginAnimator = ValueAnimator.ofInt(0, origBottomMargin);
+        bottomMarginAnimator.addUpdateListener(new AnimatorUpdateListener() {
 
-		ValueAnimator topMarginAnimator = ValueAnimator.ofInt(0, origTopMargin);
-		topMarginAnimator.addUpdateListener(new AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(final ValueAnimator animator) {
+                if (getLayoutParams() == null) {
+                    return;
+                }
 
-			@Override
-			public void onAnimationUpdate(ValueAnimator animator) {
-				if (getLayoutParams() == null) {
-					return;
-				}
+                LinearLayout.LayoutParams layoutParams = (LayoutParams) getLayoutParams();
+                layoutParams.bottomMargin = (Integer) animator.getAnimatedValue();
+                setLayoutParams(layoutParams);
+            }
+        });
 
-				LinearLayout.LayoutParams layoutParams = (LayoutParams) getLayoutParams();
-				layoutParams.topMargin = (Integer) animator.getAnimatedValue();
-				setLayoutParams(layoutParams);
-			}
-		});
+        AnimatorSet set = new AnimatorSet();
+        set.playTogether(etvAnimator, topMarginAnimator, bottomMarginAnimator);
+        set.start();
+    }
 
-		ValueAnimator bottomMarginAnimator = ValueAnimator.ofInt(0, origBottomMargin);
-		bottomMarginAnimator.addUpdateListener(new AnimatorUpdateListener() {
-
-			@Override
-			public void onAnimationUpdate(ValueAnimator animator) {
-				if (getLayoutParams() == null) {
-					return;
-				}
-
-				LinearLayout.LayoutParams layoutParams = (LayoutParams) getLayoutParams();
-				layoutParams.bottomMargin = (Integer) animator.getAnimatedValue();
-				setLayoutParams(layoutParams);
-			}
-		});
-
-		AnimatorSet set = new AnimatorSet();
-		set.playTogether(etvAnimator, topMarginAnimator, bottomMarginAnimator);
-		set.start();
-	}
-
-	private class BannerOnClickListener implements OnClickListener {
-		@Override
-		public void onClick(View v) {
-			if (mDataAvailable) {
-				if (mExpanded) {
-					collapseContent();
-				} else {
-					expandContent();
-				}
-			}
-		}
-	}
+    private class BannerOnClickListener implements OnClickListener {
+        @Override
+        public void onClick(final View v) {
+            if (mDataAvailable) {
+                if (mExpanded) {
+                    collapseContent();
+                } else {
+                    expandContent();
+                }
+            }
+        }
+    }
 }
