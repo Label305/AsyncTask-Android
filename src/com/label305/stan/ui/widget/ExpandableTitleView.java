@@ -11,7 +11,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -174,7 +173,6 @@ public class ExpandableTitleView extends LinearLayout {
         a.setHeight(mContentVG.getMeasuredHeight());
         mContentVG.startAnimation(a);
 
-        mMoreImageButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.rotatecw90));
         mExpanded = true;
     }
 
@@ -182,7 +180,6 @@ public class ExpandableTitleView extends LinearLayout {
         ExpandViewAnimation a = new ExpandViewAnimation(mContentVG, ANIMATIONDURATION, ExpandViewAnimation.COLLAPSE);
         mContentVG.startAnimation(a);
 
-        mMoreImageButton.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.rotateccw90));
         mExpanded = false;
     }
 
