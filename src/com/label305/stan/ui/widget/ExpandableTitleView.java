@@ -62,13 +62,13 @@ public class ExpandableTitleView extends LinearLayout {
         TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.ExpandableTitleView);
         if (a != null) {
             try {
-                mBackgroundColor = a.getColor(R.styleable.ExpandableTitleView_background, R.color.transparent);
+                mBackgroundColor = a.getColor(R.styleable.ExpandableTitleView_etv_background, R.color.transparent);
             } catch (Resources.NotFoundException e) {
-                mBackgroundDrawableResId = a.getResourceId(R.styleable.ExpandableTitleView_background, 0);
+                mBackgroundDrawableResId = a.getResourceId(R.styleable.ExpandableTitleView_etv_background, 0);
             }
 
             mHeaderHeight = (int) a.getDimension(R.styleable.ExpandableTitleView_headerHeight, PixelUtils.dpToPx(getContext(), HEADERHEIGHTDP));
-            mIconResId = a.getResourceId(R.styleable.ExpandableTitleView_icon, 0);
+            mIconResId = a.getResourceId(R.styleable.ExpandableTitleView_etv_icon, 0);
             mText = a.getString(R.styleable.ExpandableTitleView_titleText);
             mTextColor = a.getColor(R.styleable.ExpandableTitleView_titleTextColor, R.color.black);
             mTextFont = a.getString(R.styleable.ExpandableTitleView_titleTextFont);

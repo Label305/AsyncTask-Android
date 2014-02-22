@@ -12,8 +12,8 @@
     <!-- ExpandableTitleView -->
     <declare-styleable name="ExpandableTitleView">
         <attr name="headerHeight" format="dimension" />
-        <attr name="background" format="color|reference" />
-        <attr name="icon" format="reference" />
+        <attr name="etv_background" format="color|reference" />
+        <attr name="etv_icon" format="reference" />
         <attr name="titleText" format="string" />
         <attr name="titleTextColor" format="color" />
         <attr name="titleTextFont" format="string" />
