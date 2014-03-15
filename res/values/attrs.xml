@@ -12,8 +12,8 @@
     <!-- ExpandableTitleView -->
     <declare-styleable name="ExpandableTitleView">
         <attr name="headerHeight" format="dimension" />
-        <attr name="background" format="color|reference" />
-        <attr name="icon" format="reference" />
+        <attr name="etv_background" format="color|reference" />
+        <attr name="etv_icon" format="reference" />
         <attr name="titleText" format="string" />
         <attr name="titleTextColor" format="color" />
         <attr name="titleTextFont" format="string" />
@@ -46,14 +46,18 @@
              Additional option that can be set to have the top and/or bottom edges of
              the child clipped to its container's bounds.
              The clip will be based on the vertical gravity: a top gravity will clip the bottom
-             edge, a bottom gravity will clip the top edge, and neither will clip both edges.
+             edge, a bottom gravity will clip the top edge, and neither will clip both edges.
+
+
             -->
             <flag name="clip_vertical" value="0x80" />
             <!--
              Additional option that can be set to have the left and/or right edges of
              the child clipped to its container's bounds.
              The clip will be based on the horizontal gravity: a left gravity will clip the right
-             edge, a right gravity will clip the left edge, and neither will clip both edges.
+             edge, a right gravity will clip the left edge, and neither will clip both edges.
+
+
             -->
             <flag name="clip_horizontal" value="0x08" />
             <!-- Push object to the beginning of its container, not changing its size. -->
