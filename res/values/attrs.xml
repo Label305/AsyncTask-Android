@@ -9,8 +9,8 @@
         <attr name="text" format="reference" />
     </declare-styleable>
 
-    <!-- ExpandableTitleView -->
-    <declare-styleable name="ExpandableTitleView">
+    <!-- AbstractExpandableTitleView -->
+    <declare-styleable name="AbstractExpandableTitleView">
         <attr name="headerHeight" format="dimension" />
         <attr name="etv_background" format="color|reference" />
         <attr name="etv_icon" format="reference" />

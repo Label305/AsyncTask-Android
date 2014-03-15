@@ -1,10 +1,12 @@
 package com.label305.stan.ui.widget;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -24,11 +26,7 @@ import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ValueAnimator;
 import com.nineoldandroids.animation.ValueAnimator.AnimatorUpdateListener;
 
-/**
- * @deprecated For modularity, use AbstractExpandableTitleView instead.
- */
-@Deprecated
-public class ExpandableTitleView extends LinearLayout {
+public abstract class AbstractExpandableTitleView extends LinearLayout {
 
     private static final int ANIMATIONDURATION = 400;
     private static final int HEADERHEIGHTDP = 48;
@@ -37,7 +35,10 @@ public class ExpandableTitleView extends LinearLayout {
     private ImageView mIconIV;
     private ImageView mMoreImageButton;
     private ProgressBar mProgressBar;
+
     private ViewGroup mContentVG;
+    private View mContentView;
+
     private boolean mExpanded;
     private int mHeaderHeight;
     private int mBackgroundColor;
@@ -52,10 +53,18 @@ public class ExpandableTitleView extends LinearLayout {
     private boolean mContentVisible;
     private boolean mDataAvailable = true;
 
+    public AbstractExpandableTitleView(final Context context) {
+        super(context);
+    }
 
-    public ExpandableTitleView(final Context context, final AttributeSet attrs) {
+    public AbstractExpandableTitleView(final Context context, final AttributeSet attrs) {
         super(context, attrs);
         init(attrs);
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public AbstractExpandableTitleView(final Context context, final AttributeSet attrs, final int defStyle) {
+        super(context, attrs, defStyle);
     }
 
     private void init(final AttributeSet attrs) {
@@ -121,6 +130,14 @@ public class ExpandableTitleView extends LinearLayout {
 
         mContentVG = (ViewGroup) findViewById(R.id.view_expandabletitle_expandedcontent);
         mContentVG.setVisibility(mContentVisible ? VISIBLE : GONE);
+        mContentView = createContentView(mContentVG);
+        mContentVG.addView(mContentView);
+    }
+
+    protected abstract View createContentView(final ViewGroup parent);
+
+    protected View getContentView() {
+        return mContentView;
     }
 
     public void setTitle(final String title) {
@@ -139,14 +156,10 @@ public class ExpandableTitleView extends LinearLayout {
         mIconIV.setImageBitmap(bitmap);
     }
 
-    public ViewGroup getContent() {
+    public ViewGroup getContentHolder() {
         return mContentVG;
     }
 
-    public void setContent(final View view) {
-        mContentVG.removeAllViews();
-        mContentVG.addView(view);
-    }
 
     /**
      * If !mDataAvailable, will show a indeterminate spinner instead of an arrow
@@ -255,7 +268,7 @@ public class ExpandableTitleView extends LinearLayout {
 
             @Override
             public void onAnimationEnd(final Animator animator) {
-                ExpandableTitleView.super.setVisibility(View.GONE);
+                AbstractExpandableTitleView.super.setVisibility(View.GONE);
                 LinearLayout.LayoutParams layoutParams = (LayoutParams) getLayoutParams();
                 layoutParams.height = origHeight;
                 layoutParams.topMargin = origTopMargin;
