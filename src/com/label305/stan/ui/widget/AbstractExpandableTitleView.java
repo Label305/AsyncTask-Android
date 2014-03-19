@@ -55,6 +55,7 @@ public abstract class AbstractExpandableTitleView extends LinearLayout {
 
     public AbstractExpandableTitleView(final Context context) {
         super(context);
+        init(null);
     }
 
     public AbstractExpandableTitleView(final Context context, final AttributeSet attrs) {
@@ -65,6 +66,7 @@ public abstract class AbstractExpandableTitleView extends LinearLayout {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public AbstractExpandableTitleView(final Context context, final AttributeSet attrs, final int defStyle) {
         super(context, attrs, defStyle);
+        init(attrs);
     }
 
     private void init(final AttributeSet attrs) {
@@ -72,28 +74,30 @@ public abstract class AbstractExpandableTitleView extends LinearLayout {
         inflater.inflate(R.layout.view_expandabletitle, this);
         setOrientation(VERTICAL);
 
-        TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.AbstractExpandableTitleView);
-        if (a != null) {
-            try {
+        if (attrs != null) {
+            TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.AbstractExpandableTitleView);
+            if (a != null) {
+                try {
                 mBackgroundColor = a.getColor(R.styleable.AbstractExpandableTitleView_etv_background, R.color.transparent);
-            } catch (Resources.NotFoundException e) {
+                } catch (Resources.NotFoundException e) {
                 mBackgroundDrawableResId = a.getResourceId(R.styleable.AbstractExpandableTitleView_etv_background, 0);
-            }
+                }
 
-            mHeaderHeight = (int) a.getDimension(R.styleable.AbstractExpandableTitleView_headerHeight, PixelUtils.dpToPx(getContext(), HEADERHEIGHTDP));
+                mHeaderHeight = (int) a.getDimension(R.styleable.AbstractExpandableTitleView_headerHeight, PixelUtils.dpToPx(getContext(), HEADERHEIGHTDP));
             mIconResId = a.getResourceId(R.styleable.AbstractExpandableTitleView_etv_icon, 0);
-            mText = a.getString(R.styleable.AbstractExpandableTitleView_titleText);
-            mTextColor = a.getColor(R.styleable.AbstractExpandableTitleView_titleTextColor, R.color.black);
-            mTextFont = a.getString(R.styleable.AbstractExpandableTitleView_titleTextFont);
-            mTextSize = a.getDimensionPixelSize(R.styleable.AbstractExpandableTitleView_titleTextSize, getContext().getResources().getDimensionPixelSize(R.dimen.textsize_medium));
-            mTextGravity = a.getInt(R.styleable.AbstractExpandableTitleView_titleGravity, Gravity.LEFT);
-            mArrowResId = a.getResourceId(R.styleable.AbstractExpandableTitleView_arrow, 0);
-            mContentVisible = a.getBoolean(R.styleable.AbstractExpandableTitleView_contentVisible, true);
-            mExpanded = mContentVisible;
-            a.recycle();
-
-            setupViews();
+                mText = a.getString(R.styleable.AbstractExpandableTitleView_titleText);
+                mTextColor = a.getColor(R.styleable.AbstractExpandableTitleView_titleTextColor, R.color.black);
+                mTextFont = a.getString(R.styleable.AbstractExpandableTitleView_titleTextFont);
+                mTextSize = a.getDimensionPixelSize(R.styleable.AbstractExpandableTitleView_titleTextSize, getContext().getResources().getDimensionPixelSize(R.dimen.textsize_medium));
+                mTextGravity = a.getInt(R.styleable.AbstractExpandableTitleView_titleGravity, Gravity.LEFT);
+                mArrowResId = a.getResourceId(R.styleable.AbstractExpandableTitleView_arrow, 0);
+                mContentVisible = a.getBoolean(R.styleable.AbstractExpandableTitleView_contentVisible, true);
+                mExpanded = mContentVisible;
+                a.recycle();
+            }
         }
+
+        setupViews();
     }
 
     private void setupViews() {
