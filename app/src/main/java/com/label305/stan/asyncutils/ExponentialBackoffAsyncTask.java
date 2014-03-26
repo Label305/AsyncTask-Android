@@ -28,6 +28,11 @@ public abstract class ExponentialBackoffAsyncTask<ResultT> extends AsyncTask<Res
     @SuppressWarnings("RefusedBequest")
     @Override
     public ExponentialBackoffAsyncTask<ResultT> execute() {
-        return (ExponentialBackoffAsyncTask<ResultT>) execute(new ExponentialBackoffTask<ResultT>(this));
+        return execute(new ExponentialBackoffTask<ResultT>(this));
+    }
+
+    @Override
+    public ExponentialBackoffAsyncTask<ResultT> execute(Task<ResultT> task) {
+        return (ExponentialBackoffAsyncTask<ResultT>) super.execute(task);
     }
 }
