@@ -24,7 +24,7 @@ public class AsyncTaskTest extends TestCase {
     public static final String EXPECTED_EXCEPTION_MESSAGE = "Expected";
 
     @Mock
-    private SafeAsyncTaskCallback<Object> mSafeAsyncTaskCallback;
+    private AsyncTaskCallback<Object> mAsyncTaskCallback;
     private CountDownLatch mCountDownLatch;
 
     @Override
@@ -37,23 +37,23 @@ public class AsyncTaskTest extends TestCase {
     /* Test normal behavior */
 
     public void testEmptyExecution() throws InterruptedException {
-        new TestAsyncTask(mSafeAsyncTaskCallback, mCountDownLatch).execute();
+        new TestAsyncTask(mAsyncTaskCallback, mCountDownLatch).execute();
 
         mCountDownLatch.await();
 
-        verify(mSafeAsyncTaskCallback).onPreExecute(any(Object.class));
-        verify(mSafeAsyncTaskCallback).call(any(Object.class));
-        verify(mSafeAsyncTaskCallback).onSuccess(any(Object.class));
-        verify(mSafeAsyncTaskCallback).onFinally(any());
+        verify(mAsyncTaskCallback).onPreExecute(any());
+        verify(mAsyncTaskCallback).call(any(Object.class));
+        verify(mAsyncTaskCallback).onSuccess(any(Object.class));
+        verify(mAsyncTaskCallback).onFinally(any());
 
-        verify(mSafeAsyncTaskCallback, never()).onInterrupted(any(Exception.class));
-        verify(mSafeAsyncTaskCallback, never()).onCancelled(any(Object.class));
-        verify(mSafeAsyncTaskCallback, never()).onException(any(Exception.class));
-        verify(mSafeAsyncTaskCallback, never()).onRuntimeException(any(RuntimeException.class));
+        verify(mAsyncTaskCallback, never()).onInterrupted(any(Exception.class));
+        verify(mAsyncTaskCallback, never()).onCancelled(any(Object.class));
+        verify(mAsyncTaskCallback, never()).onException(any(Exception.class));
+        verify(mAsyncTaskCallback, never()).onRuntimeException(any(RuntimeException.class));
     }
 
     public void testSlowExecution() throws InterruptedException {
-        new TestAsyncTask(mSafeAsyncTaskCallback, mCountDownLatch) {
+        new TestAsyncTask(mAsyncTaskCallback, mCountDownLatch) {
             @Override
             public Object call() throws Exception {
                 super.call();
@@ -64,20 +64,20 @@ public class AsyncTaskTest extends TestCase {
 
         mCountDownLatch.await();
 
-        verify(mSafeAsyncTaskCallback).onPreExecute(any(Object.class));
-        verify(mSafeAsyncTaskCallback).call(any(Object.class));
-        verify(mSafeAsyncTaskCallback).onSuccess(any(Object.class));
-        verify(mSafeAsyncTaskCallback).onFinally(any());
+        verify(mAsyncTaskCallback).onPreExecute(any(Object.class));
+        verify(mAsyncTaskCallback).call(any(Object.class));
+        verify(mAsyncTaskCallback).onSuccess(any(Object.class));
+        verify(mAsyncTaskCallback).onFinally(any());
 
-        verify(mSafeAsyncTaskCallback, never()).onInterrupted(any(Exception.class));
-        verify(mSafeAsyncTaskCallback, never()).onCancelled(any(Object.class));
-        verify(mSafeAsyncTaskCallback, never()).onException(any(Exception.class));
-        verify(mSafeAsyncTaskCallback, never()).onRuntimeException(any(RuntimeException.class));
+        verify(mAsyncTaskCallback, never()).onInterrupted(any(Exception.class));
+        verify(mAsyncTaskCallback, never()).onCancelled(any(Object.class));
+        verify(mAsyncTaskCallback, never()).onException(any(Exception.class));
+        verify(mAsyncTaskCallback, never()).onRuntimeException(any(RuntimeException.class));
     }
 
     public void testResultExecution() throws InterruptedException {
         final Object result = new Object();
-        new TestAsyncTask(mSafeAsyncTaskCallback, mCountDownLatch) {
+        new TestAsyncTask(mAsyncTaskCallback, mCountDownLatch) {
             @Override
             public Object call() throws Exception {
                 super.call();
@@ -87,19 +87,19 @@ public class AsyncTaskTest extends TestCase {
 
         mCountDownLatch.await();
 
-        verify(mSafeAsyncTaskCallback).onPreExecute(any(Object.class));
-        verify(mSafeAsyncTaskCallback).call(any(Object.class));
-        verify(mSafeAsyncTaskCallback).onSuccess(result);
-        verify(mSafeAsyncTaskCallback).onFinally(any());
+        verify(mAsyncTaskCallback).onPreExecute(any(Object.class));
+        verify(mAsyncTaskCallback).call(any(Object.class));
+        verify(mAsyncTaskCallback).onSuccess(result);
+        verify(mAsyncTaskCallback).onFinally(any());
 
-        verify(mSafeAsyncTaskCallback, never()).onCancelled(any(Object.class));
-        verify(mSafeAsyncTaskCallback, never()).onInterrupted(any(Exception.class));
-        verify(mSafeAsyncTaskCallback, never()).onException(any(Exception.class));
-        verify(mSafeAsyncTaskCallback, never()).onRuntimeException(any(RuntimeException.class));
+        verify(mAsyncTaskCallback, never()).onCancelled(any(Object.class));
+        verify(mAsyncTaskCallback, never()).onInterrupted(any(Exception.class));
+        verify(mAsyncTaskCallback, never()).onException(any(Exception.class));
+        verify(mAsyncTaskCallback, never()).onRuntimeException(any(RuntimeException.class));
     }
 
     public void testCancelledExecution() throws InterruptedException {
-        AsyncTask<Object> task = new TestAsyncTask(mSafeAsyncTaskCallback, mCountDownLatch) {
+        AsyncTask<Object> task = new TestAsyncTask(mAsyncTaskCallback, mCountDownLatch) {
             @Override
             public Object call() throws Exception {
                 super.call();
@@ -112,20 +112,20 @@ public class AsyncTaskTest extends TestCase {
         task.cancel();
         mCountDownLatch.await();
 
-        verify(mSafeAsyncTaskCallback).onPreExecute(any(Object.class));
-        verify(mSafeAsyncTaskCallback).call(any(Object.class));
-        verify(mSafeAsyncTaskCallback).onCancelled(any(Object.class));
-        verify(mSafeAsyncTaskCallback).onFinally(any());
+        verify(mAsyncTaskCallback).onPreExecute(any(Object.class));
+        verify(mAsyncTaskCallback).call(any(Object.class));
+        verify(mAsyncTaskCallback).onCancelled(any(Object.class));
+        verify(mAsyncTaskCallback).onFinally(any());
 
-        verify(mSafeAsyncTaskCallback, never()).onInterrupted(any(Exception.class));
-        verify(mSafeAsyncTaskCallback, never()).onSuccess(any(Object.class));
-        verify(mSafeAsyncTaskCallback, never()).onException(any(Exception.class));
-        verify(mSafeAsyncTaskCallback, never()).onRuntimeException(any(RuntimeException.class));
+        verify(mAsyncTaskCallback, never()).onInterrupted(any(Exception.class));
+        verify(mAsyncTaskCallback, never()).onSuccess(any(Object.class));
+        verify(mAsyncTaskCallback, never()).onException(any(Exception.class));
+        verify(mAsyncTaskCallback, never()).onRuntimeException(any(RuntimeException.class));
     }
 
     public void testCallExceptionThrown() throws InterruptedException {
         final Exception ex = new Exception(EXPECTED_EXCEPTION_MESSAGE);
-        new TestAsyncTask(mSafeAsyncTaskCallback, mCountDownLatch) {
+        new TestAsyncTask(mAsyncTaskCallback, mCountDownLatch) {
 
             @Override
             public Object call() throws Exception {
@@ -137,21 +137,21 @@ public class AsyncTaskTest extends TestCase {
 
         mCountDownLatch.await();
 
-        verify(mSafeAsyncTaskCallback).onPreExecute(any());
-        verify(mSafeAsyncTaskCallback).call(any());
-        verify(mSafeAsyncTaskCallback).onException(any(Exception.class));
-        verify(mSafeAsyncTaskCallback).onFinally(any());
+        verify(mAsyncTaskCallback).onPreExecute(any());
+        verify(mAsyncTaskCallback).call(any());
+        verify(mAsyncTaskCallback).onException(any(Exception.class));
+        verify(mAsyncTaskCallback).onFinally(any());
 
-        verify(mSafeAsyncTaskCallback, never()).onRuntimeException(any(RuntimeException.class));
-        verify(mSafeAsyncTaskCallback, never()).onCancelled(any());
-        verify(mSafeAsyncTaskCallback, never()).onSuccess(any());
-        verify(mSafeAsyncTaskCallback, never()).onInterrupted(any(InterruptedException.class));
+        verify(mAsyncTaskCallback, never()).onRuntimeException(any(RuntimeException.class));
+        verify(mAsyncTaskCallback, never()).onCancelled(any());
+        verify(mAsyncTaskCallback, never()).onSuccess(any());
+        verify(mAsyncTaskCallback, never()).onInterrupted(any(InterruptedException.class));
     }
 
      /* Test whether RuntimeExceptions are actually thrown, and not caught */
 
     public void testCancelledInterruptedExecution() throws InterruptedException {
-        AsyncTask<Object> task = new TestAsyncTask(mSafeAsyncTaskCallback, mCountDownLatch) {
+        AsyncTask<Object> task = new TestAsyncTask(mAsyncTaskCallback, mCountDownLatch) {
             @Override
             public Object call() throws Exception {
                 super.call();
@@ -164,20 +164,20 @@ public class AsyncTaskTest extends TestCase {
         task.cancelInterrupt();
         mCountDownLatch.await();
 
-        verify(mSafeAsyncTaskCallback).onPreExecute(any(Object.class));
-        verify(mSafeAsyncTaskCallback).call(any(Object.class));
-        verify(mSafeAsyncTaskCallback).onInterrupted(any(InterruptedException.class));
-        verify(mSafeAsyncTaskCallback).onFinally(any());
+        verify(mAsyncTaskCallback).onPreExecute(any(Object.class));
+        verify(mAsyncTaskCallback).call(any(Object.class));
+        verify(mAsyncTaskCallback).onInterrupted(any(InterruptedException.class));
+        verify(mAsyncTaskCallback).onFinally(any());
 
-        verify(mSafeAsyncTaskCallback, never()).onCancelled(any(Object.class));
-        verify(mSafeAsyncTaskCallback, never()).onSuccess(any(Object.class));
-        verify(mSafeAsyncTaskCallback, never()).onException(any(Exception.class));
-        verify(mSafeAsyncTaskCallback, never()).onRuntimeException(any(RuntimeException.class));
+        verify(mAsyncTaskCallback, never()).onCancelled(any(Object.class));
+        verify(mAsyncTaskCallback, never()).onSuccess(any(Object.class));
+        verify(mAsyncTaskCallback, never()).onException(any(Exception.class));
+        verify(mAsyncTaskCallback, never()).onRuntimeException(any(RuntimeException.class));
     }
 
     public void testPreExecuteRuntimeExceptionThrown() throws InterruptedException {
         final RuntimeException rte = new RuntimeException(EXPECTED_EXCEPTION_MESSAGE);
-        new TestAsyncTask(mSafeAsyncTaskCallback, mCountDownLatch) {
+        new TestAsyncTask(mAsyncTaskCallback, mCountDownLatch) {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
@@ -186,12 +186,12 @@ public class AsyncTaskTest extends TestCase {
         }.execute();
 
         mCountDownLatch.await();
-        verify(mSafeAsyncTaskCallback).onRuntimeException(rte);
+        verify(mAsyncTaskCallback).onRuntimeException(rte);
     }
 
     public void testSuccessRuntimeExceptionThrown() throws InterruptedException {
         final RuntimeException rte = new RuntimeException(EXPECTED_EXCEPTION_MESSAGE);
-        new TestAsyncTask(mSafeAsyncTaskCallback, mCountDownLatch) {
+        new TestAsyncTask(mAsyncTaskCallback, mCountDownLatch) {
 
             @Override
             protected void onSuccess(final Object o) {
@@ -201,19 +201,19 @@ public class AsyncTaskTest extends TestCase {
         }.execute();
 
         mCountDownLatch.await();
-        verify(mSafeAsyncTaskCallback).onPreExecute(any(Object.class));
-        verify(mSafeAsyncTaskCallback).call(any(Object.class));
-        verify(mSafeAsyncTaskCallback).onSuccess(any(Object.class));
-        verify(mSafeAsyncTaskCallback).onRuntimeException(rte);
-        verify(mSafeAsyncTaskCallback).onFinally(any(Object.class));
+        verify(mAsyncTaskCallback).onPreExecute(any(Object.class));
+        verify(mAsyncTaskCallback).call(any(Object.class));
+        verify(mAsyncTaskCallback).onSuccess(any(Object.class));
+        verify(mAsyncTaskCallback).onRuntimeException(rte);
+        verify(mAsyncTaskCallback).onFinally(any(Object.class));
 
-        verify(mSafeAsyncTaskCallback, never()).onException(any(Exception.class));
-        verify(mSafeAsyncTaskCallback, never()).onCancelled(any(Object.class));
+        verify(mAsyncTaskCallback, never()).onException(any(Exception.class));
+        verify(mAsyncTaskCallback, never()).onCancelled(any(Object.class));
     }
 
     public void testCancelledRuntimeExceptionThrown() throws InterruptedException {
         final RuntimeException rte = new RuntimeException(EXPECTED_EXCEPTION_MESSAGE);
-        AsyncTask<Object> task = new TestAsyncTask(mSafeAsyncTaskCallback, mCountDownLatch) {
+        AsyncTask<Object> task = new TestAsyncTask(mAsyncTaskCallback, mCountDownLatch) {
 
             @Override
             public Object call() throws Exception {
@@ -233,21 +233,21 @@ public class AsyncTaskTest extends TestCase {
         task.cancel();
         mCountDownLatch.await();
 
-        verify(mSafeAsyncTaskCallback).onPreExecute(any());
-        verify(mSafeAsyncTaskCallback).call(any());
-        verify(mSafeAsyncTaskCallback).onCancelled(any());
-        verify(mSafeAsyncTaskCallback).onRuntimeException(rte);
-        verify(mSafeAsyncTaskCallback).onFinally(any());
+        verify(mAsyncTaskCallback).onPreExecute(any());
+        verify(mAsyncTaskCallback).call(any());
+        verify(mAsyncTaskCallback).onCancelled(any());
+        verify(mAsyncTaskCallback).onRuntimeException(rte);
+        verify(mAsyncTaskCallback).onFinally(any());
 
-        verify(mSafeAsyncTaskCallback, never()).onSuccess(any());
-        verify(mSafeAsyncTaskCallback, never()).onException(any(Exception.class));
-        verify(mSafeAsyncTaskCallback, never()).onInterrupted(any(InterruptedException.class));
+        verify(mAsyncTaskCallback, never()).onSuccess(any());
+        verify(mAsyncTaskCallback, never()).onException(any(Exception.class));
+        verify(mAsyncTaskCallback, never()).onInterrupted(any(InterruptedException.class));
     }
 
 
     public void testExceptionRuntimeExceptionThrown() throws InterruptedException {
         final RuntimeException rte = new RuntimeException(EXPECTED_EXCEPTION_MESSAGE);
-        new TestAsyncTask(mSafeAsyncTaskCallback, mCountDownLatch) {
+        new TestAsyncTask(mAsyncTaskCallback, mCountDownLatch) {
 
             @Override
             public Object call() throws Exception {
@@ -264,26 +264,26 @@ public class AsyncTaskTest extends TestCase {
 
         mCountDownLatch.await();
 
-        verify(mSafeAsyncTaskCallback).onPreExecute(any());
-        verify(mSafeAsyncTaskCallback).call(any());
-        verify(mSafeAsyncTaskCallback).onException(any(Exception.class));
-        verify(mSafeAsyncTaskCallback).onRuntimeException(rte);
-        verify(mSafeAsyncTaskCallback).onFinally(any());
+        verify(mAsyncTaskCallback).onPreExecute(any());
+        verify(mAsyncTaskCallback).call(any());
+        verify(mAsyncTaskCallback).onException(any(Exception.class));
+        verify(mAsyncTaskCallback).onRuntimeException(rte);
+        verify(mAsyncTaskCallback).onFinally(any());
 
-        verify(mSafeAsyncTaskCallback, never()).onCancelled(any());
-        verify(mSafeAsyncTaskCallback, never()).onSuccess(any());
-        verify(mSafeAsyncTaskCallback, never()).onInterrupted(any(InterruptedException.class));
+        verify(mAsyncTaskCallback, never()).onCancelled(any());
+        verify(mAsyncTaskCallback, never()).onSuccess(any());
+        verify(mAsyncTaskCallback, never()).onInterrupted(any(InterruptedException.class));
     }
 
     public void testFinallyRuntimeExceptionThrown() throws InterruptedException {
         final RuntimeException rte = new RuntimeException(EXPECTED_EXCEPTION_MESSAGE);
-        new TestAsyncTask(mSafeAsyncTaskCallback, mCountDownLatch) {
+        new TestAsyncTask(mAsyncTaskCallback, mCountDownLatch) {
 
             @SuppressWarnings("RefusedBequest")
             @Override
             protected void onFinally() {
                 assertThat(Looper.getMainLooper().getThread(), is(Thread.currentThread()));
-                mSafeAsyncTaskCallback.onFinally(new Object());
+                mAsyncTaskCallback.onFinally(new Object());
                 throw rte;
             }
 
@@ -296,20 +296,20 @@ public class AsyncTaskTest extends TestCase {
 
         mCountDownLatch.await();
 
-        verify(mSafeAsyncTaskCallback).onPreExecute(any());
-        verify(mSafeAsyncTaskCallback).call(any());
-        verify(mSafeAsyncTaskCallback).onSuccess(any());
-        verify(mSafeAsyncTaskCallback).onFinally(any());
-        verify(mSafeAsyncTaskCallback).onRuntimeException(rte);
+        verify(mAsyncTaskCallback).onPreExecute(any());
+        verify(mAsyncTaskCallback).call(any());
+        verify(mAsyncTaskCallback).onSuccess(any());
+        verify(mAsyncTaskCallback).onFinally(any());
+        verify(mAsyncTaskCallback).onRuntimeException(rte);
 
-        verify(mSafeAsyncTaskCallback, never()).onException(any(Exception.class));
-        verify(mSafeAsyncTaskCallback, never()).onCancelled(any());
-        verify(mSafeAsyncTaskCallback, never()).onInterrupted(any(InterruptedException.class));
+        verify(mAsyncTaskCallback, never()).onException(any(Exception.class));
+        verify(mAsyncTaskCallback, never()).onCancelled(any());
+        verify(mAsyncTaskCallback, never()).onInterrupted(any(InterruptedException.class));
     }
 
     public void testCallRuntimeExceptionThrown() throws InterruptedException {
         final RuntimeException rte = new RuntimeException(EXPECTED_EXCEPTION_MESSAGE);
-        new TestAsyncTask(mSafeAsyncTaskCallback, mCountDownLatch) {
+        new TestAsyncTask(mAsyncTaskCallback, mCountDownLatch) {
 
             @Override
             public Object call() throws Exception {
@@ -321,15 +321,15 @@ public class AsyncTaskTest extends TestCase {
 
         mCountDownLatch.await();
 
-        verify(mSafeAsyncTaskCallback).onPreExecute(any());
-        verify(mSafeAsyncTaskCallback).call(any());
-        verify(mSafeAsyncTaskCallback).onRuntimeException(rte);
-        verify(mSafeAsyncTaskCallback).onFinally(any());
+        verify(mAsyncTaskCallback).onPreExecute(any());
+        verify(mAsyncTaskCallback).call(any());
+        verify(mAsyncTaskCallback).onRuntimeException(rte);
+        verify(mAsyncTaskCallback).onFinally(any());
 
-        verify(mSafeAsyncTaskCallback, never()).onException(any(Exception.class));
-        verify(mSafeAsyncTaskCallback, never()).onCancelled(any());
-        verify(mSafeAsyncTaskCallback, never()).onSuccess(any());
-        verify(mSafeAsyncTaskCallback, never()).onInterrupted(any(InterruptedException.class));
+        verify(mAsyncTaskCallback, never()).onException(any(Exception.class));
+        verify(mAsyncTaskCallback, never()).onCancelled(any());
+        verify(mAsyncTaskCallback, never()).onSuccess(any());
+        verify(mAsyncTaskCallback, never()).onInterrupted(any(InterruptedException.class));
     }
 
     /**
@@ -340,17 +340,17 @@ public class AsyncTaskTest extends TestCase {
      */
     private static class TestAsyncTask extends AsyncTask<Object> {
 
-        private final SafeAsyncTaskCallback<Object> mSafeAsyncTaskCallback;
+        private final AsyncTaskCallback<Object> mAsyncTaskCallback;
         private final CountDownLatch mCountDownLatch;
 
-        private TestAsyncTask(final SafeAsyncTaskCallback<Object> safeAsyncTaskCallback, final CountDownLatch countDownLatch) {
-            mSafeAsyncTaskCallback = safeAsyncTaskCallback;
+        private TestAsyncTask(final AsyncTaskCallback<Object> asyncTaskCallback, final CountDownLatch countDownLatch) {
+            mAsyncTaskCallback = asyncTaskCallback;
             mCountDownLatch = countDownLatch;
         }
 
         @Override
         public Object call() throws Exception {
-            mSafeAsyncTaskCallback.call(new Object());
+            mAsyncTaskCallback.call(new Object());
             assertThat(Looper.getMainLooper().getThread(), is(not(Thread.currentThread())));
             return null;
         }
@@ -358,7 +358,7 @@ public class AsyncTaskTest extends TestCase {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            mSafeAsyncTaskCallback.onPreExecute(new Object());
+            mAsyncTaskCallback.onPreExecute(new Object());
 
             assertThat(Looper.getMainLooper().getThread(), is(Thread.currentThread()));
         }
@@ -366,38 +366,38 @@ public class AsyncTaskTest extends TestCase {
         @Override
         protected void onSuccess(final Object t) {
             assertThat(Looper.getMainLooper().getThread(), is(Thread.currentThread()));
-            mSafeAsyncTaskCallback.onSuccess(t);
+            mAsyncTaskCallback.onSuccess(t);
         }
 
         @SuppressWarnings("RefusedBequest")
         @Override
         protected void onInterrupted(final InterruptedException e) {
             assertThat(Looper.getMainLooper().getThread(), is(Thread.currentThread()));
-            mSafeAsyncTaskCallback.onInterrupted(e);
+            mAsyncTaskCallback.onInterrupted(e);
         }
 
         @Override
         protected void onCancelled() {
             assertThat(Looper.getMainLooper().getThread(), is(Thread.currentThread()));
-            mSafeAsyncTaskCallback.onCancelled(new Object());
+            mAsyncTaskCallback.onCancelled(new Object());
         }
 
         @Override
         protected void onException(final Exception e) {
             assertThat(Looper.getMainLooper().getThread(), is(Thread.currentThread()));
-            mSafeAsyncTaskCallback.onException(e);
+            mAsyncTaskCallback.onException(e);
         }
 
         @Override
         protected void onRuntimeException(final RuntimeException e) {
             assertThat(Looper.getMainLooper().getThread(), is(Thread.currentThread()));
-            mSafeAsyncTaskCallback.onRuntimeException(e);
+            mAsyncTaskCallback.onRuntimeException(e);
         }
 
         @Override
         protected void onFinally() {
             assertThat(Looper.getMainLooper().getThread(), is(Thread.currentThread()));
-            mSafeAsyncTaskCallback.onFinally(new Object());
+            mAsyncTaskCallback.onFinally(new Object());
             mCountDownLatch.countDown();
         }
     }
@@ -405,7 +405,7 @@ public class AsyncTaskTest extends TestCase {
     @SuppressWarnings("InterfaceNeverImplemented")
     /** A callback interface to validate method calls using Mockito. */
     /* Extra Object parameters are added because dexmaker fails otherwise */
-    private interface SafeAsyncTaskCallback<T> {
+    private interface AsyncTaskCallback<T> {
         public void call(Object o);
 
         public void onPreExecute(Object o);
