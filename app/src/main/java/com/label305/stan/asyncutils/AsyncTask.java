@@ -72,8 +72,12 @@ public abstract class AsyncTask<ResultT> implements Callable<ResultT> {
     }
 
     public AsyncTask<ResultT> execute() {
+        return execute(new Task<ResultT>(this));
+    }
+
+    public AsyncTask<ResultT> execute(final Task<ResultT> task) {
         mLaunchLocation = Thread.currentThread().getStackTrace();
-        mFutureTask = new FutureTask<Void>(new Task<ResultT>(this), null);
+        mFutureTask = new FutureTask<Void>(task, null);
         mExecutor.execute(mFutureTask);
         return this;
     }

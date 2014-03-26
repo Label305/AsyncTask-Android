@@ -169,4 +169,8 @@ class Task<ResultT> implements Runnable {
             throw exceptions[0];
         }
     }
+
+    protected AsyncTask<ResultT> getParent() {
+        return mParent;
+    }
 }
