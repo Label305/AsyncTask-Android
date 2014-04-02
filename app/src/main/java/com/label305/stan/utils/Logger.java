@@ -35,21 +35,21 @@ public class Logger {
     }
 
     /**
-     * Logs an int to the logcat if in debug mode, otherwise to Crashlytics if possible.
+     * Logs the String representation of an Object to the logcat if in debug mode, otherwise to Crashlytics if possible.
      */
-    public static void log(final int msg) {
-        log(String.valueOf(msg));
-    }
+    public static void log(final Object msg) {
+        String message;
 
-
-    /**
-     * Logs a String to the logcat if in debug mode, otherwise to Crashlytics if possible.
-     */
-    public static void log(final String msg) {
-        if (isDebug()) {
-            Log.v(TAG, msg);
+        if (msg == null) {
+            message = "null";
         } else {
-            Crashlytics.log(msg);
+            message = msg.toString();
+        }
+
+        if (isDebug()) {
+            Log.v(TAG, message);
+        } else {
+            Crashlytics.log(message);
         }
     }
 
