@@ -42,6 +42,7 @@ public class Analytics {
 
     private static final String ANALYTICS = "Analytics: ";
     private static final String START = "start";
+    private static final char COMMA = ',';
 
     private Analytics() {
     }
@@ -54,6 +55,13 @@ public class Analytics {
     public static void init(final Context context, final boolean isDebug) {
         GoogleAnalytics.getInstance(context).getTracker(getAnalyticsKey(context, isDebug));
         Logger.setIsDebug(isDebug);
+    }
+
+    /**
+     * Set the app version to send to Google Analytics.
+     */
+    public static void setAppVersion(final Context context, final String appVersion) {
+        getDefaultTracker(context).set(Fields.APP_VERSION, appVersion);
     }
 
     /**
@@ -74,6 +82,20 @@ public class Analytics {
 
         Logger.log(ANALYTICS + screenName);
     }
+
+    /**
+     * Send an event to Google Analytics. Also logs to Crashlytics if applicable.
+     * @param category the event category.
+     * @param action the event action.
+     * @param label (optional) the event label.
+     * @param value (optional) the event value.
+     */
+    public static void sendEvent(final Context context, final String category, final String action, final String label, final Long value) {
+        getDefaultTracker(context).send(MapBuilder.createEvent(category, action, label, value).build());
+
+        Logger.log(ANALYTICS + "Event( " + category + COMMA + action + COMMA + label + COMMA + value + COMMA); //NON-NLS
+    }
+
 
     private static String getAnalyticsKey(final Context context, final boolean isDebug) {
         if (context.getString(R.string.key_analytics).length() == 0) {
