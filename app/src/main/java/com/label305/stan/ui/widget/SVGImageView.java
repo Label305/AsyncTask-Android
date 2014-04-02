@@ -34,6 +34,7 @@ import com.caverock.androidsvg.SVG;
 import com.caverock.androidsvg.SVGParseException;
 import com.label305.stan.R;
 import com.label305.stan.memorymanagement.BitmapCache;
+import com.label305.stan.memorymanagement.SvgCache;
 import com.label305.stan.utils.ImageUtils;
 import com.label305.stan.utils.Logger;
 
@@ -41,8 +42,6 @@ import com.label305.stan.utils.Logger;
  * Created by Label305 on 02/04/2014.
  */
 public class SVGImageView extends ImageView {
-
-    private static LruCache<Integer, SVG> sSVGCache;
 
     private int mSvgResourceId;
 
@@ -71,7 +70,6 @@ public class SVGImageView extends ImageView {
 
 
     private void init(AttributeSet attrs) {
-        createCache();
 
         TypedArray a = getContext().getTheme().obtainStyledAttributes(
                 attrs,
@@ -93,21 +91,6 @@ public class SVGImageView extends ImageView {
             setSVGResource(a.getResourceId(R.styleable.SVGImageView_svg, 0));
         } finally {
             a.recycle();
-        }
-    }
-
-    private static void createCache() {
-        if (sSVGCache == null) {
-            final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
-            final int cacheSize = maxMemory / 8;
-
-            sSVGCache = new LruCache<Integer, SVG>(cacheSize) {
-                @Override
-                protected int sizeOf(Integer key, SVG bitmap) {
-                    String str = bitmap.toString();
-                    return str.length();
-                }
-            };
         }
     }
 
@@ -201,14 +184,14 @@ public class SVGImageView extends ImageView {
     }
 
     private SVG getSVGImage(int svgResourceId) {
-        SVG svg = sSVGCache.get(svgResourceId);
+        SVG svg = SvgCache.getSvgFromCache(svgResourceId);
         if (svg == null) {
             try {
                 svg = SVG.getFromResource(getContext(), svgResourceId);
             } catch (SVGParseException e) {
                 Logger.log(e);
             }
-            sSVGCache.put(svgResourceId, svg);
+            SvgCache.addSvgToCache(svgResourceId, svg);
         }
         return svg;
     }
