@@ -24,6 +24,10 @@ dependencies {
     compile 'com.crashlytics.android:crashlytics:1.+'
 
     compile files('libs/volley.jar')
+    compile files('libs/libGoogleAnalyticsServices.jar')
+
+
+    /* Test dependencies */
     androidTestCompile('org.mockito:mockito-core:1.9.5') { exclude group: 'org.hamcrest' }
 //    androidTestCompile('com.google.dexmaker:dexmaker-mockito:1.1') { exclude group: 'org.hamcrest' }
     androidTestCompile('junit:junit:4.11') { exclude group: 'org.hamcrest' }
