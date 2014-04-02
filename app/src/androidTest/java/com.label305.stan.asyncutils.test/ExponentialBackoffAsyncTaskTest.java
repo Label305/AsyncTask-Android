@@ -40,7 +40,7 @@ public class ExponentialBackoffAsyncTaskTest extends TestCase {
         mCountDownLatch.await();
 
         verify(mExponentialBackoffAsyncTaskCallback, never()).onBackoffFailedException(any(Exception.class));
-        verify(mExponentialBackoffAsyncTaskCallback, times(1)).call(any());
+        verify(mExponentialBackoffAsyncTaskCallback, times(1)).call();
 
         assertMaxTestDuration(100L);
     }
@@ -59,7 +59,7 @@ public class ExponentialBackoffAsyncTaskTest extends TestCase {
         mCountDownLatch.await();
 
         verify(mExponentialBackoffAsyncTaskCallback).onBackoffFailedException(e);
-        verify(mExponentialBackoffAsyncTaskCallback, times(ExponentialBackoffAsyncTask.DEFAULT_MAX_TRY_COUNT)).call(any());
+        verify(mExponentialBackoffAsyncTaskCallback, times(ExponentialBackoffAsyncTask.DEFAULT_MAX_TRY_COUNT)).call();
 
         assertProperTestDuration(ExponentialBackoffAsyncTask.DEFAULT_MAX_TRY_COUNT);
     }
@@ -86,7 +86,7 @@ public class ExponentialBackoffAsyncTaskTest extends TestCase {
         mCountDownLatch.await();
 
         verify(mExponentialBackoffAsyncTaskCallback).onBackoffFailedException(e);
-        verify(mExponentialBackoffAsyncTaskCallback, times(maxTryCount)).call(any());
+        verify(mExponentialBackoffAsyncTaskCallback, times(maxTryCount)).call();
 
         assertProperTestDuration(maxTryCount);
     }
@@ -126,7 +126,7 @@ public class ExponentialBackoffAsyncTaskTest extends TestCase {
 
         @Override
         public Object call() throws Exception {
-            mExponentialBackoffAsyncTask.call(new Object());
+            mExponentialBackoffAsyncTask.call();
             assertThat(Looper.getMainLooper().getThread(), is(not(Thread.currentThread())));
             return null;
         }
@@ -134,7 +134,7 @@ public class ExponentialBackoffAsyncTaskTest extends TestCase {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            mExponentialBackoffAsyncTask.onPreExecute(new Object());
+            mExponentialBackoffAsyncTask.onPreExecute();
 
             assertThat(Looper.getMainLooper().getThread(), is(Thread.currentThread()));
         }
@@ -155,7 +155,7 @@ public class ExponentialBackoffAsyncTaskTest extends TestCase {
         @Override
         protected void onCancelled() {
             assertThat(Looper.getMainLooper().getThread(), is(Thread.currentThread()));
-            mExponentialBackoffAsyncTask.onCancelled(new Object());
+            mExponentialBackoffAsyncTask.onCancelled();
         }
 
         @Override
@@ -173,29 +173,28 @@ public class ExponentialBackoffAsyncTaskTest extends TestCase {
         @Override
         protected void onFinally() {
             assertThat(Looper.getMainLooper().getThread(), is(Thread.currentThread()));
-            mExponentialBackoffAsyncTask.onFinally(new Object());
+            mExponentialBackoffAsyncTask.onFinally();
             mCountDownLatch.countDown();
         }
     }
 
     @SuppressWarnings("InterfaceNeverImplemented")
     /** A callback interface to validate method calls using Mockito. */
-    /* Extra Object parameters are added because dexmaker fails otherwise */
     private interface ExponentialBackoffAsyncTaskCallback<T> {
-        public void call(Object o);
+        public void call();
 
-        public void onPreExecute(Object o);
+        public void onPreExecute();
 
         public void onSuccess(T t);
 
         public void onInterrupted(Exception e);
 
-        public void onCancelled(Object o);
+        public void onCancelled();
 
         public void onBackoffFailedException(Exception e);
 
         public void onRuntimeException(RuntimeException e);
 
-        public void onFinally(Object o);
+        public void onFinally();
     }
 }
