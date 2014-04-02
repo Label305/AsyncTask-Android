@@ -8,6 +8,7 @@ import com.crashlytics.android.Crashlytics;
 
 /**
  * A logger class which only logs when the app is in debug mode.
+ * If the app is not in debug mode, logs to Crashlytics if possible.
  * {@link #setIsDebug(boolean)} must be called before any logging occurs at all.
  */
 @SuppressWarnings({"UnusedDeclaration", "StringConcatenation", "CallToPrintStackTrace", "UtilityClass", "UseOfSystemOutOrSystemErr"})
@@ -34,7 +35,7 @@ public class Logger {
     }
 
     /**
-     * Logs an int to the logcat, and to Crashlytics if possible.
+     * Logs an int to the logcat if in debug mode, otherwise to Crashlytics if possible.
      */
     public static void log(final int msg) {
         log(String.valueOf(msg));
@@ -42,17 +43,19 @@ public class Logger {
 
 
     /**
-     * Logs a String to the logcat, and to Crashlytics if possible.
+     * Logs a String to the logcat if in debug mode, otherwise to Crashlytics if possible.
      */
     public static void log(final String msg) {
         if (isDebug()) {
             Log.v(TAG, msg);
+        } else {
             Crashlytics.log(msg);
         }
     }
 
     /**
-     * Logs the String representation of an Objec tto the logcat, and to Crashlytics if possible. Also tries to show a Toast message.
+     * If in debug mode, logs the String representation of an Object to the logcat, and tries to show a Toast message.
+     * Otherwise logs to Crashlytics if possible.
      */
     public static void log(final Context context, final Object msg) {
         String message;
