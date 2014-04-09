@@ -26,7 +26,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.PictureDrawable;
 import android.graphics.drawable.StateListDrawable;
-import android.support.v4.util.LruCache;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
@@ -49,8 +48,8 @@ public class SVGImageView extends ImageView {
     private boolean mOverrideColors = false;
     private boolean mIsPressable = false;
 
-    private int mSvgColor;
-    private int mPressedSvgColor;
+    private int mSvgColor = Color.BLACK;
+    private int mPressedSvgColor = Color.WHITE;
 
 
     public SVGImageView(Context context) {
@@ -133,6 +132,7 @@ public class SVGImageView extends ImageView {
      */
     public void setSvgColor(int svgColor) {
         this.mSvgColor = svgColor;
+        doOverrideColors();
         showSVGImage();
     }
 

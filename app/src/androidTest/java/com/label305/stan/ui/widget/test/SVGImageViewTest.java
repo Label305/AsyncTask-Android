@@ -18,66 +18,274 @@
 
 package com.label305.stan.ui.widget.test;
 
-import android.test.AndroidTestCase;
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.PictureDrawable;
+import android.graphics.drawable.StateListDrawable;
+import android.test.ActivityUnitTestCase;
 
-import com.caverock.androidsvg.SVG;
 import com.label305.stan.ui.widget.SVGImageView;
 
-
 /**
- * Created by Label305 on 02/04/2014.
+ * Created by Label305 on 09/04/2014.
  */
-public class SVGImageViewTest extends AndroidTestCase {
+public class SVGImageViewTest extends ActivityUnitTestCase<Activity> {
 
-    SVGImageView mSvgImageView;
+    private SVGImageView mSvgImageView;
+
+    public SVGImageViewTest() {
+        super(Activity.class);
+    }
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        mSvgImageView = new SVGImageView(getContext());
-        SVG svg;
-        svg = new SVG();
-        getContext().getResources().getLayout(com.label305.stan.test.R.layout.svg_imageview)
+
+        Intent intent = new Intent(getInstrumentation().getTargetContext(),
+                Activity.class);
+        startActivity(intent, null, null);
+        Activity mActivity = getActivity();
+        mSvgImageView = new SVGImageView(mActivity);
         mSvgImageView.setSVGResource(com.label305.stan.test.R.raw.ic_svg_test_square_red);
     }
 
-    public void testTA() {
-        fail();
+    //Convert PictureDrawable to Bitmap
+    private Bitmap pictureDrawable2Bitmap(PictureDrawable pictureDrawable) {
+        Bitmap bitmap = Bitmap.createBitmap(pictureDrawable.getIntrinsicWidth(), pictureDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        canvas.drawPicture(pictureDrawable.getPicture());
+        return bitmap;
     }
 
-    public void testDoInvertSvg() throws Exception {
-
+    private Bitmap getBitmapFromDrawable(Drawable drawable) {
+        if (drawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable) drawable).getBitmap();
+        } else {
+            return pictureDrawable2Bitmap((PictureDrawable) drawable);
+        }
     }
 
-    public void testDoNotInvertSvg() throws Exception {
-
+    private Bitmap getBitmapFromImageView() {
+        return getBitmapFromDrawable(mSvgImageView.getDrawable());
     }
 
-    public void testDoOverrideColors() throws Exception {
+    public void testSimpleSVGImageView() {
+        Bitmap bmp = getBitmapFromImageView();
+        int pixel = bmp.getPixel(0, 0);
 
+        assertEquals(Color.RED, pixel);
+        assertNotSame(Color.BLACK, pixel);
     }
 
-    public void testDoNotOverrideColors() throws Exception {
+    public void testBlueSVGImageView() {
 
+        mSvgImageView.setSvgColor(Color.BLUE);
+
+        Bitmap bmp = getBitmapFromImageView();
+
+        int pixel = bmp.getPixel(0, 0);
+        int transparentPixel = bmp.getPixel(mSvgImageView.getDrawable().getIntrinsicWidth()-1, 0);
+
+        assertEquals(Color.BLUE, pixel);
+        assertNotSame(Color.RED, pixel);
+        assertNotSame(Color.BLACK, pixel);
+        assertEquals(Color.TRANSPARENT, transparentPixel);
     }
 
-    public void testSetSvgColor() throws Exception {
+    public void testInvertSVGImageView() {
 
+        mSvgImageView.doInvertSvg();
+        Bitmap bmp = getBitmapFromImageView();
+
+        int leftPixel = bmp.getPixel(0, 0);
+        int rightPixel = bmp.getPixel(mSvgImageView.getDrawable().getIntrinsicWidth()-1, 0);
+
+        assertEquals(Color.TRANSPARENT, leftPixel);
+        assertNotSame(Color.RED, leftPixel);
+        assertNotSame(Color.BLACK, leftPixel);
+
+        assertEquals(Color.BLACK, rightPixel);
+        assertNotSame(Color.TRANSPARENT, rightPixel);
+        assertNotSame(Color.RED, rightPixel);
     }
 
-    public void testSetPressedSvgColor() throws Exception {
+    public void testInvertBlueSVGImageView() {
 
+        mSvgImageView.doInvertSvg();
+        mSvgImageView.setSvgColor(Color.BLUE);
+        Bitmap bmp = getBitmapFromImageView();
+
+        int leftPixel = bmp.getPixel(0, 0);
+        int rightPixel = bmp.getPixel(mSvgImageView.getDrawable().getIntrinsicWidth()-1, 0);
+
+        assertEquals(Color.TRANSPARENT, leftPixel);
+        assertNotSame(Color.RED, leftPixel);
+        assertNotSame(Color.BLACK, leftPixel);
+
+        assertEquals(Color.BLUE, rightPixel);
+        assertNotSame(Color.BLACK, rightPixel);
+        assertNotSame(Color.TRANSPARENT, rightPixel);
     }
 
-    public void testSetIsPressable() throws Exception {
+    public void testPressableSVGImageView() {
 
+        mSvgImageView.setIsPressable();
+
+        StateListDrawable stateListDrawable = (StateListDrawable) mSvgImageView.getDrawable();
+
+        Bitmap bmp = getBitmapFromDrawable(stateListDrawable.getCurrent());
+
+        int leftPixel = bmp.getPixel(0, 0);
+        int rightPixel = bmp.getPixel(mSvgImageView.getDrawable().getIntrinsicWidth()-1, 0);
+
+        assertEquals(Color.BLACK, leftPixel);
+        assertNotSame(Color.RED, leftPixel);
+        assertNotSame(Color.TRANSPARENT, leftPixel);
+
+        assertEquals(Color.TRANSPARENT, rightPixel);
+        assertNotSame(Color.BLACK, rightPixel);
+        assertNotSame(Color.RED, rightPixel);
+
+        mSvgImageView.setPressed(true);
+
+        stateListDrawable = (StateListDrawable) mSvgImageView.getDrawable();
+
+        bmp = getBitmapFromDrawable(stateListDrawable.getCurrent());
+
+        leftPixel = bmp.getPixel(0, 0);
+        rightPixel = bmp.getPixel(mSvgImageView.getDrawable().getIntrinsicWidth()-1, 0);
+
+        assertEquals(Color.WHITE, leftPixel);
+        assertNotSame(Color.RED, leftPixel);
+        assertNotSame(Color.TRANSPARENT, leftPixel);
+
+        assertEquals(Color.TRANSPARENT, rightPixel);
+        assertNotSame(Color.BLACK, rightPixel);
+        assertNotSame(Color.RED, rightPixel);
     }
 
-    public void testSetIsNotPressable() throws Exception {
+    public void testPressableColorSVGImageView() {
 
+        mSvgImageView.setSvgColor(Color.BLUE);
+        mSvgImageView.setIsPressable();
+
+        StateListDrawable stateListDrawable = (StateListDrawable) mSvgImageView.getDrawable();
+
+        Bitmap bmp = getBitmapFromDrawable(stateListDrawable.getCurrent());
+
+        int leftPixel = bmp.getPixel(0, 0);
+        int rightPixel = bmp.getPixel(mSvgImageView.getDrawable().getIntrinsicWidth()-1, 0);
+
+        assertEquals(Color.BLUE, leftPixel);
+        assertNotSame(Color.RED, leftPixel);
+        assertNotSame(Color.BLUE, leftPixel);
+        assertNotSame(Color.TRANSPARENT, leftPixel);
+
+        assertEquals(Color.TRANSPARENT, rightPixel);
+        assertNotSame(Color.BLACK, rightPixel);
+        assertNotSame(Color.RED, rightPixel);
+
+        mSvgImageView.setPressed(true);
+
+        stateListDrawable = (StateListDrawable) mSvgImageView.getDrawable();
+
+        bmp = getBitmapFromDrawable(stateListDrawable.getCurrent());
+
+        leftPixel = bmp.getPixel(0, 0);
+        rightPixel = bmp.getPixel(mSvgImageView.getDrawable().getIntrinsicWidth()-1, 0);
+
+        assertEquals(Color.WHITE, leftPixel);
+        assertNotSame(Color.RED, leftPixel);
+        assertNotSame(Color.TRANSPARENT, leftPixel);
+
+        assertEquals(Color.TRANSPARENT, rightPixel);
+        assertNotSame(Color.BLACK, rightPixel);
+        assertNotSame(Color.RED, rightPixel);
     }
 
-    public void testSetSVGResource() throws Exception {
+    public void testPressableColorsSVGImageView() {
 
+        mSvgImageView.setSvgColor(Color.BLUE);
+        mSvgImageView.setPressedSvgColor(Color.GREEN);
+        mSvgImageView.setIsPressable();
+
+        StateListDrawable stateListDrawable = (StateListDrawable) mSvgImageView.getDrawable();
+
+        Bitmap bmp = getBitmapFromDrawable(stateListDrawable.getCurrent());
+
+        int leftPixel = bmp.getPixel(0, 0);
+        int rightPixel = bmp.getPixel(mSvgImageView.getDrawable().getIntrinsicWidth()-1, 0);
+
+        assertEquals(Color.BLUE, leftPixel);
+        assertNotSame(Color.RED, leftPixel);
+        assertNotSame(Color.BLUE, leftPixel);
+        assertNotSame(Color.TRANSPARENT, leftPixel);
+
+        assertEquals(Color.TRANSPARENT, rightPixel);
+        assertNotSame(Color.BLACK, rightPixel);
+        assertNotSame(Color.RED, rightPixel);
+
+        mSvgImageView.setPressed(true);
+
+        stateListDrawable = (StateListDrawable) mSvgImageView.getDrawable();
+
+        bmp = getBitmapFromDrawable(stateListDrawable.getCurrent());
+
+        leftPixel = bmp.getPixel(0, 0);
+        rightPixel = bmp.getPixel(mSvgImageView.getDrawable().getIntrinsicWidth()-1, 0);
+
+        assertEquals(Color.GREEN, leftPixel);
+        assertNotSame(Color.RED, leftPixel);
+        assertNotSame(Color.TRANSPARENT, leftPixel);
+
+        assertEquals(Color.TRANSPARENT, rightPixel);
+        assertNotSame(Color.BLACK, rightPixel);
+        assertNotSame(Color.RED, rightPixel);
+    }
+
+    public void testPressableInvertedColorsSVGImageView() {
+
+        mSvgImageView.doInvertSvg();
+        mSvgImageView.setSvgColor(Color.BLUE);
+        mSvgImageView.setPressedSvgColor(Color.GREEN);
+        mSvgImageView.setIsPressable();
+
+        StateListDrawable stateListDrawable = (StateListDrawable) mSvgImageView.getDrawable();
+
+        Bitmap bmp = getBitmapFromDrawable(stateListDrawable.getCurrent());
+
+        int leftPixel = bmp.getPixel(0, 0);
+        int rightPixel = bmp.getPixel(mSvgImageView.getDrawable().getIntrinsicWidth()-1, 0);
+
+        assertEquals(Color.BLUE, rightPixel);
+        assertNotSame(Color.RED, rightPixel);
+        assertNotSame(Color.BLUE, rightPixel);
+        assertNotSame(Color.TRANSPARENT, rightPixel);
+
+        assertEquals(Color.TRANSPARENT, leftPixel);
+        assertNotSame(Color.BLACK, leftPixel);
+        assertNotSame(Color.RED, leftPixel);
+
+        mSvgImageView.setPressed(true);
+
+        stateListDrawable = (StateListDrawable) mSvgImageView.getDrawable();
+
+        bmp = getBitmapFromDrawable(stateListDrawable.getCurrent());
+
+        leftPixel = bmp.getPixel(0, 0);
+        rightPixel = bmp.getPixel(mSvgImageView.getDrawable().getIntrinsicWidth()-1, 0);
+
+        assertEquals(Color.GREEN, rightPixel);
+        assertNotSame(Color.RED, rightPixel);
+        assertNotSame(Color.TRANSPARENT, rightPixel);
+
+        assertEquals(Color.TRANSPARENT, leftPixel);
+        assertNotSame(Color.BLACK, leftPixel);
+        assertNotSame(Color.RED, leftPixel);
     }
 }
