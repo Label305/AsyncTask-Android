@@ -29,6 +29,10 @@ import android.test.AndroidTestCase;
 
 import com.label305.stan.ui.widget.SVGImageView;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.core.IsNot.not;
+
 /**
  * Created by Label305 on 09/04/2014.
  */
@@ -68,8 +72,8 @@ public class SVGImageViewTest extends AndroidTestCase {
         Bitmap bmp = getBitmapFromImageView();
         int pixel = bmp.getPixel(0, 0);
 
-        assertEquals(Color.RED, pixel);
-        assertNotSame(Color.BLACK, pixel);
+        assertThat(pixel, equalTo(Color.RED));
+        assertThat(pixel, not(equalTo(Color.BLACK)));
     }
 
     public void testBlueSVGImageView() {
@@ -81,10 +85,10 @@ public class SVGImageViewTest extends AndroidTestCase {
         int pixel = bmp.getPixel(0, 0);
         int transparentPixel = bmp.getPixel(mSvgImageView.getDrawable().getIntrinsicWidth()-1, 0);
 
-        assertEquals(Color.BLUE, pixel);
-        assertNotSame(Color.RED, pixel);
-        assertNotSame(Color.BLACK, pixel);
-        assertEquals(Color.TRANSPARENT, transparentPixel);
+        assertThat(pixel, equalTo(Color.BLUE));
+        assertThat(transparentPixel, equalTo(Color.TRANSPARENT));
+        assertThat(pixel, not(equalTo(Color.RED)));
+        assertThat(pixel, not(equalTo(Color.BLACK)));
     }
 
     public void testInvertSVGImageView() {
@@ -95,13 +99,13 @@ public class SVGImageViewTest extends AndroidTestCase {
         int leftPixel = bmp.getPixel(0, 0);
         int rightPixel = bmp.getPixel(mSvgImageView.getDrawable().getIntrinsicWidth()-1, 0);
 
-        assertEquals(Color.TRANSPARENT, leftPixel);
-        assertNotSame(Color.RED, leftPixel);
-        assertNotSame(Color.BLACK, leftPixel);
+        assertThat(leftPixel, equalTo(Color.TRANSPARENT));
+        assertThat(leftPixel, not(equalTo(Color.RED)));
+        assertThat(leftPixel, not(equalTo(Color.BLACK)));
 
-        assertEquals(Color.BLACK, rightPixel);
-        assertNotSame(Color.TRANSPARENT, rightPixel);
-        assertNotSame(Color.RED, rightPixel);
+        assertThat(rightPixel, equalTo(Color.BLACK));
+        assertThat(rightPixel, not(equalTo(Color.TRANSPARENT)));
+        assertThat(rightPixel, not(equalTo(Color.RED)));
     }
 
     public void testInvertBlueSVGImageView() {
@@ -113,13 +117,13 @@ public class SVGImageViewTest extends AndroidTestCase {
         int leftPixel = bmp.getPixel(0, 0);
         int rightPixel = bmp.getPixel(mSvgImageView.getDrawable().getIntrinsicWidth()-1, 0);
 
-        assertEquals(Color.TRANSPARENT, leftPixel);
-        assertNotSame(Color.RED, leftPixel);
-        assertNotSame(Color.BLACK, leftPixel);
+        assertThat(leftPixel, equalTo(Color.TRANSPARENT));
+        assertThat(leftPixel, not(equalTo(Color.RED)));
+        assertThat(leftPixel, not(equalTo(Color.BLACK)));
 
-        assertEquals(Color.BLUE, rightPixel);
-        assertNotSame(Color.BLACK, rightPixel);
-        assertNotSame(Color.TRANSPARENT, rightPixel);
+        assertThat(rightPixel, equalTo(Color.BLUE));
+        assertThat(rightPixel, not(equalTo(Color.TRANSPARENT)));
+        assertThat(rightPixel, not(equalTo(Color.BLACK)));
     }
 
     public void testPressableSVGImageView() {
@@ -133,13 +137,13 @@ public class SVGImageViewTest extends AndroidTestCase {
         int leftPixel = bmp.getPixel(0, 0);
         int rightPixel = bmp.getPixel(mSvgImageView.getDrawable().getIntrinsicWidth()-1, 0);
 
-        assertEquals(Color.BLACK, leftPixel);
-        assertNotSame(Color.RED, leftPixel);
-        assertNotSame(Color.TRANSPARENT, leftPixel);
+        assertThat(leftPixel, equalTo(Color.BLACK));
+        assertThat(leftPixel, not(equalTo(Color.RED)));
+        assertThat(leftPixel, not(equalTo(Color.TRANSPARENT)));
 
-        assertEquals(Color.TRANSPARENT, rightPixel);
-        assertNotSame(Color.BLACK, rightPixel);
-        assertNotSame(Color.RED, rightPixel);
+        assertThat(rightPixel, equalTo(Color.TRANSPARENT));
+        assertThat(rightPixel, not(equalTo(Color.BLACK)));
+        assertThat(rightPixel, not(equalTo(Color.RED)));
 
         mSvgImageView.setPressed(true);
 
@@ -150,13 +154,13 @@ public class SVGImageViewTest extends AndroidTestCase {
         leftPixel = bmp.getPixel(0, 0);
         rightPixel = bmp.getPixel(mSvgImageView.getDrawable().getIntrinsicWidth()-1, 0);
 
-        assertEquals(Color.WHITE, leftPixel);
-        assertNotSame(Color.RED, leftPixel);
-        assertNotSame(Color.TRANSPARENT, leftPixel);
+        assertThat(leftPixel, equalTo(Color.WHITE));
+        assertThat(leftPixel, not(equalTo(Color.RED)));
+        assertThat(leftPixel, not(equalTo(Color.TRANSPARENT)));
 
-        assertEquals(Color.TRANSPARENT, rightPixel);
-        assertNotSame(Color.BLACK, rightPixel);
-        assertNotSame(Color.RED, rightPixel);
+        assertThat(rightPixel, equalTo(Color.TRANSPARENT));
+        assertThat(rightPixel, not(equalTo(Color.BLACK)));
+        assertThat(rightPixel, not(equalTo(Color.RED)));
     }
 
     public void testPressableColorSVGImageView() {
@@ -171,14 +175,13 @@ public class SVGImageViewTest extends AndroidTestCase {
         int leftPixel = bmp.getPixel(0, 0);
         int rightPixel = bmp.getPixel(mSvgImageView.getDrawable().getIntrinsicWidth()-1, 0);
 
-        assertEquals(Color.BLUE, leftPixel);
-        assertNotSame(Color.RED, leftPixel);
-        assertNotSame(Color.BLUE, leftPixel);
-        assertNotSame(Color.TRANSPARENT, leftPixel);
+        assertThat(leftPixel, equalTo(Color.BLUE));
+        assertThat(leftPixel, not(equalTo(Color.RED)));
+        assertThat(leftPixel, not(equalTo(Color.TRANSPARENT)));
 
-        assertEquals(Color.TRANSPARENT, rightPixel);
-        assertNotSame(Color.BLACK, rightPixel);
-        assertNotSame(Color.RED, rightPixel);
+        assertThat(rightPixel, equalTo(Color.TRANSPARENT));
+        assertThat(rightPixel, not(equalTo(Color.BLACK)));
+        assertThat(rightPixel, not(equalTo(Color.RED)));
 
         mSvgImageView.setPressed(true);
 
@@ -189,13 +192,13 @@ public class SVGImageViewTest extends AndroidTestCase {
         leftPixel = bmp.getPixel(0, 0);
         rightPixel = bmp.getPixel(mSvgImageView.getDrawable().getIntrinsicWidth()-1, 0);
 
-        assertEquals(Color.WHITE, leftPixel);
-        assertNotSame(Color.RED, leftPixel);
-        assertNotSame(Color.TRANSPARENT, leftPixel);
+        assertThat(leftPixel, equalTo(Color.WHITE));
+        assertThat(leftPixel, not(equalTo(Color.RED)));
+        assertThat(leftPixel, not(equalTo(Color.TRANSPARENT)));
 
-        assertEquals(Color.TRANSPARENT, rightPixel);
-        assertNotSame(Color.BLACK, rightPixel);
-        assertNotSame(Color.RED, rightPixel);
+        assertThat(rightPixel, equalTo(Color.TRANSPARENT));
+        assertThat(rightPixel, not(equalTo(Color.BLACK)));
+        assertThat(rightPixel, not(equalTo(Color.RED)));
     }
 
     public void testPressableColorsSVGImageView() {
@@ -211,14 +214,13 @@ public class SVGImageViewTest extends AndroidTestCase {
         int leftPixel = bmp.getPixel(0, 0);
         int rightPixel = bmp.getPixel(mSvgImageView.getDrawable().getIntrinsicWidth()-1, 0);
 
-        assertEquals(Color.BLUE, leftPixel);
-        assertNotSame(Color.RED, leftPixel);
-        assertNotSame(Color.BLUE, leftPixel);
-        assertNotSame(Color.TRANSPARENT, leftPixel);
+        assertThat(leftPixel, equalTo(Color.BLUE));
+        assertThat(leftPixel, not(equalTo(Color.RED)));
+        assertThat(leftPixel, not(equalTo(Color.TRANSPARENT)));
 
-        assertEquals(Color.TRANSPARENT, rightPixel);
-        assertNotSame(Color.BLACK, rightPixel);
-        assertNotSame(Color.RED, rightPixel);
+        assertThat(rightPixel, equalTo(Color.TRANSPARENT));
+        assertThat(rightPixel, not(equalTo(Color.BLACK)));
+        assertThat(rightPixel, not(equalTo(Color.RED)));
 
         mSvgImageView.setPressed(true);
 
@@ -229,13 +231,13 @@ public class SVGImageViewTest extends AndroidTestCase {
         leftPixel = bmp.getPixel(0, 0);
         rightPixel = bmp.getPixel(mSvgImageView.getDrawable().getIntrinsicWidth()-1, 0);
 
-        assertEquals(Color.GREEN, leftPixel);
-        assertNotSame(Color.RED, leftPixel);
-        assertNotSame(Color.TRANSPARENT, leftPixel);
+        assertThat(leftPixel, equalTo(Color.GREEN));
+        assertThat(leftPixel, not(equalTo(Color.RED)));
+        assertThat(leftPixel, not(equalTo(Color.TRANSPARENT)));
 
-        assertEquals(Color.TRANSPARENT, rightPixel);
-        assertNotSame(Color.BLACK, rightPixel);
-        assertNotSame(Color.RED, rightPixel);
+        assertThat(rightPixel, equalTo(Color.TRANSPARENT));
+        assertThat(rightPixel, not(equalTo(Color.BLACK)));
+        assertThat(rightPixel, not(equalTo(Color.RED)));
     }
 
     public void testPressableInvertedColorsSVGImageView() {
@@ -252,14 +254,13 @@ public class SVGImageViewTest extends AndroidTestCase {
         int leftPixel = bmp.getPixel(0, 0);
         int rightPixel = bmp.getPixel(mSvgImageView.getDrawable().getIntrinsicWidth()-1, 0);
 
-        assertEquals(Color.BLUE, rightPixel);
-        assertNotSame(Color.RED, rightPixel);
-        assertNotSame(Color.BLUE, rightPixel);
-        assertNotSame(Color.TRANSPARENT, rightPixel);
+        assertThat(leftPixel, equalTo(Color.TRANSPARENT));
+        assertThat(leftPixel, not(equalTo(Color.BLACK)));
+        assertThat(leftPixel, not(equalTo(Color.RED)));
 
-        assertEquals(Color.TRANSPARENT, leftPixel);
-        assertNotSame(Color.BLACK, leftPixel);
-        assertNotSame(Color.RED, leftPixel);
+        assertThat(rightPixel, equalTo(Color.BLUE));
+        assertThat(rightPixel, not(equalTo(Color.TRANSPARENT)));
+        assertThat(rightPixel, not(equalTo(Color.RED)));
 
         mSvgImageView.setPressed(true);
 
@@ -270,12 +271,12 @@ public class SVGImageViewTest extends AndroidTestCase {
         leftPixel = bmp.getPixel(0, 0);
         rightPixel = bmp.getPixel(mSvgImageView.getDrawable().getIntrinsicWidth()-1, 0);
 
-        assertEquals(Color.GREEN, rightPixel);
-        assertNotSame(Color.RED, rightPixel);
-        assertNotSame(Color.TRANSPARENT, rightPixel);
+        assertThat(leftPixel, equalTo(Color.TRANSPARENT));
+        assertThat(leftPixel, not(equalTo(Color.BLACK)));
+        assertThat(leftPixel, not(equalTo(Color.RED)));
 
-        assertEquals(Color.TRANSPARENT, leftPixel);
-        assertNotSame(Color.BLACK, leftPixel);
-        assertNotSame(Color.RED, leftPixel);
+        assertThat(rightPixel, equalTo(Color.GREEN));
+        assertThat(rightPixel, not(equalTo(Color.TRANSPARENT)));
+        assertThat(rightPixel, not(equalTo(Color.RED)));
     }
 }
