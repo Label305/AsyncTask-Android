@@ -18,8 +18,6 @@
 
 package com.label305.stan.ui.widget.test;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -27,30 +25,22 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.PictureDrawable;
 import android.graphics.drawable.StateListDrawable;
-import android.test.ActivityUnitTestCase;
+import android.test.AndroidTestCase;
 
 import com.label305.stan.ui.widget.SVGImageView;
 
 /**
  * Created by Label305 on 09/04/2014.
  */
-public class SVGImageViewTest extends ActivityUnitTestCase<Activity> {
+public class SVGImageViewTest extends AndroidTestCase {
 
     private SVGImageView mSvgImageView;
 
-    public SVGImageViewTest() {
-        super(Activity.class);
-    }
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-
-        Intent intent = new Intent(getInstrumentation().getTargetContext(),
-                Activity.class);
-        startActivity(intent, null, null);
-        Activity mActivity = getActivity();
-        mSvgImageView = new SVGImageView(mActivity);
+        mSvgImageView = new SVGImageView(getContext());
         mSvgImageView.setSVGResource(com.label305.stan.test.R.raw.ic_svg_test_square_red);
     }
 
