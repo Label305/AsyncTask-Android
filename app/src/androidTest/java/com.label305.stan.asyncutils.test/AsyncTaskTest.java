@@ -11,10 +11,12 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.concurrent.CountDownLatch;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 @SuppressWarnings({"AnonymousInnerClass", "AnonymousInnerClassWithTooManyMethods"})
 public class AsyncTaskTest extends TestCase {
