@@ -22,11 +22,11 @@ Android library with various extensions to android views and various helpers, us
   * BitmapCache
   * SvgCache
 * Several utils
-	* Analytics
-	* Logger
-	* ArrayAdapter
-	* PixelUtils
-	* StringUtils
+  * Analytics
+  * Logger
+  * ArrayAdapter
+  * PixelUtils
+  * StringUtils
 
 ## Usage - Gradle
 
