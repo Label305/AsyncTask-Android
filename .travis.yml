@@ -11,6 +11,7 @@ env:
 
 before_install:
   # Install base Android SDK
+  - sudo chmod +x gradlew
   - sudo apt-get update -qq
   - sudo apt-get install -qq libstdc++6:i386 lib32z1 expect
   - export COMPONENTS=extra-android-m2repository,build-tools-19.0.3,android-19,$ANDROID_SDKS
@@ -29,8 +30,6 @@ install:
 - true
 
 script:
-- sudo chmod +x gradlew
-- ./gradlew assembleDebug
 - ./gradlew connectedCheck
 
 - if [[ $LINT == 'true' ]]; then ./gradlew lint ; fi
