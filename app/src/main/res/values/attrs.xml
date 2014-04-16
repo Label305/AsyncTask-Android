@@ -67,4 +67,13 @@
         </attr>
     </declare-styleable>
 
+    <declare-styleable name="SVGImageView" >
+        <attr name="svg" format="reference"/>
+        <attr name="invertSvg" format="boolean" />
+        <attr name="overrideColors" format="boolean" />
+        <attr name="svgColor" format="color" />
+        <attr name="pressedSvgColor" format="color" />
+        <attr name="isPressable" format="boolean"/>
+    </declare-styleable>
+
 </resources>
