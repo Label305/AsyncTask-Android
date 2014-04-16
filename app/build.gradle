@@ -50,3 +50,5 @@ android {
         exclude 'LICENSE.txt'
     }
 }
+
+task log << { configurations.androidTestCompile.each { println it } }
