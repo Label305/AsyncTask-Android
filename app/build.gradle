@@ -17,8 +17,6 @@ repositories {
 dependencies {
     compile 'com.android.support:support-v4:19.1.+'
     compile 'com.nineoldandroids:library:2.4.0'
-    compile 'joda-time:joda-time:2.3'
-    compile 'org.joda:joda-convert:1.6'
     compile 'com.j256.ormlite:ormlite-android:4.48'
     compile 'com.j256.ormlite:ormlite-core:4.48'
     compile 'com.crashlytics.android:crashlytics:1.+'
@@ -49,6 +47,10 @@ android {
         exclude 'META-INF/NOTICE.txt'
         exclude 'LICENSE.txt'
     }
+
+    lintOptions {
+        lintConfig file("../lint.xml")
+    }
+
 }
 
-task log << { configurations.androidTestCompile.each { println it } }
