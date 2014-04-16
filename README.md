@@ -4,23 +4,23 @@ Android library with various extensions to android views and various helpers, us
 
 ## Features
 
- * all kinds of views which support custom fonts
+* all kinds of views which support custom fonts
    * Fonts need to be placed in assets
    * A string needs to point to the location of the asset
    * This string is used in the xml to define the font used for the custom font view
 * a safe AsyncTask
-	* Which has callbacks for exceptions, but does throw RTE
-	* Also an ExponentialBackoffAsyncTask is included, which retries failed Tasks several times (can be defined)
+  * Which has callbacks for exceptions, but does throw RTE
+  * Also an ExponentialBackoffAsyncTask is included, which retries failed Tasks several times (can be defined)
 * Http functions
-	* Getter/Poster/Deleter/Putter functions supported
+  * Getter/Poster/Deleter/Putter functions supported
 * extensions on the Imageview
-	* SimpleNetworkImageView uses Volley to load an image from url
-	* SvgImageView is an Imageview which supports svg images
+  * SimpleNetworkImageView uses Volley to load an image from url
+  * SvgImageView is an Imageview which supports svg images
 * an AbstractExpandableTitleView
-	* animated
+  * animated
 * Memory management
-	* BitmapCache
-	* SvgCache
+  * BitmapCache
+  * SvgCache
 * Several utils
 	* Analytics
 	* Logger
