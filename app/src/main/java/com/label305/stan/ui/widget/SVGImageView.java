@@ -40,150 +40,136 @@ import com.label305.stan.utils.Logger;
 /**
  * Created by Label305 on 02/04/2014.
  */
-public class SVGImageView extends ImageView {
+public class SvgImageView extends ImageView {
 
     private int mSvgResourceId;
 
-    private boolean mInvertSvg = false;
-    private boolean mOverrideColors = false;
-    private boolean mIsPressable = false;
+    private boolean mInvertSvg;
+    private boolean mIsPressable;
 
     private int mSvgColor = Color.BLACK;
     private int mPressedSvgColor = Color.WHITE;
 
+    private boolean mCustomColorSet;
 
-    public SVGImageView(Context context) {
+    public SvgImageView(final Context context) {
         super(context);
-        init(null);
     }
 
-    public SVGImageView(Context context, AttributeSet attrs) {
+    public SvgImageView(final Context context, final AttributeSet attrs) {
         super(context, attrs);
         init(attrs);
     }
 
-    public SVGImageView(Context context, AttributeSet attrs, int defStyle) {
+    public SvgImageView(final Context context, final AttributeSet attrs, final int defStyle) {
         super(context, attrs, defStyle);
         init(attrs);
     }
 
 
-    private void init(AttributeSet attrs) {
+    private void init(final AttributeSet attrs) {
+        TypedArray a = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.SvgImageView, 0, 0);
+        mInvertSvg = a.getBoolean(R.styleable.SvgImageView_invertSvg, false);
+        mIsPressable = a.getBoolean(R.styleable.SvgImageView_isPressable, false);
+        mSvgColor = a.getColor(R.styleable.SvgImageView_svgColor, Color.BLACK);
 
-        TypedArray a = getContext().getTheme().obtainStyledAttributes(
-                attrs,
-                R.styleable.SVGImageView,
-                0, 0);
-
-        try {
-            setDoInvertSvg(a.getBoolean(R.styleable.SVGImageView_invertSvg, false));
-            setOverrideColors(a.getBoolean(R.styleable.SVGImageView_overrideColors, false));
-            setPressableSvg(a.getBoolean(R.styleable.SVGImageView_isPressable, false));
-
-            if (mOverrideColors) {
-                setSvgColor(a.getColor(R.styleable.SVGImageView_svgColor, Color.BLACK));
-            }
-
-            if (mIsPressable) {
-                setPressedSvgColor(a.getColor(R.styleable.SVGImageView_pressedSvgColor, Color.WHITE));
-            }
-            setSVGResource(a.getResourceId(R.styleable.SVGImageView_svg, 0));
-        } finally {
-            a.recycle();
+        if (mIsPressable) {
+            mPressedSvgColor = a.getColor(R.styleable.SvgImageView_pressedSvgColor, Color.WHITE);
         }
+        mSvgResourceId = a.getResourceId(R.styleable.SvgImageView_svg, 0);
+
+        showSvgImage();
+        a.recycle();
     }
 
-    private void setDoInvertSvg(boolean invertSvg) {
-        this.mInvertSvg = invertSvg;
-    }
-
+    /**
+     * Inverts the Svg color.
+     */
     public void doInvertSvg() {
-        this.mInvertSvg = true;
-        showSVGImage();
+        mInvertSvg = true;
+        showSvgImage();
     }
 
+    /**
+     * Restores invertation of the Svg color.
+     */
     public void doNotInvertSvg() {
-        this.mInvertSvg = false;
-        showSVGImage();
-    }
-
-
-    private void setOverrideColors(boolean overrideColors) {
-        this.mOverrideColors = overrideColors;
-        showSVGImage();
+        mInvertSvg = false;
+        showSvgImage();
     }
 
     /**
-     * call if color needs to be overridden by user defined color (defaults to black)
+     * Sets the color of the Svg.
      */
-    public void doOverrideColors() {
-        this.mOverrideColors = true;
-        showSVGImage();
-    }
-
-    public void doNotOverrideColors() {
-        this.mOverrideColors = false;
-        showSVGImage();
+    public void setSvgColor(final int svgColor) {
+        mSvgColor = svgColor;
+        mCustomColorSet = true;
+        showSvgImage();
     }
 
     /**
-     * set color of svg
-     * @param svgColor
+     * Sets the color of the Svg to the default color.
      */
-    public void setSvgColor(int svgColor) {
-        this.mSvgColor = svgColor;
-        doOverrideColors();
-        showSVGImage();
+    public void useDefaultColor() {
+        mCustomColorSet = false;
+        showSvgImage();
     }
 
     /**
-     * set color of pressed state of svg
-     * @param pressedSvgColor
+     * Sets the color of the pressed state of the Svg.
      */
-    public void setPressedSvgColor(int pressedSvgColor) {
+    public void setPressedSvgColor(final int pressedSvgColor) {
         setIsPressable();
-        this.mPressedSvgColor = pressedSvgColor;
-        if (mPressedSvgColor == mSvgColor) setIsNotPressable();
-        showSVGImage();
+        mPressedSvgColor = pressedSvgColor;
+        if (mPressedSvgColor == mSvgColor) {
+            setIsNotPressable();
+        }
+        showSvgImage();
     }
 
-    private void setPressableSvg(boolean isPressable) {
-        this.mIsPressable = isPressable;
-    }
-
+    /**
+     * Adds a pressable state. Defaults to invertation of the Svg. Use {@link #setPressedSvgColor(int)} to provide a custom color.
+     */
     public void setIsPressable() {
-        this.mIsPressable = true;
-        showSVGImage();
+        mIsPressable = true;
+        showSvgImage();
     }
 
+    /**
+     * Removes any added pressable states.
+     */
     public void setIsNotPressable() {
-        this.mIsPressable = false;
-        showSVGImage();
+        mIsPressable = false;
+        showSvgImage();
     }
 
-    public void setSVGResource(int resourceId) {
-        this.mSvgResourceId = resourceId;
-        showSVGImage();
+    /**
+     * Sets the resource of the Svg to use.
+     * @param resourceId the resource of the Svg, of the form R.raw.my_svg.
+     */
+    public void setSvgResource(final int resourceId) {
+        mSvgResourceId = resourceId;
+        showSvgImage();
     }
 
-    private void showSVGImage() {
+    private void showSvgImage() {
         if (mSvgResourceId == 0) {
             setImageResource(0);
         } else {
             if (mIsPressable) {
                 showPressableSvgImage();
             } else {
-                if (mInvertSvg || mOverrideColors) {
+                if (mInvertSvg || mCustomColorSet) {
                     setImageBitmap(getImageBitmap());
                 } else {
-                    SVG svg = getSVGImage(mSvgResourceId);
+                    SVG svg = getSvgImage(mSvgResourceId);
                     setImageDrawable(new PictureDrawable(svg.renderToPicture()));
                 }
             }
         }
     }
 
-    private SVG getSVGImage(int svgResourceId) {
+    private SVG getSvgImage(final int svgResourceId) {
         SVG svg = SvgCache.getSvgFromCache(svgResourceId);
         if (svg == null) {
             try {
@@ -194,52 +180,6 @@ public class SVGImageView extends ImageView {
             SvgCache.addSvgToCache(svgResourceId, svg);
         }
         return svg;
-    }
-
-    private Bitmap convertImageColor(Drawable drawable, int invertColor) {
-        return convertImageColor(ImageUtils.drawableToBmp(drawable), invertColor);
-    }
-
-    private Bitmap convertImageColor(Bitmap image, int invertColor) {
-
-        int length = image.getWidth() * image.getHeight();
-        int[] array = new int[length];
-        image.getPixels(array, 0, image.getWidth(), 0, 0, image.getWidth(), image.getHeight());
-        for (int i = 0; i < length; i++) {
-        /* If the bitmap is in ARGB_8888 format */
-            if (array[i] != Color.TRANSPARENT) {
-                array[i] = invertColor;
-            } else {
-                array[i] = Color.TRANSPARENT;
-            }
-        }
-
-        image.setPixels(array, 0, image.getWidth(), 0, 0, image.getWidth(), image.getHeight());
-
-        return image;
-    }
-
-    private Bitmap invertImage(Drawable drawable, int invertColor) {
-        return invertImage(ImageUtils.drawableToBmp(drawable), invertColor);
-    }
-
-    private Bitmap invertImage(Bitmap image, int invertColor) {
-
-        int length = image.getWidth() * image.getHeight();
-        int[] array = new int[length];
-        image.getPixels(array, 0, image.getWidth(), 0, 0, image.getWidth(), image.getHeight());
-        for (int i = 0; i < length; i++) {
-        /* If the bitmap is in ARGB_8888 format */
-            if (array[i] == Color.TRANSPARENT) {
-                array[i] = invertColor;
-            } else {
-                array[i] = Color.TRANSPARENT;
-            }
-        }
-
-        image.setPixels(array, 0, image.getWidth(), 0, 0, image.getWidth(), image.getHeight());
-
-        return image;
     }
 
     private void showPressableSvgImage() {
@@ -254,10 +194,10 @@ public class SVGImageView extends ImageView {
 
         image = BitmapCache.getBitmapFromCache(getSvgCacheTag());
 
-        if(image == null) {
-            SVG svg = getSVGImage(mSvgResourceId);
+        if (image == null) {
+            SVG svg = getSvgImage(mSvgResourceId);
             PictureDrawable pictureDrawable = new PictureDrawable(svg.renderToPicture());
-            if(mInvertSvg) {
+            if (mInvertSvg) {
                 Bitmap invertedBitmap = invertImage(pictureDrawable, mSvgColor);
                 image = convertImageColor(invertedBitmap, mSvgColor);
             } else {
@@ -274,10 +214,10 @@ public class SVGImageView extends ImageView {
 
         image = BitmapCache.getBitmapFromCache(getPressedSvgCacheTag());
 
-        if(image == null) {
-            SVG svg = getSVGImage(mSvgResourceId);
+        if (image == null) {
+            SVG svg = getSvgImage(mSvgResourceId);
             PictureDrawable pictureDrawable = new PictureDrawable(svg.renderToPicture());
-            if(mInvertSvg) {
+            if (mInvertSvg) {
                 Bitmap invertedBitmap = invertImage(pictureDrawable, mPressedSvgColor);
                 image = convertImageColor(invertedBitmap, mPressedSvgColor);
             } else {
@@ -290,11 +230,52 @@ public class SVGImageView extends ImageView {
     }
 
     private String getSvgCacheTag() {
-        return mSvgResourceId + getWidth() + "," + getHeight() +String.valueOf(mSvgColor) + String.valueOf(mInvertSvg) + String.valueOf(mOverrideColors);
+        return mSvgResourceId + getWidth() + "," + getHeight() + String.valueOf(mSvgColor) + String.valueOf(mInvertSvg) + String.valueOf(mCustomColorSet);
     }
 
     private String getPressedSvgCacheTag() {
-        return mSvgResourceId + getWidth() + "," + getHeight() + String.valueOf(mPressedSvgColor) + String.valueOf(mInvertSvg) + String.valueOf(mOverrideColors);
+        return mSvgResourceId + getWidth() + "," + getHeight() + String.valueOf(mPressedSvgColor) + String.valueOf(mInvertSvg) + String.valueOf(mCustomColorSet);
     }
 
+    private static Bitmap convertImageColor(final Drawable drawable, final int invertColor) {
+        return convertImageColor(ImageUtils.drawableToBmp(drawable), invertColor);
+    }
+
+    private static Bitmap convertImageColor(final Bitmap image, final int invertColor) {
+        int length = image.getWidth() * image.getHeight();
+        int[] array = new int[length];
+        image.getPixels(array, 0, image.getWidth(), 0, 0, image.getWidth(), image.getHeight());
+        for (int i = 0; i < length; i++) {
+        /* If the bitmap is in ARGB_8888 format */
+            if (array[i] != Color.TRANSPARENT) {
+                array[i] = invertColor;
+            }
+        }
+
+        image.setPixels(array, 0, image.getWidth(), 0, 0, image.getWidth(), image.getHeight());
+
+        return image;
+    }
+
+    private static Bitmap invertImage(final Drawable drawable, final int invertColor) {
+        return invertImage(ImageUtils.drawableToBmp(drawable), invertColor);
+    }
+
+    private static Bitmap invertImage(final Bitmap image, final int invertColor) {
+        int length = image.getWidth() * image.getHeight();
+        int[] array = new int[length];
+        image.getPixels(array, 0, image.getWidth(), 0, 0, image.getWidth(), image.getHeight());
+        for (int i = 0; i < length; i++) {
+        /* If the bitmap is in ARGB_8888 format */
+            if (array[i] == Color.TRANSPARENT) {
+                array[i] = invertColor;
+            } else {
+                array[i] = Color.TRANSPARENT;
+            }
+        }
+
+        image.setPixels(array, 0, image.getWidth(), 0, 0, image.getWidth(), image.getHeight());
+
+        return image;
+    }
 }

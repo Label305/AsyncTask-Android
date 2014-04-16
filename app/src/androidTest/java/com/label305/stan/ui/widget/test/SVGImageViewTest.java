@@ -27,7 +27,7 @@ import android.graphics.drawable.PictureDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.test.AndroidTestCase;
 
-import com.label305.stan.ui.widget.SVGImageView;
+import com.label305.stan.ui.widget.SvgImageView;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -36,16 +36,16 @@ import static org.hamcrest.core.IsNot.not;
 /**
  * Created by Label305 on 09/04/2014.
  */
-public class SVGImageViewTest extends AndroidTestCase {
+public class SvgImageViewTest extends AndroidTestCase {
 
-    private SVGImageView mSvgImageView;
+    private SvgImageView mSvgImageView;
 
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        mSvgImageView = new SVGImageView(getContext());
-        mSvgImageView.setSVGResource(com.label305.stan.test.R.raw.ic_svg_test_square_red);
+        mSvgImageView = new SvgImageView(getContext());
+        mSvgImageView.setSvgResource(com.label305.stan.test.R.raw.ic_svg_test_square_red);
     }
 
     //Convert PictureDrawable to Bitmap
