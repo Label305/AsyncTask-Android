@@ -30,7 +30,6 @@ install:
 
 script:
 - sudo chmod +x gradlew
-- ./gradlew assembleDebug
 - ./gradlew connectedCheck
 
 - if [[ $LINT == 'true' ]]; then ./gradlew lint ; fi
