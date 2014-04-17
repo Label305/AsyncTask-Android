@@ -22,11 +22,6 @@ before_install:
 - source ~/.android-sdk-installer/env
 - export ANDROID_HOME=$HOME/.android-sdk-installer
 - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
-
-- sudo apt-get install -qq ncftp
-- ./gradlew generateDebugJavadoc -PANDROID_HOME=$ANDROID_HOME -PTITLE="Stan for Android ($TRAVIS_BRANCH - $TRAVIS_BUILD-NUMBER)" -POUTPUT="docs"
-- ncftpput -R -m -u $FTP_USER -p $FTP_PASSWORD host3.label305.com /stan-for-android/$TRAVIS_BRANCH docs/html/*
-
 - emulator -avd test -no-skin -no-audio -no-window &
 before_script:
 - wait_for_emulator
