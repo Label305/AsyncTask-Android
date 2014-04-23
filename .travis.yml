@@ -1,38 +1,41 @@
 language: java
 jdk: oraclejdk7
-
 env:
   matrix:
-    - ANDROID_SDKS=android-17,sysimg-17 ANDROID_TARGET=android-17 ANDROID_ABI=armeabi-v7a LINT=false
-    - ANDROID_SDKS=android-18,sysimg-18 ANDROID_TARGET=android-18 ANDROID_ABI=armeabi-v7a LINT=false  
-    - ANDROID_SDKS=sysimg-19            ANDROID_TARGET=android-19 ANDROID_ABI=armeabi-v7a LINT=true
+  - ANDROID_SDKS=android-17,sysimg-17 ANDROID_TARGET=android-17 ANDROID_ABI=armeabi-v7a
+    LINT=false
+  - ANDROID_SDKS=android-18,sysimg-18 ANDROID_TARGET=android-18 ANDROID_ABI=armeabi-v7a
+    LINT=false
+  - ANDROID_SDKS=sysimg-19            ANDROID_TARGET=android-19 ANDROID_ABI=armeabi-v7a
+    LINT=true
   global:
-    - TERM=dumb
-
+  - TERM=dumb
+  - secure: kFutepOJXnSNuEj+w3HVT61qt4f1rSMXNMSOwd5KP+40j3xnVaJZzT85GRzZ4PsYaCvxR88DUMZ/aruEC2eao09++XvFpIeCmjMhLgH8WJY8cGNCGvWsMLNvDCcPxxyf9yEiQh/vXxqVR3nGODoVrUuGMN7lTTUeONOQrWrVnu8=
+  - secure: bGISHuqYtLEWjnyjvtc0RUV7QBA7d5Na0aUxlURN8OoMfmpMvTAH8tLuQVKIgSMSHO5qiKH/m570eGyLIg49V7J+Ipm/7eEgVIKS4xYMLAGEiqul2wx2sUONcTSYmyTW3oZTLsUwNpeYfyKQEofNBKQwmAtOB4OuYhwWWcaEx/I=
 before_install:
-  # Install base Android SDK
-  - sudo chmod +x gradlew
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq libstdc++6:i386 lib32z1 expect
-  - export COMPONENTS=extra-android-m2repository,build-tools-19.0.3,android-19,$ANDROID_SDKS
-  - curl -3L https://raw.github.com/embarkmobile/android-sdk-installer/version-2/android-sdk-installer | bash /dev/stdin --install=$COMPONENTS
-  - source ~/.android-sdk-installer/env
-
-  # Create and start emulator
-  - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
-  - emulator -avd test -no-skin -no-audio -no-window &
-
+- sudo chmod +x gradlew
+- sudo apt-get update -qq
+- sudo apt-get install -qq libstdc++6:i386 lib32z1 expect
+- export COMPONENTS=extra-android-m2repository,build-tools-19.0.3,android-19,$ANDROID_SDKS
+- curl -3L https://raw.github.com/embarkmobile/android-sdk-installer/version-2/android-sdk-installer
+  | bash /dev/stdin --install=$COMPONENTS
+- source ~/.android-sdk-installer/env
+#- export ANDROID_HOME=$HOME/.android-sdk-installer
+- echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
+- emulator -avd test -no-skin -no-audio -no-window &
 before_script:
-# Make sure the emulator has started before running tests
 - wait_for_emulator
-
 install:
 - true
-
 script:
 - ./gradlew connectedCheck
-
 - if [[ $LINT == 'true' ]]; then ./gradlew lint ; fi
-
-notifications:
+after_success:
+- sudo apt-get install -qq ncftp
+- ./gradlew generateDebugJavadoc -PANDROID_HOME=$ANDROID_HOME -PTITLE="Stan for Android ($TRAVIS_BRANCH - $TRAVIS_BUILD-NUMBER)" -POUTPUT="docs"
+- ncftpput -R -m -u $FTP_USER -p $FTP_PASSWORD host3.label305.com /stan-for-android/$TRAVIS_BRANCH docs/html/*
+notifications: 
 email: false
+hipchat:
+  rooms:
+    secure: XDkzejt7ImugegYsgdkzS8gg8/DUVML+1BOmoRyuuJqDyVvm1mkXZct7OOAYxJO5BYVettHIB2ZmTvChLrxRWMsAkKjuX3EFfG1E6+onthfwB2hpaESkQl8MbQRfa3T/ogqf+E1eyU137Xojsvx/URiZEBokYnJ9p3WmnSzfx0Y=
