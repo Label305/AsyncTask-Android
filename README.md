@@ -1,3 +1,5 @@
+# Stan for Android [![Build Status](https://travis-ci.org/Label305/Stan-for-Android.svg?branch=master)](https://travis-ci.org/Label305/Stan-for-Android)
+
 Android library with various extensions to android views and various helpers, used at Label305 for app development
 
 ## Features
