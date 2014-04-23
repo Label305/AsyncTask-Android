@@ -20,7 +20,8 @@ before_install:
 - curl -3L https://raw.github.com/embarkmobile/android-sdk-installer/version-2/android-sdk-installer
   | bash /dev/stdin --install=$COMPONENTS
 - source ~/.android-sdk-installer/env
-- export ANDROID_HOME=$HOME/.android-sdk-installer
+# - export ANDROID_HOME=$HOME/.android-sdk-installer
+- android list sdk -a -e
 - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
 - emulator -avd test -no-skin -no-audio -no-window &
 before_script:
