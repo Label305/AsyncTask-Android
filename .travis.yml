@@ -16,12 +16,11 @@ before_install:
 - sudo chmod +x gradlew
 - sudo apt-get update -qq
 - sudo apt-get install -qq libstdc++6:i386 lib32z1 expect
-- export COMPONENTS=extra-android-m2repository,build-tools-19.0.3,android-19,$ANDROID_SDKS
+- export COMPONENTS=extra-android-m2repository,build-tools-19.0.3,android-19,doc-19,$ANDROID_SDKS
 - curl -3L https://raw.github.com/embarkmobile/android-sdk-installer/version-2/android-sdk-installer
   | bash /dev/stdin --install=$COMPONENTS
 - source ~/.android-sdk-installer/env
 # - export ANDROID_HOME=$HOME/.android-sdk-installer
-- android list sdk -a -e
 - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
 - emulator -avd test -no-skin -no-audio -no-window &
 before_script:
