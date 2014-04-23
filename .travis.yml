@@ -20,20 +20,19 @@ before_install:
 - curl -3L https://raw.github.com/embarkmobile/android-sdk-installer/version-2/android-sdk-installer
   | bash /dev/stdin --install=$COMPONENTS
 - source ~/.android-sdk-installer/env
-# - export ANDROID_HOME=$HOME/.android-sdk-installer
-# - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
-# - emulator -avd test -no-skin -no-audio -no-window &
+- echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
+- emulator -avd test -no-skin -no-audio -no-window &
 before_script:
-# - wait_for_emulator
+- wait_for_emulator
 install:
 - true
 script:
-- ./gradlew assembleDebug
+- ./gradlew connectedCheck
 - if [[ $ONETIMECALLS == 'true' ]]; then ./gradlew lint ; fi
 after_success:
-- sudo apt-get install -qq ncftp
-- ./gradlew generateDebugJavadoc -PANDROID_HOME=$ANDROID_HOME -PTITLE="Stan for Android ($TRAVIS_BRANCH - $TRAVIS_BUILD-NUMBER)" -POUTPUT="$HOME/docs"
-- ncftpput -R -m -u $FTP_USER -p $FTP_PASSWORD host3.label305.com /stan-for-android/$TRAVIS_BRANCH $HOME/docs/*
+- if [[ $ONETIMECALLS == 'true' ]]; then sudo apt-get install -qq ncftp
+- if [[ $ONETIMECALLS == 'true' ]]; then ./gradlew generateDebugJavadoc -PANDROID_HOME=$ANDROID_HOME -PTITLE="Stan for Android ($TRAVIS_BRANCH - $TRAVIS_BUILD-NUMBER)" -POUTPUT="$HOME/docs"
+- if [[ $ONETIMECALLS == 'true' ]]; then ncftpput -R -m -u $FTP_USER -p $FTP_PASSWORD host3.label305.com /stan-for-android/$TRAVIS_BRANCH $HOME/docs/*
 notifications: 
 email: false
 hipchat:
