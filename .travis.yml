@@ -3,11 +3,11 @@ jdk: oraclejdk7
 env:
   matrix:
   - ANDROID_SDKS=android-17,sysimg-17 ANDROID_TARGET=android-17 ANDROID_ABI=armeabi-v7a
-    LINT=false
+    ONETIMECALLS=false
   - ANDROID_SDKS=android-18,sysimg-18 ANDROID_TARGET=android-18 ANDROID_ABI=armeabi-v7a
-    LINT=false
+    ONETIMECALLS=false
   - ANDROID_SDKS=sysimg-19            ANDROID_TARGET=android-19 ANDROID_ABI=armeabi-v7a
-    LINT=true
+    ONETIMECALLS=true
   global:
   - TERM=dumb
   - secure: kFutepOJXnSNuEj+w3HVT61qt4f1rSMXNMSOwd5KP+40j3xnVaJZzT85GRzZ4PsYaCvxR88DUMZ/aruEC2eao09++XvFpIeCmjMhLgH8WJY8cGNCGvWsMLNvDCcPxxyf9yEiQh/vXxqVR3nGODoVrUuGMN7lTTUeONOQrWrVnu8=
@@ -20,7 +20,7 @@ before_install:
 - curl -3L https://raw.github.com/embarkmobile/android-sdk-installer/version-2/android-sdk-installer
   | bash /dev/stdin --install=$COMPONENTS
 - source ~/.android-sdk-installer/env
-#- export ANDROID_HOME=$HOME/.android-sdk-installer
+- export ANDROID_HOME=$HOME/.android-sdk-installer
 - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
 - emulator -avd test -no-skin -no-audio -no-window &
 before_script:
@@ -29,11 +29,11 @@ install:
 - true
 script:
 - ./gradlew connectedCheck
-- if [[ $LINT == 'true' ]]; then ./gradlew lint ; fi
+- if [[ $ONETIMECALLS == 'true' ]]; then ./gradlew lint ; fi
 after_success:
 - sudo apt-get install -qq ncftp
-- ./gradlew generateDebugJavadoc -PANDROID_HOME=$ANDROID_HOME -PTITLE="Stan for Android ($TRAVIS_BRANCH - $TRAVIS_BUILD-NUMBER)" -POUTPUT="$PWD/docs"
-- ncftpput -R -m -u $FTP_USER -p $FTP_PASSWORD host3.label305.com /stan-for-android/$TRAVIS_BRANCH $PWD/docs/html/*
+- ./gradlew generateDebugJavadoc -PANDROID_HOME=$ANDROID_HOME -PTITLE="Stan for Android ($TRAVIS_BRANCH - $TRAVIS_BUILD-NUMBER)" -POUTPUT="~/docs"
+- ncftpput -R -m -u $FTP_USER -p $FTP_PASSWORD host3.label305.com /stan-for-android/$TRAVIS_BRANCH ~/docs/*
 notifications: 
 email: false
 hipchat:
