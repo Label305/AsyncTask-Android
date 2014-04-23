@@ -30,9 +30,9 @@ script:
 - ./gradlew connectedCheck
 - if [[ $ONETIMECALLS == 'true' ]]; then ./gradlew lint ; fi
 after_success:
-- if [[ $ONETIMECALLS == 'true' ]]; then sudo apt-get install -qq ncftp
-- if [[ $ONETIMECALLS == 'true' ]]; then ./gradlew generateDebugJavadoc -PANDROID_HOME=$ANDROID_HOME -PTITLE="Stan for Android ($TRAVIS_BRANCH - $TRAVIS_BUILD-NUMBER)" -POUTPUT="$HOME/docs"
-- if [[ $ONETIMECALLS == 'true' ]]; then ncftpput -R -m -u $FTP_USER -p $FTP_PASSWORD host3.label305.com /stan-for-android/$TRAVIS_BRANCH $HOME/docs/*
+- if [[ $ONETIMECALLS == 'true' ]]; then sudo apt-get install -qq ncftp ; fi
+- if [[ $ONETIMECALLS == 'true' ]]; then ./gradlew generateDebugJavadoc -PANDROID_HOME=$ANDROID_HOME -PTITLE="Stan for Android ($TRAVIS_BRANCH - $TRAVIS_BUILD-NUMBER)" -POUTPUT="$HOME/docs" ; fi
+- if [[ $ONETIMECALLS == 'true' ]]; then ncftpput -R -m -u $FTP_USER -p $FTP_PASSWORD host3.label305.com /stan-for-android/$TRAVIS_BRANCH $HOME/docs/* ; fi
 notifications: 
 email: false
 hipchat:
