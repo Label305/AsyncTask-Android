@@ -26,6 +26,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.PictureDrawable;
 import android.graphics.drawable.StateListDrawable;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
@@ -156,6 +157,9 @@ public class SvgImageView extends ImageView {
         if (mSvgResourceId == 0) {
             setImageResource(0);
         } else {
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                setLayerType(LAYER_TYPE_SOFTWARE, null);
+            }
             if (mIsPressable) {
                 showPressableSvgImage();
             } else {
