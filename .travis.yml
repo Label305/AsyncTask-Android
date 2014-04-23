@@ -21,10 +21,10 @@ before_install:
   | bash /dev/stdin --install=$COMPONENTS
 - source ~/.android-sdk-installer/env
 # - export ANDROID_HOME=$HOME/.android-sdk-installer
-- echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
-- emulator -avd test -no-skin -no-audio -no-window &
+# - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
+# - emulator -avd test -no-skin -no-audio -no-window &
 before_script:
-- wait_for_emulator
+# - wait_for_emulator
 install:
 - true
 script:

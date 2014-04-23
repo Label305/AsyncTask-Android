@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:19.1.0'
+    compile 'com.android.support:support-v4:19.1.+'
     compile 'com.nineoldandroids:library:2.4.0'
     compile 'com.j256.ormlite:ormlite-android:4.48'
     compile 'com.j256.ormlite:ormlite-core:4.48'
@@ -63,9 +63,10 @@ android.libraryVariants.all { variant ->
             ext.androidJar =
                     "${android.plugin.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar"
             destinationDir file(OUTPUT)
+            println(destinationDir)
             classpath = files(variant.javaCompile.classpath.files) + files(ext.androidJar)
             options.links("http://docs.oracle.com/javase/7/docs/api/");
-            options.linksOffline "http://d.android.com/reference", ANDROID_HOME + "/docs/reference"
+            options.linksOffline("http://d.android.com/reference", ANDROID_HOME + "/docs/reference")
             options.setMemberLevel(JavadocMemberLevel.PACKAGE)
             exclude '**/BuildConfig.java'
             exclude '**/R.java'
