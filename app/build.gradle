@@ -1,13 +1,18 @@
 apply plugin: 'android-library'
+apply plugin: 'build-version'
 
 apply from: 'generateJavadoc.gradle'
+apply from: 'buildVersion.gradle'
+apply from: 'maven_push.gradle'
 
 buildscript {
     repositories {
         mavenCentral()
+        maven { url 'https://geonet.artifactoryonline.com/geonet/public-releases' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:0.9.+'
+        classpath group: 'nz.org.geonet', name: 'gradle-build-version-plugin', version: '1.0.1'
     }
 }
 
@@ -51,6 +56,12 @@ android {
 
     lintOptions {
         lintConfig file("../lint.xml")
+    }
+
+    defaultConfig {
+        minSdkVersion 8
+        targetSdkVersion 19
+        versionName buildVersion.version
     }
 
 }
