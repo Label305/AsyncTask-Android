@@ -11,14 +11,17 @@ env:
   - TERM=dumb
   - secure: kFutepOJXnSNuEj+w3HVT61qt4f1rSMXNMSOwd5KP+40j3xnVaJZzT85GRzZ4PsYaCvxR88DUMZ/aruEC2eao09++XvFpIeCmjMhLgH8WJY8cGNCGvWsMLNvDCcPxxyf9yEiQh/vXxqVR3nGODoVrUuGMN7lTTUeONOQrWrVnu8=
   - secure: bGISHuqYtLEWjnyjvtc0RUV7QBA7d5Na0aUxlURN8OoMfmpMvTAH8tLuQVKIgSMSHO5qiKH/m570eGyLIg49V7J+Ipm/7eEgVIKS4xYMLAGEiqul2wx2sUONcTSYmyTW3oZTLsUwNpeYfyKQEofNBKQwmAtOB4OuYhwWWcaEx/I=
+  # NEXUSUSERNAME:
+  - secure: BRK3XtgO9eZKWq6JI6p6ZK3mI1WOgh3ACo5iGXS01Z4LOuFovXkL8xFiGswKuA4C+NeYHH9EKAbdWTAIL/KhWlWM1f/+yDL8fRVxWcMaTQYk0CUQJl2dyEMjLI6z4ziiv5QVzAEFjYAdNNb/CL6scTNjaN2CW2kreDV6BnCAahI=
+  # NEXUSPASSWORD:
+  - secure: j2DqijRCMuV5W3C25oiVEdgZvdN64Zvl13O+4B166E3dFGCQXTKNRgg0e9wineb7tPJekv0/QyZ58qpMaL4ep6epEulL9Ygg1YZn9OrL/DHR9ofce8VpQmhmISZ9HYb74/cckw9qvDxC8Q/g00DoTlV/A0elJxIpOA7DjxN9jCc=
 
 before_install:
 - sudo chmod +x gradlew
 - sudo apt-get update -qq
 - sudo apt-get install -qq libstdc++6:i386 lib32z1 expect
 - export COMPONENTS=extra-android-m2repository,build-tools-19.0.3,android-19,$ANDROID_SDKS
-- curl -3L https://raw.github.com/embarkmobile/android-sdk-installer/version-2/android-sdk-installer
-  | bash /dev/stdin --install=$COMPONENTS
+- curl -3L https://raw.github.com/embarkmobile/android-sdk-installer/version-2/android-sdk-installer | bash /dev/stdin --install=$COMPONENTS
 - source ~/.android-sdk-installer/env
 
 - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
@@ -38,7 +41,7 @@ after_success:
 - sudo apt-get install -qq ncftp
 - ./gradlew generateDebugJavadoc -PANDROID_HOME=$ANDROID_HOME -PTITLE="Stan for Android ($TRAVIS_BRANCH - $TRAVIS_BUILD-NUMBER)" -POUTPUT="docs"
 - ncftpput -R -m -u $FTP_USER -p $FTP_PASSWORD host3.label305.com /stan-for-android/$TRAVIS_BRANCH docs/html/*
-- if [[ $MAVEN == 'true' ]]; ./gradlew uploadArchives ; fi
+- if [[ $MAVEN == 'true' ]]; ./gradlew uploadArchives -PnexusUsername=${NEXUSUSERNAME} -PnexusPassword=${NEXUSPASSWORD} ; fi
 
 notifications: 
 email: false
