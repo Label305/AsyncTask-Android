@@ -3,12 +3,9 @@ jdk: oraclejdk7
 
 env:
   matrix:
-  - ANDROID_SDKS=android-17,sysimg-17 ANDROID_TARGET=android-17 ANDROID_ABI=armeabi-v7a
-    LINT=false
-  - ANDROID_SDKS=android-18,sysimg-18 ANDROID_TARGET=android-18 ANDROID_ABI=armeabi-v7a
-    LINT=false
-  - ANDROID_SDKS=sysimg-19            ANDROID_TARGET=android-19 ANDROID_ABI=armeabi-v7a
-    LINT=true
+  - ANDROID_SDKS=android-17,sysimg-17 ANDROID_TARGET=android-17 ANDROID_ABI=armeabi-v7a LINT=false MAVEN=false
+  - ANDROID_SDKS=android-18,sysimg-18 ANDROID_TARGET=android-18 ANDROID_ABI=armeabi-v7a LINT=false MAVEN=false
+  - ANDROID_SDKS=sysimg-19            ANDROID_TARGET=android-19 ANDROID_ABI=armeabi-v7a LINT=true  MAVEN=true
 
   global:
   - TERM=dumb
@@ -41,7 +38,7 @@ after_success:
 - sudo apt-get install -qq ncftp
 - ./gradlew generateDebugJavadoc -PANDROID_HOME=$ANDROID_HOME -PTITLE="Stan for Android ($TRAVIS_BRANCH - $TRAVIS_BUILD-NUMBER)" -POUTPUT="docs"
 - ncftpput -R -m -u $FTP_USER -p $FTP_PASSWORD host3.label305.com /stan-for-android/$TRAVIS_BRANCH docs/html/*
-- ./gradlew uploadArchives
+- if [[ $MAVEN == 'true' ]]; ./gradlew uploadArchives ; fi
 
 notifications: 
 email: false
