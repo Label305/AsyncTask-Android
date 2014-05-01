@@ -42,10 +42,11 @@ after_success:
 - if [[ $JAVADOC == 'true' ]]; then ./gradlew generateDebugJavadoc -PANDROID_HOME=$ANDROID_HOME -PTITLE="Stan for Android ($TRAVIS_BRANCH - $TRAVIS_BUILD-NUMBER)" -POUTPUT="$HOME/docs" ; fi
 - if [[ $JAVADOC == 'true' ]]; then ncftpput -R -m -u $FTP_USER -p $FTP_PASSWORD host3.label305.com /stan-for-android/$TRAVIS_BRANCH $HOME/docs/* ; fi
 
-- if [[ $MAVEN == 'true' ]]; ./gradlew uploadArchives -PnexusUsername=${NEXUSUSERNAME} -PnexusPassword=${NEXUSPASSWORD} ; fi
+- if [[ $MAVEN == 'true' ]]; then ./gradlew uploadArchives -PnexusUsername=${NEXUSUSERNAME} -PnexusPassword=${NEXUSPASSWORD} ; fi
 
 notifications: 
-email: false
+  email: false
+
 hipchat:
   rooms:
     secure: XDkzejt7ImugegYsgdkzS8gg8/DUVML+1BOmoRyuuJqDyVvm1mkXZct7OOAYxJO5BYVettHIB2ZmTvChLrxRWMsAkKjuX3EFfG1E6+onthfwB2hpaESkQl8MbQRfa3T/ogqf+E1eyU137Xojsvx/URiZEBokYnJ9p3WmnSzfx0Y=
