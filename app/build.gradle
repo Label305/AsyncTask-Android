@@ -63,5 +63,4 @@ android {
         targetSdkVersion 19
         versionName buildVersion.version
     }
-
 }
