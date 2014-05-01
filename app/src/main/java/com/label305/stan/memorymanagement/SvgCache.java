@@ -23,59 +23,80 @@ import android.support.v4.util.LruCache;
 
 import com.caverock.androidsvg.SVG;
 import com.caverock.androidsvg.SVGParseException;
-import com.label305.stan.R;
+import com.label305.stan.utils.Logger;
 
-/**
- * Created by Label305 on 02/04/2014.
- */
 public class SvgCache {
 
     private static LruCache<Integer, SVG> sCache;
 
-    public static void addSvgToCache(int key, SVG svg) {
-        if(sCache == null) {
+    private SvgCache() {
+    }
+
+    public static void addSvgToCache(final int key, final SVG svg) {
+        if (sCache == null) {
             createCache();
         }
 
         sCache.put(key, svg);
     }
 
-    public static SVG getSvgFromCache(int key) {
-        SVG retVal = null;
-
-        if(sCache != null) {
-            retVal = sCache.get(key);
+    public static SVG getSvgFromCache(final int key) {
+        SVG result = null;
+        if (sCache != null) {
+            result = sCache.get(key);
         }
-        return retVal;
+        return result;
     }
 
     private static void createCache() {
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
         final int cacheSize = maxMemory / 8;
 
-        sCache = new LruCache<Integer, SVG>(cacheSize) {
-            @Override
-            protected int sizeOf(Integer key, SVG svg) {
-                String str = svg.toString();
-                return str.length();
-            }
-        };
+        sCache = new IntegerSVGLruCache(cacheSize);
     }
 
-    public static void asyncCache(final Context context, final int... svgResources){
-        new Thread(new Runnable(){
-            @Override
-            public void run() {
-                try {
-                    for(int resource : svgResources) {
-                        SVG item = SVG.getFromResource(context, resource);
-                        addSvgToCache(resource, item);
-                    }
-                } catch (SVGParseException e) {
-                    e.printStackTrace();
+    /**
+     * Starts a new thread for retrieving and caching given svg resources.
+     * @param context the context
+     * @param svgResources the resource id's of the svg's to cache.
+     */
+    public static void asyncCache(final Context context, final int... svgResources) {
+        AsyncCacheRunnable runnable = new AsyncCacheRunnable(context, svgResources);
+        new Thread(runnable).start();
+    }
+
+    private static class IntegerSVGLruCache extends LruCache<Integer, SVG> {
+
+        IntegerSVGLruCache(final int cacheSize) {
+            super(cacheSize);
+        }
+
+        @Override
+        protected int sizeOf(final Integer key, final SVG value) {
+            return value.toString().length();
+        }
+    }
+
+    private static class AsyncCacheRunnable implements Runnable {
+
+        private final Context mContext;
+        private final int[] mSvgResources;
+
+        AsyncCacheRunnable(final Context context, final int... svgResources) {
+            mContext = context;
+            mSvgResources = svgResources;
+        }
+
+        @Override
+        public void run() {
+            try {
+                for (int resource : mSvgResources) {
+                    SVG item = SVG.getFromResource(mContext, resource);
+                    addSvgToCache(resource, item);
                 }
+            } catch (SVGParseException e) {
+                Logger.log(e);
             }
-        }).start();
+        }
     }
-
 }
