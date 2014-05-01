@@ -1,8 +1,6 @@
 apply plugin: 'android-library'
-apply plugin: 'build-version'
 
 apply from: 'generateJavadoc.gradle'
-apply from: 'buildVersion.gradle'
 apply from: 'maven_push.gradle'
 
 buildscript {
@@ -61,6 +59,6 @@ android {
     defaultConfig {
         minSdkVersion 8
         targetSdkVersion 19
-        versionName buildVersion.version
+        versionName VERSION_NAME
     }
 }

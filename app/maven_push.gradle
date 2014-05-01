@@ -2,13 +2,13 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 def sonatypeRepositoryUrl
-if (buildVersion.isRelease) {
-    println 'RELEASE BUILD'
+if (isRelease == 'true') {
+    println 'RELEASE BUILD ' + version
     sonatypeRepositoryUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
 } else {
-    println 'DEBUG BUILD'
+    version = VERSION_NAME + '-SNAPSHOT'
+    println 'DEBUG BUILD ' + version
     sonatypeRepositoryUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
-	version = buildVersion.version + '-SNAPSHOT'
 }
 
 group = 'com.label305.stan'
@@ -45,13 +45,24 @@ afterEvaluate { project ->
                         }
                     }
 
+                    developers {
+                        developer {
+                            id POM_DEVELOPER_ID1
+                            name POM_DEVELOPER_NAME1
+                        }
+
+                        developer {
+                            id POM_DEVELOPER_ID2
+                            name POM_DEVELOPER_NAME2
+                        }
+                    }
                 }
             }
         }
     }
 
     signing {
-        required { buildVersion.isRelease && gradle.taskGraph.hasTask("uploadArchives") }
+        required { isRelease == 'true' && gradle.taskGraph.hasTask("uploadArchives") }
         sign configurations.archives
     }
 

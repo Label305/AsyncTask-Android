@@ -1,6 +1,0 @@
-buildVersion {
-    releaseTagPattern = "(\\d+\\.\\d+\\.\\d)"
-    matchGroup = "\$1"
-    versionSplitter = "."
-    snapShotQuantifier = ""
-}
