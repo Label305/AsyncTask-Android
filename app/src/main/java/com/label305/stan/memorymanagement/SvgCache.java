@@ -18,9 +18,12 @@
 
 package com.label305.stan.memorymanagement;
 
+import android.content.Context;
 import android.support.v4.util.LruCache;
 
 import com.caverock.androidsvg.SVG;
+import com.caverock.androidsvg.SVGParseException;
+import com.label305.stan.R;
 
 /**
  * Created by Label305 on 02/04/2014.
@@ -58,4 +61,21 @@ public class SvgCache {
             }
         };
     }
+
+    public static void asyncCache(final Context context, final int... svgResources){
+        new Thread(new Runnable(){
+            @Override
+            public void run() {
+                try {
+                    for(int resource : svgResources) {
+                        SVG item = SVG.getFromResource(context, resource);
+                        addSvgToCache(resource, item);
+                    }
+                } catch (SVGParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
 }
