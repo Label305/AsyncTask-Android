@@ -5,7 +5,7 @@
         android:id="@+id/view_expandabletitle_banner"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:padding="@dimen/spacing_micro">
+        android:padding="4dp">
 
         <ImageView
             android:id="@+id/view_expandabletitle_iconiv"
@@ -13,7 +13,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:padding="@dimen/spacing_micro" />
+            android:padding="4dp" />
 
         <ImageView
             android:id="@+id/view_expandabletitle_morebutton"
@@ -23,7 +23,7 @@
             android:layout_centerVertical="true"
             android:background="@null"
             android:clickable="false"
-            android:padding="@dimen/spacing_micro" />
+            android:padding="4dp" />
 
         <ProgressBar
             android:id="@+id/view_expandabletitle_progressbar"
@@ -31,7 +31,7 @@
             android:layout_height="20dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="@dimen/spacing_micro"
+            android:layout_marginRight="4dp"
             android:visibility="gone" />
 
         <com.label305.stan.ui.widget.CustomFontTextView
@@ -42,7 +42,7 @@
             android:layout_toLeftOf="@id/view_expandabletitle_morebutton"
             android:layout_toRightOf="@id/view_expandabletitle_iconiv"
             android:ellipsize="end"
-            android:padding="@dimen/spacing_micro"
+            android:padding="4dp"
             android:singleLine="true" />
     </RelativeLayout>
 

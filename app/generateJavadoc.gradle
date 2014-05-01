@@ -10,7 +10,7 @@ android.libraryVariants.all { variant ->
             destinationDir file(OUTPUT)
             classpath = files(variant.javaCompile.classpath.files) + files(ext.androidJar)
             options.links("http://docs.oracle.com/javase/7/docs/api/");
-            options.linksOffline("http://d.android.com/reference", ANDROID_HOME + "/docs/reference")
+            options.linksOffline "http://d.android.com/reference", ANDROID_HOME + "/docs/reference"
             options.setMemberLevel(JavadocMemberLevel.PACKAGE)
             exclude '**/BuildConfig.java'
             exclude '**/R.java'

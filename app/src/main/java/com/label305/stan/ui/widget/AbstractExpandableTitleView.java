@@ -78,17 +78,17 @@ public abstract class AbstractExpandableTitleView extends LinearLayout {
             TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.AbstractExpandableTitleView);
             if (a != null) {
                 try {
-                mBackgroundColor = a.getColor(R.styleable.AbstractExpandableTitleView_etv_background, R.color.transparent);
+                    mBackgroundColor = a.getColor(R.styleable.AbstractExpandableTitleView_etv_background, android.R.color.transparent);
                 } catch (Resources.NotFoundException e) {
-                mBackgroundDrawableResId = a.getResourceId(R.styleable.AbstractExpandableTitleView_etv_background, 0);
+                    mBackgroundDrawableResId = a.getResourceId(R.styleable.AbstractExpandableTitleView_etv_background, 0);
                 }
 
                 mHeaderHeight = (int) a.getDimension(R.styleable.AbstractExpandableTitleView_headerHeight, PixelUtils.dpToPx(getContext(), HEADERHEIGHTDP));
-            mIconResId = a.getResourceId(R.styleable.AbstractExpandableTitleView_etv_icon, 0);
+                mIconResId = a.getResourceId(R.styleable.AbstractExpandableTitleView_etv_icon, 0);
                 mText = a.getString(R.styleable.AbstractExpandableTitleView_titleText);
-                mTextColor = a.getColor(R.styleable.AbstractExpandableTitleView_titleTextColor, R.color.black);
+                mTextColor = a.getColor(R.styleable.AbstractExpandableTitleView_titleTextColor, android.R.color.black);
                 mTextFont = a.getString(R.styleable.AbstractExpandableTitleView_titleTextFont);
-                mTextSize = a.getDimensionPixelSize(R.styleable.AbstractExpandableTitleView_titleTextSize, getContext().getResources().getDimensionPixelSize(R.dimen.textsize_medium));
+                mTextSize = a.getDimensionPixelSize(R.styleable.AbstractExpandableTitleView_titleTextSize, getContext().getResources().getDimensionPixelSize(R.dimen.textsize_etv_default));
                 mTextGravity = a.getInt(R.styleable.AbstractExpandableTitleView_titleGravity, Gravity.LEFT);
                 mArrowResId = a.getResourceId(R.styleable.AbstractExpandableTitleView_arrow, 0);
                 mContentVisible = a.getBoolean(R.styleable.AbstractExpandableTitleView_contentVisible, true);
@@ -170,7 +170,7 @@ public abstract class AbstractExpandableTitleView extends LinearLayout {
      * until setDataAvailable(true);
      */
     public void setDataAvailable(final boolean dataAvailable) {
-        this.mDataAvailable = dataAvailable;
+        mDataAvailable = dataAvailable;
 
         if (dataAvailable) {
             mProgressBar.setVisibility(View.GONE);
