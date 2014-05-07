@@ -74,7 +74,7 @@ public class SvgImageView extends ImageView {
         mInvertSvg = a.getBoolean(R.styleable.SvgImageView_invertSvg, false);
         mIsPressable = a.getBoolean(R.styleable.SvgImageView_isPressable, false);
         mSvgColor = a.getColor(R.styleable.SvgImageView_svgColor, Color.BLACK);
-
+        mCustomColorSet = a.hasValue(R.styleable.SvgImageView_svgColor);
         if (mIsPressable) {
             mPressedSvgColor = a.getColor(R.styleable.SvgImageView_pressedSvgColor, Color.WHITE);
         }
