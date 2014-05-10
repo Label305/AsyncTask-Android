@@ -1,11 +1,16 @@
 apply plugin: 'android-library'
 
+apply from: 'generateJavadoc.gradle'
+apply from: 'maven_push.gradle'
+
 buildscript {
     repositories {
         mavenCentral()
+        maven { url 'https://geonet.artifactoryonline.com/geonet/public-releases' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:0.9.+'
+        classpath group: 'nz.org.geonet', name: 'gradle-build-version-plugin', version: '1.0.1'
     }
 }
 
@@ -24,7 +29,6 @@ dependencies {
 
     compile files('libs/volley.jar')
     compile files('libs/libGoogleAnalyticsServices.jar')
-
 
     /* Test dependencies */
     androidTestCompile('org.mockito:mockito-core:1.9.5') { exclude group: 'org.hamcrest' }
@@ -52,5 +56,9 @@ android {
         lintConfig file("../lint.xml")
     }
 
+    defaultConfig {
+        minSdkVersion 8
+        targetSdkVersion 19
+        versionName VERSION_NAME
+    }
 }
-

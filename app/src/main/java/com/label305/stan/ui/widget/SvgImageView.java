@@ -18,6 +18,7 @@
 
 package com.label305.stan.ui.widget;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -26,6 +27,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.PictureDrawable;
 import android.graphics.drawable.StateListDrawable;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
@@ -72,7 +74,7 @@ public class SvgImageView extends ImageView {
         mInvertSvg = a.getBoolean(R.styleable.SvgImageView_invertSvg, false);
         mIsPressable = a.getBoolean(R.styleable.SvgImageView_isPressable, false);
         mSvgColor = a.getColor(R.styleable.SvgImageView_svgColor, Color.BLACK);
-
+        mCustomColorSet = a.hasValue(R.styleable.SvgImageView_svgColor);
         if (mIsPressable) {
             mPressedSvgColor = a.getColor(R.styleable.SvgImageView_pressedSvgColor, Color.WHITE);
         }
@@ -152,10 +154,16 @@ public class SvgImageView extends ImageView {
         showSvgImage();
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    private void setSoftwareLayerType() {
+        setLayerType(LAYER_TYPE_SOFTWARE, null);
+    }
+
     private void showSvgImage() {
         if (mSvgResourceId == 0) {
             setImageResource(0);
         } else {
+            setSoftwareLayerType();
             if (mIsPressable) {
                 showPressableSvgImage();
             } else {
