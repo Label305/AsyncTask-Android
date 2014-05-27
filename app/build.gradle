@@ -26,6 +26,7 @@ dependencies {
     compile 'com.j256.ormlite:ormlite-core:4.48'
     compile 'com.crashlytics.android:crashlytics:1.+'
     compile 'com.caverock:androidsvg:1.2.1'
+    compile 'com.intellij:annotations:+@jar'
 
     compile files('libs/volley.jar')
     compile files('libs/libGoogleAnalyticsServices.jar')
