@@ -6,6 +6,8 @@ import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 
+import org.jetbrains.annotations.NonNls;
+
 /**
  * A logger class which only logs when the app is in debug mode.
  * If the app is not in debug mode, logs to Crashlytics if possible.
@@ -17,9 +19,6 @@ public class Logger {
     private static final String NO_MESSAGE = "No message";
 
     private static final String TAG = "StanLogger";
-
-    private enum Debug {DEBUG, RELEASE, UNKNOWN}
-
     private static Debug sDebug = Debug.UNKNOWN;
 
     private Logger() {
@@ -37,7 +36,7 @@ public class Logger {
     /**
      * Logs the String representation of an Object to the logcat if in debug mode, otherwise to Crashlytics if possible.
      */
-    public static void log(final Object msg) {
+    public static void log(@NonNls final Object msg) {
         String message;
 
         if (msg == null) {
@@ -57,7 +56,7 @@ public class Logger {
      * If in debug mode, logs the String representation of an Object to the logcat, and tries to show a Toast message.
      * Otherwise logs to Crashlytics if possible.
      */
-    public static void log(final Context context, final Object msg) {
+    public static void log(final Context context, @NonNls final Object msg) {
         String message;
 
         if (msg == null) {
@@ -66,8 +65,6 @@ public class Logger {
             message = msg.toString();
         }
 
-        // (Not available in API 8)
-        //noinspection SizeReplaceableByIsEmpty
         if (msg.toString().trim().length() == 0) {
             message = NO_MESSAGE;
         }
@@ -94,7 +91,7 @@ public class Logger {
         }
     }
 
-    private static void toast(final Context context, final CharSequence message) {
+    private static void toast(final Context context, @NonNls final CharSequence message) {
         if (isDebug()) {
             if (context != null) {
                 //noinspection OverlyBroadCatchBlock
@@ -126,4 +123,6 @@ public class Logger {
         }
         return result;
     }
+
+    private enum Debug {DEBUG, RELEASE, UNKNOWN}
 }
