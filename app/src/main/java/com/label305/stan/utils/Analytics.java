@@ -20,10 +20,9 @@ package com.label305.stan.utils;
 
 import android.content.Context;
 
-import com.google.analytics.tracking.android.Fields;
-import com.google.analytics.tracking.android.GoogleAnalytics;
-import com.google.analytics.tracking.android.MapBuilder;
-import com.google.analytics.tracking.android.Tracker;
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.label305.stan.R;
 
 @SuppressWarnings({"UnusedDeclaration", "StaticMethodOnlyUsedInOneClass"})
@@ -44,6 +43,9 @@ public class Analytics {
     private static final String START = "start";
     private static final char COMMA = ',';
 
+    private static boolean mIsDebug;
+    private static Tracker mTracker;
+
     private Analytics() {
     }
 
@@ -53,7 +55,7 @@ public class Analytics {
      * Initialize the Analytics Tracker. Resolves the key based on isDebug.
      */
     public static void init(final Context context, final boolean isDebug) {
-        GoogleAnalytics.getInstance(context).getTracker(getAnalyticsKey(context, isDebug));
+        mIsDebug = isDebug;
         Logger.setIsDebug(isDebug);
     }
 
@@ -61,37 +63,46 @@ public class Analytics {
      * Set the app version to send to Google Analytics.
      */
     public static void setAppVersion(final Context context, final String appVersion) {
-        getDefaultTracker(context).set(Fields.APP_VERSION, appVersion);
+        getDefaultTracker(context).setAppVersion(appVersion);
     }
 
     /**
      * Manually start the session.
+     * @deprecated does nothing anymore since analytics v4 is supported
      */
+    @Deprecated
     public static void startSession(final Context context) {
-        getDefaultTracker(context).set(Fields.SESSION_CONTROL, START);
     }
 
     /**
      * Send a screen to Google Analytics. Also logs to Crashlytics if applicable.
+     *
      * @param screenName the screen to send.
      */
     public static void sendScreen(final Context context, final String screenName) {
         Tracker tracker = getDefaultTracker(context);
-        tracker.set(Fields.SCREEN_NAME, screenName);
-        tracker.send(MapBuilder.createAppView().build());
 
+        tracker.setScreenName(screenName);
+        tracker.send(new HitBuilders.AppViewBuilder().build());
         Logger.log(ANALYTICS + screenName);
     }
 
     /**
      * Send an event to Google Analytics. Also logs to Crashlytics if applicable.
+     *
      * @param category the event category.
-     * @param action the event action.
-     * @param label (optional) the event label.
-     * @param value (optional) the event value.
+     * @param action   the event action.
+     * @param label    (optional) the event label.
+     * @param value    (optional) the event value.
      */
     public static void sendEvent(final Context context, final String category, final String action, final String label, final Long value) {
-        getDefaultTracker(context).send(MapBuilder.createEvent(category, action, label, value).build());
+//        getDefaultTracker(context).send(MapBuilder.createEvent(category, action, label, value).build());
+
+        getDefaultTracker(context).send(new HitBuilders.EventBuilder()
+                .setCategory(category)
+                .setAction(action)
+                .setLabel(label)
+                .build());
 
         Logger.log(ANALYTICS + "Event( " + category + COMMA + action + COMMA + label + COMMA + value + COMMA); //NON-NLS
     }
@@ -112,10 +123,13 @@ public class Analytics {
     }
 
     private static Tracker getDefaultTracker(final Context context) {
-        Tracker tracker = GoogleAnalytics.getInstance(context).getDefaultTracker();
-        if (tracker == null) {
-            throw new IllegalArgumentException("Call Analytics.init(Context, boolean) before using this class!");
+        if(mTracker == null) {
+            mTracker = GoogleAnalytics.getInstance(context).newTracker(getAnalyticsKey(context, mIsDebug));
+            mTracker.setSampleRate(1.0f);
+            if (mTracker == null) {
+                throw new IllegalArgumentException("Call Analytics.init(Context, boolean) before using this class!");
+            }
         }
-        return tracker;
+        return mTracker;
     }
 }
