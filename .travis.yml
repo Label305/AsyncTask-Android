@@ -1,4 +1,4 @@
-language: java
+language: android
 jdk: oraclejdk7
 
 env:
@@ -17,32 +17,31 @@ env:
   - secure: j2DqijRCMuV5W3C25oiVEdgZvdN64Zvl13O+4B166E3dFGCQXTKNRgg0e9wineb7tPJekv0/QyZ58qpMaL4ep6epEulL9Ygg1YZn9OrL/DHR9ofce8VpQmhmISZ9HYb74/cckw9qvDxC8Q/g00DoTlV/A0elJxIpOA7DjxN9jCc=
 
 before_install:
-- sudo chmod +x gradlew
-- sudo apt-get update -qq
-- sudo apt-get install -qq libstdc++6:i386 lib32z1 expect
-- export COMPONENTS=extra-android-m2repository,build-tools-19.0.3,android-19,doc-19,$ANDROID_SDKS
-- curl -3L https://raw.github.com/embarkmobile/android-sdk-installer/version-2/android-sdk-installer | bash /dev/stdin --install=$COMPONENTS
-- source ~/.android-sdk-installer/env
+  - curl -3L -o wait_for_emulator https://github.com/embarkmobile/android-sdk-installer/raw/version-2/wait_for_emulator
+  - sudo chmod +x wait_for_emulator
 
-- echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
-- emulator -avd test -no-skin -no-audio -no-window &
+  # Start the emulator
+  - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
+  - emulator -avd test -no-skin -no-audio -no-window &
 
 before_script:
-- wait_for_emulator
+  # Force download
+  - gradle
+  - ./wait_for_emulator
 
 install:
 - true
 
 script:
-- ./gradlew connectedCheck
-- if [[ $LINT == 'true' ]]; then ./gradlew lint ; fi
+- gradle connectedCheck
+- if [[ $LINT == 'true' ]]; then gradle ; fi
 
 after_success:
 - if [[ $JAVADOC == 'true' ]]; then sudo apt-get install -qq ncftp ; fi
-- if [[ $JAVADOC == 'true' ]]; then ./gradlew generateDebugJavadoc -PANDROID_HOME=$ANDROID_HOME -PTITLE="Stan for Android ($TRAVIS_BRANCH - $TRAVIS_BUILD-NUMBER)" -POUTPUT="$HOME/docs" ; fi
+- if [[ $JAVADOC == 'true' ]]; then gradle generateDebugJavadoc -PANDROID_HOME=$ANDROID_HOME -PTITLE="Stan for Android ($TRAVIS_BRANCH - $TRAVIS_BUILD-NUMBER)" -POUTPUT="$HOME/docs" ; fi
 - if [[ $JAVADOC == 'true' ]]; then ncftpput -R -m -u $FTP_USER -p $FTP_PASSWORD host3.label305.com /stan-for-android/$TRAVIS_BRANCH $HOME/docs/* ; fi
 
-- if [[ $MAVEN == 'true' && $TRAVIS_BRANCH == 'dev']]; then ./gradlew uploadArchives -PnexusUsername=${NEXUSUSERNAME} -PnexusPassword=${NEXUSPASSWORD} ; fi
+- if [[ $MAVEN == 'true' && $TRAVIS_BRANCH == 'dev' ]]; then gradle uploadArchives -PnexusUsername=${NEXUSUSERNAME} -PnexusPassword=${NEXUSPASSWORD} ; fi
 
 notifications: 
   email: false
