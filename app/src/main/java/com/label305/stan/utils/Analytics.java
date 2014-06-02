@@ -43,14 +43,19 @@ public class Analytics {
     private static final String START = "start";
     private static final char COMMA = ',';
 
-    private static boolean mIsDebug;
-    private static Tracker mTracker;
+    private static boolean sIsDebug;
+    private static Tracker sTracker;
 
     private Analytics() {
     }
 
+    @SuppressWarnings("BooleanParameter")
+    /* Suppress the boolean parameter warning to allow easy calling with BuildConfig.DEBUG. */
+    /**
+     * Initialize the Analytics Tracker. Resolves the key based on isDebug.
+     */
     public static void init(final Context context, final boolean isDebug) {
-        mIsDebug = isDebug;
+        sIsDebug = isDebug;
         Logger.setIsDebug(isDebug);
         getDefaultTracker(context);
     }
@@ -59,7 +64,7 @@ public class Analytics {
      * Set the app version to send to Google Analytics.
      */
     public static void setAppVersion(final String appVersion) {
-        mTracker.setAppVersion(appVersion);
+        sTracker.setAppVersion(appVersion);
     }
 
     /**
@@ -78,8 +83,8 @@ public class Analytics {
      */
     public static void sendScreen(final String screenName) {
 
-        mTracker.setScreenName(screenName);
-        mTracker.send(new HitBuilders.AppViewBuilder().build());
+        sTracker.setScreenName(screenName);
+        sTracker.send(new HitBuilders.AppViewBuilder().build());
         Logger.log(ANALYTICS + screenName);
     }
 
@@ -93,7 +98,7 @@ public class Analytics {
      */
     public static void sendEvent(final String category, final String action, final String label, final Long value) {
 
-        mTracker.send(new HitBuilders.EventBuilder()
+        sTracker.send(new HitBuilders.EventBuilder()
                 .setCategory(category)
                 .setAction(action)
                 .setLabel(label)
@@ -104,7 +109,7 @@ public class Analytics {
 
 
     private static String getAnalyticsKey(final Context context, final boolean isDebug) {
-        if (context.getString(R.string.key_analytics).length() == 0) {
+        if (context.getString(R.string.key_analytics).isEmpty()) {
             throw new IllegalArgumentException("Add a string value for key_analytics!");
         }
 
@@ -118,12 +123,14 @@ public class Analytics {
     }
 
     private static Tracker getDefaultTracker(final Context context) {
-        if (mTracker == null) {
-            mTracker = GoogleAnalytics.getInstance(context).newTracker(getAnalyticsKey(context, mIsDebug));
-            if (mTracker == null) {
-                throw new IllegalArgumentException("Cannot create new Tracker!");
+        synchronized (Analytics.class) {
+            if (sTracker == null) {
+                sTracker = GoogleAnalytics.getInstance(context).newTracker(getAnalyticsKey(context, sIsDebug));
+                if (sTracker == null) {
+                    throw new IllegalArgumentException("Cannot create new Tracker!");
+                }
             }
+            return sTracker;
         }
-        return mTracker;
     }
 }
