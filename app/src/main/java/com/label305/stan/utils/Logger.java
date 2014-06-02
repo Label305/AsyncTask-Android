@@ -4,8 +4,6 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.crashlytics.android.Crashlytics;
-
 /**
  * A logger class which only logs when the app is in debug mode.
  * If the app is not in debug mode, logs to Crashlytics if possible.
@@ -49,7 +47,9 @@ public class Logger {
         if (isDebug()) {
             Log.v(TAG, message);
         } else {
-            Crashlytics.log(message);
+            if(Dependency.isPresent("com.crashlytics.android.Crashlytics")) {
+                com.crashlytics.android.Crashlytics.log(message);
+            }
         }
     }
 
