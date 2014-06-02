@@ -21,8 +21,6 @@ repositories {
 
 dependencies {
 
-    compile 'com.google.android.gms:play-services:4.4.52'
-
     compile 'com.android.support:support-v4:19.1.+'
     compile 'com.nineoldandroids:library:2.4.0'
     compile 'com.j256.ormlite:ormlite-android:4.48'
@@ -31,10 +29,6 @@ dependencies {
     compile 'com.caverock:androidsvg:1.2.1'
 
     compile 'com.mcxiaoke.volley:library:1.0.+'
-//    compile files('libs/libGoogleAnalyticsServices.jar')
-//    compile 'com.google.apis:google-api-services-analytics:v3-rev94-1.18.0-rc'
-
-
 
     /* Test dependencies */
     androidTestCompile('org.mockito:mockito-core:1.9.5') { exclude group: 'org.hamcrest' }

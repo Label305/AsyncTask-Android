@@ -2,17 +2,7 @@
     package="com.label305.stan"
     android:versionCode="1">
 
-    <application android:allowBackup="true" >
-
-        <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
-
-        <meta-data
-            android:name="com.google.android.gms.analytics.globalConfigResource"
-            android:resource="@xml/global_tracker" />
-
-    </application>
+    <application android:allowBackup="true" />
 
 
 </manifest>
