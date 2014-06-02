@@ -49,29 +49,26 @@ public class Analytics {
     private Analytics() {
     }
 
-    @SuppressWarnings("BooleanParameter")
-    /* Suppress the boolean parameter warning to allow easy calling with BuildConfig.DEBUG. */
-    /**
-     * Initialize the Analytics Tracker. Resolves the key based on isDebug.
-     */
     public static void init(final Context context, final boolean isDebug) {
         mIsDebug = isDebug;
         Logger.setIsDebug(isDebug);
+        getDefaultTracker(context);
     }
 
     /**
      * Set the app version to send to Google Analytics.
      */
-    public static void setAppVersion(final Context context, final String appVersion) {
-        getDefaultTracker(context).setAppVersion(appVersion);
+    public static void setAppVersion(final String appVersion) {
+        mTracker.setAppVersion(appVersion);
     }
 
     /**
      * Manually start the session.
+     *
      * @deprecated does nothing anymore since analytics v4 is supported
      */
     @Deprecated
-    public static void startSession(final Context context) {
+    public static void startSession() {
     }
 
     /**
@@ -79,11 +76,10 @@ public class Analytics {
      *
      * @param screenName the screen to send.
      */
-    public static void sendScreen(final Context context, final String screenName) {
-        Tracker tracker = getDefaultTracker(context);
+    public static void sendScreen(final String screenName) {
 
-        tracker.setScreenName(screenName);
-        tracker.send(new HitBuilders.AppViewBuilder().build());
+        mTracker.setScreenName(screenName);
+        mTracker.send(new HitBuilders.AppViewBuilder().build());
         Logger.log(ANALYTICS + screenName);
     }
 
@@ -95,10 +91,9 @@ public class Analytics {
      * @param label    (optional) the event label.
      * @param value    (optional) the event value.
      */
-    public static void sendEvent(final Context context, final String category, final String action, final String label, final Long value) {
-//        getDefaultTracker(context).send(MapBuilder.createEvent(category, action, label, value).build());
+    public static void sendEvent(final String category, final String action, final String label, final Long value) {
 
-        getDefaultTracker(context).send(new HitBuilders.EventBuilder()
+        mTracker.send(new HitBuilders.EventBuilder()
                 .setCategory(category)
                 .setAction(action)
                 .setLabel(label)
@@ -123,11 +118,10 @@ public class Analytics {
     }
 
     private static Tracker getDefaultTracker(final Context context) {
-        if(mTracker == null) {
+        if (mTracker == null) {
             mTracker = GoogleAnalytics.getInstance(context).newTracker(getAnalyticsKey(context, mIsDebug));
-            mTracker.setSampleRate(1.0f);
             if (mTracker == null) {
-                throw new IllegalArgumentException("Call Analytics.init(Context, boolean) before using this class!");
+                throw new IllegalArgumentException("Cannot create new Tracker!");
             }
         }
         return mTracker;
