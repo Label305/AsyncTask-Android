@@ -72,12 +72,10 @@ public class SvgImageView extends ImageView {
     private void init(final AttributeSet attrs) {
         TypedArray a = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.SvgImageView, 0, 0);
         mInvertSvg = a.getBoolean(R.styleable.SvgImageView_invertSvg, false);
-        mIsPressable = a.getBoolean(R.styleable.SvgImageView_isPressable, false);
         mSvgColor = a.getColor(R.styleable.SvgImageView_svgColor, Color.BLACK);
         mCustomColorSet = a.hasValue(R.styleable.SvgImageView_svgColor);
-        if (mIsPressable) {
-            mPressedSvgColor = a.getColor(R.styleable.SvgImageView_pressedSvgColor, Color.WHITE);
-        }
+        mPressedSvgColor = a.getColor(R.styleable.SvgImageView_pressedSvgColor, Color.WHITE);
+        mIsPressable = a.hasValue(R.styleable.SvgImageView_pressedSvgColor);
         mSvgResourceId = a.getResourceId(R.styleable.SvgImageView_svg, 0);
 
         showSvgImage();

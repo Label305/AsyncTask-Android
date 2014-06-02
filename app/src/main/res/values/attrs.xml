@@ -72,7 +72,6 @@
         <attr name="invertSvg" format="boolean" />
         <attr name="svgColor" format="color" />
         <attr name="pressedSvgColor" format="color" />
-        <attr name="isPressable" format="boolean"/>
     </declare-styleable>
 
 </resources>
