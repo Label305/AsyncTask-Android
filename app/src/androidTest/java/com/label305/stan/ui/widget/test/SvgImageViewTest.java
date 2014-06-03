@@ -26,8 +26,16 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.PictureDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.test.AndroidTestCase;
+import android.util.AttributeSet;
+import android.util.Xml;
+import android.widget.LinearLayout;
 
+import com.label305.stan.R;
 import com.label305.stan.ui.widget.SvgImageView;
+
+import org.xmlpull.v1.XmlPullParser;
+
+import java.util.jar.Attributes;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -44,13 +52,20 @@ public class SvgImageViewTest extends AndroidTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        mSvgImageView = new SvgImageView(getContext());
-        mSvgImageView.setSvgResource(com.label305.stan.test.R.raw.ic_svg_test_square_red);
+//        mSvgImageView = new SvgImageView(getContext());
+//        mSvgImageView.setSvgResource(com.label305.stan.test.R.raw.ic_svg_test_square_red);
+//        mSvgImageView.setLayoutParams(new LinearLayout.LayoutParams(2,2));
+//        mSvgImageView.invalidate();
+        XmlPullParser xmlPullParser = getContext().getResources().getXml(R.layout.svg_simple_layout);
+        AttributeSet attributes = Xml.asAttributeSet(xmlPullParser);
+        System.out.println("attributes: " + attributes.toString());
+        mSvgImageView = new SvgImageView(getContext(), attributes);
+        mSvgImageView.buildDrawingCache();
     }
 
     //Convert PictureDrawable to Bitmap
     private Bitmap pictureDrawable2Bitmap(PictureDrawable pictureDrawable) {
-        Bitmap bitmap = Bitmap.createBitmap(pictureDrawable.getIntrinsicWidth(), pictureDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Bitmap bitmap = Bitmap.createBitmap(mSvgImageView.getWidth(), mSvgImageView.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         canvas.drawPicture(pictureDrawable.getPicture());
         return bitmap;
@@ -79,6 +94,7 @@ public class SvgImageViewTest extends AndroidTestCase {
     public void testBlueSVGImageView() {
 
         mSvgImageView.setSvgColor(Color.BLUE);
+        mSvgImageView.invalidate();
 
         Bitmap bmp = getBitmapFromImageView();
 
