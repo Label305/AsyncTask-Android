@@ -22,7 +22,12 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.LightingColorFilter;
+import android.graphics.Paint;
+import android.graphics.Picture;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.PictureDrawable;
@@ -38,6 +43,10 @@ import com.label305.stan.memorymanagement.BitmapCache;
 import com.label305.stan.memorymanagement.SvgCache;
 import com.label305.stan.utils.ImageUtils;
 import com.label305.stan.utils.Logger;
+
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.IntBuffer;
 
 /**
  * Created by Label305 on 02/04/2014.
@@ -78,7 +87,6 @@ public class SvgImageView extends ImageView {
         mIsPressable = a.hasValue(R.styleable.SvgImageView_pressedSvgColor);
         mSvgResourceId = a.getResourceId(R.styleable.SvgImageView_svg, 0);
 
-        showSvgImage();
         a.recycle();
     }
 
@@ -87,7 +95,7 @@ public class SvgImageView extends ImageView {
      */
     public void doInvertSvg() {
         mInvertSvg = true;
-        showSvgImage();
+//        showSvgImage();
     }
 
     /**
@@ -95,7 +103,7 @@ public class SvgImageView extends ImageView {
      */
     public void doNotInvertSvg() {
         mInvertSvg = false;
-        showSvgImage();
+//        showSvgImage();
     }
 
     /**
@@ -104,7 +112,7 @@ public class SvgImageView extends ImageView {
     public void setSvgColor(final int svgColor) {
         mSvgColor = svgColor;
         mCustomColorSet = true;
-        showSvgImage();
+//        showSvgImage();
     }
 
     /**
@@ -112,7 +120,7 @@ public class SvgImageView extends ImageView {
      */
     public void useDefaultColor() {
         mCustomColorSet = false;
-        showSvgImage();
+//        showSvgImage();
     }
 
     /**
@@ -124,7 +132,7 @@ public class SvgImageView extends ImageView {
         if (mPressedSvgColor == mSvgColor) {
             setIsNotPressable();
         }
-        showSvgImage();
+//        showSvgImage();
     }
 
     /**
@@ -132,7 +140,7 @@ public class SvgImageView extends ImageView {
      */
     public void setIsPressable() {
         mIsPressable = true;
-        showSvgImage();
+//        showSvgImage();
     }
 
     /**
@@ -140,16 +148,17 @@ public class SvgImageView extends ImageView {
      */
     public void setIsNotPressable() {
         mIsPressable = false;
-        showSvgImage();
+//        showSvgImage();
     }
 
     /**
      * Sets the resource of the Svg to use.
+     *
      * @param resourceId the resource of the Svg, of the form R.raw.my_svg.
      */
     public void setSvgResource(final int resourceId) {
         mSvgResourceId = resourceId;
-        showSvgImage();
+//        showSvgImage();
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -157,16 +166,16 @@ public class SvgImageView extends ImageView {
         setLayerType(LAYER_TYPE_SOFTWARE, null);
     }
 
-    private void showSvgImage() {
+    private void showSvgImage(final int width, final int height) {
         if (mSvgResourceId == 0) {
             setImageResource(0);
         } else {
             setSoftwareLayerType();
             if (mIsPressable) {
-                showPressableSvgImage();
+                showPressableSvgImage(width, height);
             } else {
                 if (mInvertSvg || mCustomColorSet) {
-                    setImageBitmap(getImageBitmap());
+                    setImageBitmap(getImageBitmap(width, height));
                 } else {
                     SVG svg = getSvgImage(mSvgResourceId);
                     setImageDrawable(new PictureDrawable(svg.renderToPicture()));
@@ -183,31 +192,36 @@ public class SvgImageView extends ImageView {
             } catch (SVGParseException e) {
                 Logger.log(e);
             }
-            SvgCache.addSvgToCache(svgResourceId, svg);
+            SvgCache.asyncCache(getContext(), svgResourceId);
         }
         return svg;
     }
 
-    private void showPressableSvgImage() {
+    private void showPressableSvgImage(final int width, final int height) {
         StateListDrawable states = new StateListDrawable();
-        states.addState(new int[]{android.R.attr.state_pressed}, new BitmapDrawable(getResources(), getPressedImageBitmap()));
-        states.addState(new int[]{}, new BitmapDrawable(getResources(), getImageBitmap()));
+        states.addState(new int[]{android.R.attr.state_pressed}, new BitmapDrawable(getResources(), getPressedImageBitmap(width, height)));
+        states.addState(new int[]{}, new BitmapDrawable(getResources(), getImageBitmap(width, height)));
         setImageDrawable(states);
     }
 
-    private Bitmap getImageBitmap() {
+    private Bitmap getImageBitmap(final int width, final int height) {
         Bitmap image;
 
         image = BitmapCache.getBitmapFromCache(getSvgCacheTag());
 
         if (image == null) {
             SVG svg = getSvgImage(mSvgResourceId);
-            PictureDrawable pictureDrawable = new PictureDrawable(svg.renderToPicture());
+
+            System.out.println("width: " + width + " height: " + height);
+            image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(image);
+            // Render our document onto our canvas
+            svg.renderToCanvas(canvas);
             if (mInvertSvg) {
-                Bitmap invertedBitmap = invertImage(pictureDrawable, mSvgColor);
+                Bitmap invertedBitmap = invertImage(image, mSvgColor);
                 image = convertImageColor(invertedBitmap, mSvgColor);
             } else {
-                image = convertImageColor(pictureDrawable, mSvgColor);
+                image = convertImageColor(image, mSvgColor);
             }
             BitmapCache.addBitmapToCache(getSvgCacheTag(), image);
         }
@@ -215,24 +229,37 @@ public class SvgImageView extends ImageView {
         return image;
     }
 
-    private Bitmap getPressedImageBitmap() {
+    private Bitmap getPressedImageBitmap(final int width, final int height) {
         Bitmap image;
 
         image = BitmapCache.getBitmapFromCache(getPressedSvgCacheTag());
 
         if (image == null) {
             SVG svg = getSvgImage(mSvgResourceId);
-            PictureDrawable pictureDrawable = new PictureDrawable(svg.renderToPicture());
+
+            System.out.println("width: " + width + " height: " + height);
+
+            image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(image);
+            // Render our document onto our canvas
+            svg.renderToCanvas(canvas);
             if (mInvertSvg) {
-                Bitmap invertedBitmap = invertImage(pictureDrawable, mPressedSvgColor);
+                Bitmap invertedBitmap = invertImage(image, mPressedSvgColor);
                 image = convertImageColor(invertedBitmap, mPressedSvgColor);
             } else {
-                image = convertImageColor(pictureDrawable, mPressedSvgColor);
+                image = convertImageColor(image, mPressedSvgColor);
             }
             BitmapCache.addBitmapToCache(getPressedSvgCacheTag(), image);
         }
 
         return image;
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+
+        showSvgImage(right - left, bottom - top);
     }
 
     private String getSvgCacheTag() {
@@ -243,44 +270,29 @@ public class SvgImageView extends ImageView {
         return mSvgResourceId + getWidth() + "," + getHeight() + String.valueOf(mPressedSvgColor) + String.valueOf(mInvertSvg) + String.valueOf(mCustomColorSet);
     }
 
-    private static Bitmap convertImageColor(final Drawable drawable, final int invertColor) {
-        return convertImageColor(ImageUtils.drawableToBmp(drawable), invertColor);
-    }
-
     private static Bitmap convertImageColor(final Bitmap image, final int invertColor) {
-        int length = image.getWidth() * image.getHeight();
-        int[] array = new int[length];
-        image.getPixels(array, 0, image.getWidth(), 0, 0, image.getWidth(), image.getHeight());
-        for (int i = 0; i < length; i++) {
-        /* If the bitmap is in ARGB_8888 format */
-            if (array[i] != Color.TRANSPARENT) {
-                array[i] = invertColor;
+        for (int x = 0; x < image.getWidth(); x++) {
+            for (int y = 0; y < image.getHeight(); y++) {
+                /* If the bitmap is in ARGB_8888 format */
+                if (image.getPixel(x, y) != Color.TRANSPARENT) {
+                    image.setPixel(x, y, invertColor);
+                }
             }
         }
-
-        image.setPixels(array, 0, image.getWidth(), 0, 0, image.getWidth(), image.getHeight());
-
         return image;
     }
 
-    private static Bitmap invertImage(final Drawable drawable, final int invertColor) {
-        return invertImage(ImageUtils.drawableToBmp(drawable), invertColor);
-    }
-
     private static Bitmap invertImage(final Bitmap image, final int invertColor) {
-        int length = image.getWidth() * image.getHeight();
-        int[] array = new int[length];
-        image.getPixels(array, 0, image.getWidth(), 0, 0, image.getWidth(), image.getHeight());
-        for (int i = 0; i < length; i++) {
-        /* If the bitmap is in ARGB_8888 format */
-            if (array[i] == Color.TRANSPARENT) {
-                array[i] = invertColor;
-            } else {
-                array[i] = Color.TRANSPARENT;
+        for (int x = 0; x < image.getWidth(); x++) {
+            for (int y = 0; y < image.getHeight(); y++) {
+                /* If the bitmap is in ARGB_8888 format */
+                if (image.getPixel(x, y) == Color.TRANSPARENT) {
+                    image.setPixel(x, y, invertColor);
+                } else {
+                    image.setPixel(x, y, Color.TRANSPARENT);
+                }
             }
         }
-
-        image.setPixels(array, 0, image.getWidth(), 0, 0, image.getWidth(), image.getHeight());
 
         return image;
     }
