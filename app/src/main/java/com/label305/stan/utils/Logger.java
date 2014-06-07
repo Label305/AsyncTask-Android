@@ -4,8 +4,6 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.crashlytics.android.Crashlytics;
-
 import org.jetbrains.annotations.NonNls;
 
 /**
@@ -48,7 +46,9 @@ public class Logger {
         if (isDebug()) {
             Log.v(TAG, message);
         } else {
-            Crashlytics.log(message);
+            if(Dependency.isPresent("com.crashlytics.android.Crashlytics")) {
+                com.crashlytics.android.Crashlytics.log(message);
+            }
         }
     }
 
