@@ -71,7 +71,7 @@ public class GeofenceRemover implements ConnectionCallbacks, OnConnectionFailedL
             mLocationClient = null;
             mInProgress = false;
         } else {
-            throw new RuntimeException("Could not find Geofencing import, make sure the Google Play services are imported in the build.gradle file");
+            throw new RuntimeException("Could not find Geofencing import, make sure the Google Play services (com.google.android.gms:play-services:4.4.+) are imported in the build.gradle file");
         }
     }
 

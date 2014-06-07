@@ -15,9 +15,11 @@ import com.label305.stan.geofencing.GeofenceUtils.REQUEST_TYPE;
 import com.label305.stan.utils.Dependency;
 import com.label305.stan.utils.Logger;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.MissingResourceException;
 
 /**
  * This is a helper class to work with Geofences. </p> Usage: </br> <li>
@@ -46,7 +48,11 @@ public class GeofenceHelper {
      * @param radius in meters.
      */
     public static Geofence createEnterGeofence(String id, double latitude, double longitude, float radius) {
-        return new Geofence.Builder().setRequestId(id).setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER).setCircularRegion(latitude, longitude, radius).setExpirationDuration(Geofence.NEVER_EXPIRE).build();
+        if (Dependency.isPresent("com.google.android.gms.location.Geofence")) {
+            return new Geofence.Builder().setRequestId(id).setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER).setCircularRegion(latitude, longitude, radius).setExpirationDuration(Geofence.NEVER_EXPIRE).build();
+        } else {
+            throw new RuntimeException("Could not find Geofencing import, make sure the Google Play services (com.google.android.gms:play-services:4.4.+) are imported in the build.gradle file");
+        }
     }
 
     /**
@@ -58,7 +64,11 @@ public class GeofenceHelper {
      * @param radius in meters.
      */
     public static Geofence createExitGeofence(String id, double latitude, double longitude, float radius) {
-        return new Geofence.Builder().setRequestId(id).setTransitionTypes(Geofence.GEOFENCE_TRANSITION_EXIT).setCircularRegion(latitude, longitude, radius).setExpirationDuration(Geofence.NEVER_EXPIRE).build();
+        if (Dependency.isPresent("com.google.android.gms.location.Geofence")) {
+            return new Geofence.Builder().setRequestId(id).setTransitionTypes(Geofence.GEOFENCE_TRANSITION_EXIT).setCircularRegion(latitude, longitude, radius).setExpirationDuration(Geofence.NEVER_EXPIRE).build();
+        } else {
+            throw new RuntimeException("Could not find Geofencing import, make sure the Google Play services (com.google.android.gms:play-services:4.4.+) are imported in the build.gradle file");
+        }
     }
 
     private Activity mActivity;
@@ -84,7 +94,7 @@ public class GeofenceHelper {
      */
     public GeofenceHelper(Activity activity, Class<? extends ReceiveTransitionsIntentService> receiverClass) {
 
-        if(Dependency.isPresent("com.google.android.gms.location.Geofence")) {
+        if (Dependency.isPresent("com.google.android.gms.location.Geofence")) {
             mActivity = activity;
 
             mGeofenceRequester = new GeofenceRequester(activity, receiverClass);
@@ -103,7 +113,7 @@ public class GeofenceHelper {
             mProcessingAddGeofences = new ArrayList<Geofence>();
             mPendingAddGeofences = new ArrayList<Geofence>();
         } else {
-            throw new RuntimeException("Could not find Geofencing import, make sure the Google Play services are imported in the build.gradle file");
+            throw new RuntimeException("Could not find Geofencing import, make sure the Google Play services (com.google.android.gms:play-services:4.4.+) are imported in the build.gradle file");
         }
     }
 
