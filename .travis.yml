@@ -1,9 +1,6 @@
 language: android
 jdk: oraclejdk7
 
-android:
-  components:
-    - extra-google-google_play_services
 env:
   matrix:
   - ANDROID_SDKS=android-17,sysimg-17 ANDROID_TARGET=android-17 ANDROID_ABI=armeabi-v7a LINT=false MAVEN=false JAVADOC=false
