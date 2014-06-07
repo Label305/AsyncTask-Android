@@ -24,12 +24,7 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.LightingColorFilter;
-import android.graphics.Paint;
-import android.graphics.Picture;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.PictureDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.Build;
@@ -41,12 +36,7 @@ import com.caverock.androidsvg.SVGParseException;
 import com.label305.stan.R;
 import com.label305.stan.memorymanagement.BitmapCache;
 import com.label305.stan.memorymanagement.SvgCache;
-import com.label305.stan.utils.ImageUtils;
 import com.label305.stan.utils.Logger;
-
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.IntBuffer;
 
 /**
  * Created by Label305 on 02/04/2014.
@@ -95,7 +85,7 @@ public class SvgImageView extends ImageView {
      */
     public void doInvertSvg() {
         mInvertSvg = true;
-//        showSvgImage();
+        showSvgImage();
     }
 
     /**
@@ -103,7 +93,7 @@ public class SvgImageView extends ImageView {
      */
     public void doNotInvertSvg() {
         mInvertSvg = false;
-//        showSvgImage();
+        showSvgImage();
     }
 
     /**
@@ -112,7 +102,7 @@ public class SvgImageView extends ImageView {
     public void setSvgColor(final int svgColor) {
         mSvgColor = svgColor;
         mCustomColorSet = true;
-//        showSvgImage();
+        showSvgImage();
     }
 
     /**
@@ -120,7 +110,7 @@ public class SvgImageView extends ImageView {
      */
     public void useDefaultColor() {
         mCustomColorSet = false;
-//        showSvgImage();
+        showSvgImage();
     }
 
     /**
@@ -132,7 +122,7 @@ public class SvgImageView extends ImageView {
         if (mPressedSvgColor == mSvgColor) {
             setIsNotPressable();
         }
-//        showSvgImage();
+        showSvgImage();
     }
 
     /**
@@ -140,7 +130,7 @@ public class SvgImageView extends ImageView {
      */
     public void setIsPressable() {
         mIsPressable = true;
-//        showSvgImage();
+        showSvgImage();
     }
 
     /**
@@ -148,7 +138,7 @@ public class SvgImageView extends ImageView {
      */
     public void setIsNotPressable() {
         mIsPressable = false;
-//        showSvgImage();
+        showSvgImage();
     }
 
     /**
@@ -158,12 +148,16 @@ public class SvgImageView extends ImageView {
      */
     public void setSvgResource(final int resourceId) {
         mSvgResourceId = resourceId;
-//        showSvgImage();
+        showSvgImage();
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void setSoftwareLayerType() {
         setLayerType(LAYER_TYPE_SOFTWARE, null);
+    }
+
+    private void showSvgImage() {
+        showSvgImage(getWidth(), getHeight());
     }
 
     private void showSvgImage(final int width, final int height) {
@@ -205,14 +199,12 @@ public class SvgImageView extends ImageView {
     }
 
     private Bitmap getImageBitmap(final int width, final int height) {
-        Bitmap image;
 
-        image = BitmapCache.getBitmapFromCache(getSvgCacheTag());
+        Bitmap image = BitmapCache.getBitmapFromCache(getSvgCacheTag());
 
         if (image == null) {
             SVG svg = getSvgImage(mSvgResourceId);
 
-            System.out.println("width: " + width + " height: " + height);
             image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
             Canvas canvas = new Canvas(image);
             // Render our document onto our canvas
@@ -230,14 +222,11 @@ public class SvgImageView extends ImageView {
     }
 
     private Bitmap getPressedImageBitmap(final int width, final int height) {
-        Bitmap image;
 
-        image = BitmapCache.getBitmapFromCache(getPressedSvgCacheTag());
+        Bitmap image = BitmapCache.getBitmapFromCache(getPressedSvgCacheTag());
 
         if (image == null) {
             SVG svg = getSvgImage(mSvgResourceId);
-
-            System.out.println("width: " + width + " height: " + height);
 
             image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
             Canvas canvas = new Canvas(image);
@@ -256,18 +245,18 @@ public class SvgImageView extends ImageView {
     }
 
     @Override
-    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+    protected void onLayout(final boolean changed, final int left, final int top, final int right, final int bottom) {
         super.onLayout(changed, left, top, right, bottom);
 
         showSvgImage(right - left, bottom - top);
     }
 
     private String getSvgCacheTag() {
-        return mSvgResourceId + getWidth() + "," + getHeight() + String.valueOf(mSvgColor) + String.valueOf(mInvertSvg) + String.valueOf(mCustomColorSet);
+        return mSvgResourceId + getWidth() + "," + getHeight() + String.valueOf(mSvgColor) + mInvertSvg + mCustomColorSet;
     }
 
     private String getPressedSvgCacheTag() {
-        return mSvgResourceId + getWidth() + "," + getHeight() + String.valueOf(mPressedSvgColor) + String.valueOf(mInvertSvg) + String.valueOf(mCustomColorSet);
+        return mSvgResourceId + getWidth() + "," + getHeight() + String.valueOf(mPressedSvgColor) + mInvertSvg + mCustomColorSet;
     }
 
     private static Bitmap convertImageColor(final Bitmap image, final int invertColor) {
