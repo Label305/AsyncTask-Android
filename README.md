@@ -11,8 +11,8 @@ Android library with various extensions to android views and various helpers, us
 * a safe AsyncTask
   * Which has callbacks for exceptions, but does throw RTE
   * Also an ExponentialBackoffAsyncTask is included, which retries failed Tasks several times (can be defined)
-* Http functions
-  * Getter/Poster/Deleter/Putter functions supported
+* ~~Http functions~~ moved to [Kama-for-Android](https://github.com/Label305/Kama-for-Android)
+  * ~~Getter/Poster/Deleter/Putter functions supported~~
 * extensions on the Imageview
   * SimpleNetworkImageView uses Volley to load an image from url
   * SvgImageView is an Imageview which supports svg images
@@ -22,7 +22,7 @@ Android library with various extensions to android views and various helpers, us
   * BitmapCache
   * SvgCache
 * Several utils
-  * Analytics
+  * ~~Analytics~~ moved to [Jeff-for-Android](https://github.com/Label305/Jeff-for-Android)
   * Logger
   * ArrayAdapter
   * PixelUtils
@@ -30,20 +30,13 @@ Android library with various extensions to android views and various helpers, us
 
 ## Usage - Gradle
 
-Add the following lines to the settings.gradle when using Stan as submodule
-```
-include ':stan'
-
-project (':stan').projectDir = new File(settingsDir, '/$PATH_TO_SUBMODULE/stan/app')
-```
-
-Then in app/build.gradle add the following line:
+Add the following lines to the app/build.gradle when using Stan
 ```
 dependencies {
 
     ...
 
-    compile project(':stan')
+    compile 'com.label305.stan:library:0.1.1'
 
     ...
 }
