@@ -51,7 +51,7 @@ public class GeofenceHelper {
         if (Dependency.isPresent("com.google.android.gms.location.Geofence")) {
             return new Geofence.Builder().setRequestId(id).setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER).setCircularRegion(latitude, longitude, radius).setExpirationDuration(Geofence.NEVER_EXPIRE).build();
         } else {
-            throw new RuntimeException("Could not find Geofencing import, make sure the Google Play services (com.google.android.gms:play-services:4.4.+) are imported in the build.gradle file");
+            throw new NoClassDefFoundError("Could not find Geofencing import, make sure the Google Play services (com.google.android.gms:play-services:4.4.+) are imported in the build.gradle file");
         }
     }
 
@@ -67,7 +67,7 @@ public class GeofenceHelper {
         if (Dependency.isPresent("com.google.android.gms.location.Geofence")) {
             return new Geofence.Builder().setRequestId(id).setTransitionTypes(Geofence.GEOFENCE_TRANSITION_EXIT).setCircularRegion(latitude, longitude, radius).setExpirationDuration(Geofence.NEVER_EXPIRE).build();
         } else {
-            throw new RuntimeException("Could not find Geofencing import, make sure the Google Play services (com.google.android.gms:play-services:4.4.+) are imported in the build.gradle file");
+            throw new NoClassDefFoundError("Could not find Geofencing import, make sure the Google Play services (com.google.android.gms:play-services:4.4.+) are imported in the build.gradle file");
         }
     }
 
@@ -113,7 +113,7 @@ public class GeofenceHelper {
             mProcessingAddGeofences = new ArrayList<Geofence>();
             mPendingAddGeofences = new ArrayList<Geofence>();
         } else {
-            throw new RuntimeException("Could not find Geofencing import, make sure the Google Play services (com.google.android.gms:play-services:4.4.+) are imported in the build.gradle file");
+            throw new NoClassDefFoundError("Could not find Geofencing import, make sure the Google Play services (com.google.android.gms:play-services:4.4.+) are imported in the build.gradle file");
         }
     }
 

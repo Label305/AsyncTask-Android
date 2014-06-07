@@ -60,7 +60,7 @@ public class Analytics {
             Logger.setIsDebug(isDebug);
             getDefaultTracker(context);
         } else {
-            throw new RuntimeException("Could not find Analytics import, make sure the Google Play services (com.google.android.gms:play-services:4.4.+) are imported in the build.gradle file");
+            throw new NoClassDefFoundError("Could not find Analytics import, make sure the Google Play services (com.google.android.gms:play-services:4.4.+) are imported in the build.gradle file");
         }
     }
 
