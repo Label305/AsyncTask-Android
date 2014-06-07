@@ -21,16 +21,28 @@ Android library with various extensions to android views and various helpers, us
 * Memory management
   * BitmapCache
   * SvgCache
+* Geofencing *
 * Several utils
-  * ~~Analytics~~ moved to [Jeff-for-Android](https://github.com/Label305/Jeff-for-Android)
+  * Analytics *
   * Logger
+     * Will also log to crashlytics if possible
   * ArrayAdapter
   * PixelUtils
   * StringUtils
+  * GooglePlayServices *
+  * GoogleCloudMessagingUtils
+
+> features marked with * need the Google Play Services as dependency
+
+```
+compile 'com.google.android.gms:play-services:4.4.+'
+```
+
+> this is only necessary when, one or more of, these features are used
 
 ## Usage - Gradle
 
-Add the following lines to the app/build.gradle when using Stan
+Add the following line to the app/build.gradle when using Stan
 ```
 dependencies {
 
