@@ -8,18 +8,15 @@ import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.Geofence;
 import com.label305.stan.geofencing.GeofenceUtils.REQUEST_TYPE;
 import com.label305.stan.utils.Dependency;
 import com.label305.stan.utils.Logger;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
-import java.util.MissingResourceException;
 
 /**
  * This is a helper class to work with Geofences. </p> Usage: </br> <li>
@@ -47,7 +44,7 @@ public class GeofenceHelper {
      *
      * @param radius in meters.
      */
-    public static Geofence createEnterGeofence(String id, double latitude, double longitude, float radius) {
+    public static Geofence createEnterGeofence(final String id, final double latitude, final double longitude, final float radius) {
         if (Dependency.isPresent("com.google.android.gms.location.Geofence")) {
             return new Geofence.Builder().setRequestId(id).setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER).setCircularRegion(latitude, longitude, radius).setExpirationDuration(Geofence.NEVER_EXPIRE).build();
         } else {
@@ -63,7 +60,7 @@ public class GeofenceHelper {
      *
      * @param radius in meters.
      */
-    public static Geofence createExitGeofence(String id, double latitude, double longitude, float radius) {
+    public static Geofence createExitGeofence(final String id, final double latitude, final double longitude, final float radius) {
         if (Dependency.isPresent("com.google.android.gms.location.Geofence")) {
             return new Geofence.Builder().setRequestId(id).setTransitionTypes(Geofence.GEOFENCE_TRANSITION_EXIT).setCircularRegion(latitude, longitude, radius).setExpirationDuration(Geofence.NEVER_EXPIRE).build();
         } else {
@@ -71,28 +68,28 @@ public class GeofenceHelper {
         }
     }
 
-    private Activity mActivity;
+    private final Activity mActivity;
 
     private GeofenceListener mGeofenceListener;
 
-    private GeofenceRequester mGeofenceRequester;
-    private GeofenceRemover mGeofenceRemover;
+    private final GeofenceRequester mGeofenceRequester;
+    private final GeofenceRemover mGeofenceRemover;
 
-    private GeofenceBroadcastReceiver mBroadcastReceiver;
-    private IntentFilter mBroadcastIntentFilter;
+    private final GeofenceBroadcastReceiver mBroadcastReceiver;
+    private final IntentFilter mBroadcastIntentFilter;
 
     private REQUEST_TYPE mRequestType;
 
-    private List<String> mProcessingRemoveGeofenceIds;
-    private List<String> mPendingRemoveGeofenceIds;
-    private List<Geofence> mProcessingAddGeofences;
-    private List<Geofence> mPendingAddGeofences;
+    private final List<String> mProcessingRemoveGeofenceIds;
+    private final List<String> mPendingRemoveGeofenceIds;
+    private final List<Geofence> mProcessingAddGeofences;
+    private final List<Geofence> mPendingAddGeofences;
 
     /**
      * Create a new {@link GeofenceHelper} for given Activity and
      * {@link ReceiveTransitionsIntentService} class.
      */
-    public GeofenceHelper(Activity activity, Class<? extends ReceiveTransitionsIntentService> receiverClass) {
+    public GeofenceHelper(final Activity activity, final Class<? extends ReceiveTransitionsIntentService> receiverClass) {
 
         if (Dependency.isPresent("com.google.android.gms.location.Geofence")) {
             mActivity = activity;
@@ -108,10 +105,10 @@ public class GeofenceHelper {
             mBroadcastIntentFilter.addAction(GeofenceUtils.ACTION_GEOFENCE_ERROR);
             mBroadcastIntentFilter.addCategory(GeofenceUtils.CATEGORY_LOCATION_SERVICES);
 
-            mProcessingRemoveGeofenceIds = new ArrayList<String>();
-            mPendingRemoveGeofenceIds = new ArrayList<String>();
-            mProcessingAddGeofences = new ArrayList<Geofence>();
-            mPendingAddGeofences = new ArrayList<Geofence>();
+            mProcessingRemoveGeofenceIds = new ArrayList<>();
+            mPendingRemoveGeofenceIds = new ArrayList<>();
+            mProcessingAddGeofences = new ArrayList<>();
+            mPendingAddGeofences = new ArrayList<>();
         } else {
             throw new NoClassDefFoundError("Could not find Geofencing import, make sure the Google Play services (com.google.android.gms:play-services:4.4.+) are imported in the build.gradle file");
         }
@@ -121,7 +118,7 @@ public class GeofenceHelper {
      * Set the {@link GeofenceListener} to get notified of add / removal / error
      * updates.
      */
-    public void setGeofenceListener(GeofenceListener listener) {
+    public void setGeofenceListener(final GeofenceListener listener) {
         mGeofenceListener = listener;
     }
 
@@ -140,40 +137,10 @@ public class GeofenceHelper {
     }
 
     /**
-     * Call this method in your Activity's onActivityResult method. Returns true
-     * when the result has been handled, false otherwise.
-     */
-    public boolean handleActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == GeofenceUtils.CONNECTION_FAILURE_RESOLUTION_REQUEST) {
-            if (resultCode == Activity.RESULT_OK) {
-                if (GeofenceUtils.REQUEST_TYPE.ADD == mRequestType) {
-                    mGeofenceRequester.setInProgressFlag(false);
-                    mGeofenceRequester.addGeofences(mPendingAddGeofences);
-                } else if (GeofenceUtils.REQUEST_TYPE.REMOVE == mRequestType) {
-                    mGeofenceRemover.setInProgressFlag(false);
-                    mGeofenceRemover.removeGeofencesById(mPendingRemoveGeofenceIds);
-                }
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Verify that Google Play services is available before making a request.
-     *
-     * @return true if Google Play services is available, otherwise false
-     */
-    public boolean googlePlayServicesAvailable() {
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(mActivity);
-        return ConnectionResult.SUCCESS == resultCode;
-    }
-
-    /**
      * Register given geofences. If there already is a pending register request,
      * they will be added when this pending request is done.
      */
-    public void addGeofences(Geofence... geofences) {
+    public void addGeofences(final Geofence... geofences) {
         addGeofences(Arrays.asList(geofences));
     }
 
@@ -181,8 +148,8 @@ public class GeofenceHelper {
      * Register given geofences. If there already is a pending register request,
      * they will be added when this pending request is done.
      */
-    public void addGeofences(List<Geofence> geofences) {
-        mRequestType = GeofenceUtils.REQUEST_TYPE.ADD;
+    public void addGeofences(final Collection<Geofence> geofences) {
+        mRequestType = REQUEST_TYPE.ADD;
         mPendingAddGeofences.addAll(geofences);
 
         processPendingAddGeofences();
@@ -201,7 +168,7 @@ public class GeofenceHelper {
      * Remove given geofences. If there already is a pending remove request,
      * they will be removed when this pending request is done.
      */
-    public void removeGeofences(String... ids) {
+    public void removeGeofences(final String... ids) {
         removeGeofences(Arrays.asList(ids));
     }
 
@@ -209,8 +176,8 @@ public class GeofenceHelper {
      * Remove given geofences. If there already is a pending remove request,
      * they will be removed when this pending request is done.
      */
-    public void removeGeofences(List<String> ids) {
-        mRequestType = GeofenceUtils.REQUEST_TYPE.REMOVE;
+    public void removeGeofences(final Collection<String> ids) {
+        mRequestType = REQUEST_TYPE.REMOVE;
         mPendingRemoveGeofenceIds.addAll(ids);
 
         processPendingRemoveGeofences();
@@ -227,7 +194,7 @@ public class GeofenceHelper {
     private class GeofenceBroadcastReceiver extends BroadcastReceiver {
 
         @Override
-        public void onReceive(Context context, Intent intent) {
+        public void onReceive(final Context context, final Intent intent) {
             String action = intent.getAction();
             if (TextUtils.equals(action, GeofenceUtils.ACTION_GEOFENCE_ERROR)) {
                 handleGeofenceError(context, intent);
@@ -260,7 +227,7 @@ public class GeofenceHelper {
             }
         }
 
-        private void handleGeofenceError(Context context, Intent intent) {
+        private void handleGeofenceError(final Context context, final Intent intent) {
             String msg = intent.getStringExtra(GeofenceUtils.EXTRA_GEOFENCE_STATUS);
             Logger.log("Geofence error: " + msg);
 
@@ -278,16 +245,16 @@ public class GeofenceHelper {
         /**
          * Called when all pending adding geofences have been processed.
          */
-        public void onGeofencesAdded();
+        void onGeofencesAdded();
 
         /**
          * Called when all pending removed geofences have been processed.
          */
-        public void onGeofencesRemoved();
+        void onGeofencesRemoved();
 
         /**
          * Called when an error occured.
          */
-        public void onGeofenceError(Intent intent);
+        void onGeofenceError(Intent intent);
     }
 }

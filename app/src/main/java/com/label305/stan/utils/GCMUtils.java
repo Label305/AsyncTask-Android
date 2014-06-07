@@ -5,49 +5,17 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.util.Log;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.label305.stan.asyncutils.AsyncTask;
+import com.label305.stan.asyncutils.ExponentialBackoffAsyncTask;
 
 public class GCMUtils {
 
     public static final String EXTRA_MESSAGE = "message";
     public static final String PROPERTY_REG_ID = "registration_id";
     private static final String PROPERTY_APP_VERSION = "appVersion";
-    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
     private static GoogleCloudMessaging sGoogleCloudMessaging;
-
-    /**
-     * Tag used on log messages.
-     */
-    static final String TAG = "GCMUtils";
-
-    /**
-     * Check the device to make sure it has the Google Play Services APK. If it
-     * doesn't, display a dialog that allows users to download the APK from the
-     * Google Play Store or enable it in the device's system settings.
-     */
-    public static boolean checkPlayServices(final Activity activity) {
-        if (Dependency.isPresent("com.google.android.gms.gcm.GoogleCloudMessaging")) {
-            int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(activity);
-            if (resultCode != ConnectionResult.SUCCESS) {
-                if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
-                    GooglePlayServicesUtil.getErrorDialog(resultCode, activity, PLAY_SERVICES_RESOLUTION_REQUEST).show();
-                } else {
-                    Logger.log(activity, "This device is not supported.");
-                    activity.finish();
-                }
-                return false;
-            }
-            return true;
-        } else {
-            throw new NoClassDefFoundError("Could not find the Google Play Services, make sure the Google Play services (com.google.android.gms:play-services:4.4.+) are imported in the build.gradle file");
-        }
-    }
 
     /**
      * Gets the current registration ID for application on GCM service.
@@ -61,7 +29,7 @@ public class GCMUtils {
         final SharedPreferences prefs = getGCMPreferences(activity);
         String registrationId = prefs.getString(PROPERTY_REG_ID, "");
         if (registrationId.isEmpty()) {
-            Log.i(TAG, "Registration not found.");
+            Logger.log(activity, "Registration not found.");
             return "";
         }
 
@@ -85,7 +53,7 @@ public class GCMUtils {
             PackageInfo packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
             return packageInfo.versionCode;
         } catch (NameNotFoundException e) {
-            // should never happen
+            /* should never happen */
             throw new RuntimeException("Could not get package name: " + e);
         }
     }
@@ -97,18 +65,25 @@ public class GCMUtils {
         return activity.getSharedPreferences(activity.getClass().getSimpleName(), Context.MODE_PRIVATE);
     }
 
-    public static AsyncTask<?> asyncRequestRegister(final Activity activity, final String senderId,
-                                                    final OnDeviceRegisteredListener listener) {
-        return new AsyncTask<String>() {
+    private static GoogleCloudMessaging getGCMInstance(Activity activity) {
+        synchronized (GCMUtils.class) {
+            if (sGoogleCloudMessaging == null) {
+                sGoogleCloudMessaging = GoogleCloudMessaging.getInstance(activity);
+            }
+            return sGoogleCloudMessaging;
+        }
+    }
+
+    public static ExponentialBackoffAsyncTask<?> asyncRequestRegister(final Activity activity, final String senderId,
+                                                                      final OnDeviceRegisteredListener listener) {
+        return new ExponentialBackoffAsyncTask<String>() {
             @Override
             public String call() throws Exception {
                 if (Dependency.isPresent("com.google.android.gms.gcm.GoogleCloudMessaging")) {
                     String regId = getRegistrationId(activity);
                     if (regId.isEmpty()) {
-                        if (sGoogleCloudMessaging == null) {
-                            sGoogleCloudMessaging = GoogleCloudMessaging.getInstance(activity);
-                        }
-                        regId = sGoogleCloudMessaging.register(senderId);
+
+                        regId = getGCMInstance(activity).register(senderId);
                         storeRegistrationId(activity, regId);
                     }
                     return regId;
@@ -129,18 +104,15 @@ public class GCMUtils {
         }.execute();
     }
 
-    public static AsyncTask<?> asyncRequestUnRegister(final Activity activity,
-                                                      final OnDeviceRegisteredListener listener) {
-        return new AsyncTask<Void>() {
+    public static ExponentialBackoffAsyncTask<?> asyncRequestUnRegister(final Activity activity,
+                                                                        final OnDeviceRegisteredListener listener) {
+        return new ExponentialBackoffAsyncTask<Void>() {
             @Override
             public Void call() throws Exception {
                 if (Dependency.isPresent("com.google.android.gms.gcm.GoogleCloudMessaging")) {
                     String regId = getRegistrationId(activity);
                     if (regId.isEmpty()) {
-                        if (sGoogleCloudMessaging == null) {
-                            sGoogleCloudMessaging = GoogleCloudMessaging.getInstance(activity);
-                        }
-                        sGoogleCloudMessaging.unregister();
+                        getGCMInstance(activity).unregister();
                         storeRegistrationId(activity, "");
                     }
                     return null;
