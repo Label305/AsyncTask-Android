@@ -18,7 +18,6 @@
 
 package com.label305.stan.ui.widget;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -151,9 +150,10 @@ public class SvgImageView extends ImageView {
         showSvgImage();
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void setSoftwareLayerType() {
-        setLayerType(LAYER_TYPE_SOFTWARE, null);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            setLayerType(LAYER_TYPE_SOFTWARE, null);
+        }
     }
 
     private void showSvgImage() {
