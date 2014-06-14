@@ -26,7 +26,10 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.PictureDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.test.AndroidTestCase;
+import android.view.LayoutInflater;
+import android.widget.LinearLayout;
 
+import com.label305.stan.R;
 import com.label305.stan.ui.widget.SvgImageView;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -44,13 +47,14 @@ public class SvgImageViewTest extends AndroidTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        mSvgImageView = new SvgImageView(getContext());
-        mSvgImageView.setSvgResource(com.label305.stan.test.R.raw.ic_svg_test_square_red);
+        LinearLayout layout = (LinearLayout)LayoutInflater.from(getContext()).inflate(R.layout.svg_simple_layout, null);
+        mSvgImageView = (SvgImageView) layout.findViewById(R.id.svg);
+        mSvgImageView.layout(0,0,2,2);
     }
 
     //Convert PictureDrawable to Bitmap
     private Bitmap pictureDrawable2Bitmap(PictureDrawable pictureDrawable) {
-        Bitmap bitmap = Bitmap.createBitmap(pictureDrawable.getIntrinsicWidth(), pictureDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Bitmap bitmap = Bitmap.createBitmap(mSvgImageView.getWidth(), mSvgImageView.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         canvas.drawPicture(pictureDrawable.getPicture());
         return bitmap;
@@ -278,5 +282,48 @@ public class SvgImageViewTest extends AndroidTestCase {
         assertThat(rightPixel, equalTo(Color.GREEN));
         assertThat(rightPixel, not(equalTo(Color.TRANSPARENT)));
         assertThat(rightPixel, not(equalTo(Color.RED)));
+    }
+
+    public void testPressableInvertedColorsFromLayoutSVGImageView() {
+
+        LinearLayout layout = (LinearLayout)LayoutInflater.from(getContext()).inflate(R.layout.svg_test_all_layout, null);
+        mSvgImageView = (SvgImageView) layout.findViewById(R.id.svg);
+        mSvgImageView.layout(0,0,2,2);
+
+        StateListDrawable stateListDrawable = (StateListDrawable) mSvgImageView.getDrawable();
+
+        Bitmap bmp = getBitmapFromDrawable(stateListDrawable.getCurrent());
+
+        int leftPixel = bmp.getPixel(0, 0);
+        int rightPixel = bmp.getPixel(mSvgImageView.getDrawable().getIntrinsicWidth()-1, 0);
+
+        assertThat(leftPixel, equalTo(Color.TRANSPARENT));
+        assertThat(leftPixel, not(equalTo(Color.BLACK)));
+        assertThat(leftPixel, not(equalTo(Color.RED)));
+        assertThat(leftPixel, not(equalTo(Color.WHITE)));
+
+        assertThat(rightPixel, equalTo(Color.WHITE));
+        assertThat(rightPixel, not(equalTo(Color.TRANSPARENT)));
+        assertThat(rightPixel, not(equalTo(Color.RED)));
+        assertThat(rightPixel, not(equalTo(Color.BLACK)));
+
+        mSvgImageView.setPressed(true);
+
+        stateListDrawable = (StateListDrawable) mSvgImageView.getDrawable();
+
+        bmp = getBitmapFromDrawable(stateListDrawable.getCurrent());
+
+        leftPixel = bmp.getPixel(0, 0);
+        rightPixel = bmp.getPixel(mSvgImageView.getDrawable().getIntrinsicWidth()-1, 0);
+
+        assertThat(leftPixel, equalTo(Color.TRANSPARENT));
+        assertThat(leftPixel, not(equalTo(Color.BLACK)));
+        assertThat(leftPixel, not(equalTo(Color.RED)));
+        assertThat(leftPixel, not(equalTo(Color.WHITE)));
+
+        assertThat(rightPixel, equalTo(Color.BLACK));
+        assertThat(rightPixel, not(equalTo(Color.TRANSPARENT)));
+        assertThat(rightPixel, not(equalTo(Color.RED)));
+        assertThat(rightPixel, not(equalTo(Color.WHITE)));
     }
 }
