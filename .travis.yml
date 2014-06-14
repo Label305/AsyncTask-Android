@@ -1,6 +1,11 @@
 language: android
 jdk: oraclejdk7
 
+android:
+  components:
+    - build-tools-19.1.0
+    - doc-19
+
 env:
   matrix:
   - ANDROID_SDKS=android-17,sysimg-17 ANDROID_TARGET=android-17 ANDROID_ABI=armeabi-v7a LINT=false MAVEN=false JAVADOC=false
@@ -9,12 +14,12 @@ env:
 
   global:
   - TERM=dumb
-  - secure: kFutepOJXnSNuEj+w3HVT61qt4f1rSMXNMSOwd5KP+40j3xnVaJZzT85GRzZ4PsYaCvxR88DUMZ/aruEC2eao09++XvFpIeCmjMhLgH8WJY8cGNCGvWsMLNvDCcPxxyf9yEiQh/vXxqVR3nGODoVrUuGMN7lTTUeONOQrWrVnu8=
-  - secure: bGISHuqYtLEWjnyjvtc0RUV7QBA7d5Na0aUxlURN8OoMfmpMvTAH8tLuQVKIgSMSHO5qiKH/m570eGyLIg49V7J+Ipm/7eEgVIKS4xYMLAGEiqul2wx2sUONcTSYmyTW3oZTLsUwNpeYfyKQEofNBKQwmAtOB4OuYhwWWcaEx/I=
   # NEXUSUSERNAME:
   - secure: BRK3XtgO9eZKWq6JI6p6ZK3mI1WOgh3ACo5iGXS01Z4LOuFovXkL8xFiGswKuA4C+NeYHH9EKAbdWTAIL/KhWlWM1f/+yDL8fRVxWcMaTQYk0CUQJl2dyEMjLI6z4ziiv5QVzAEFjYAdNNb/CL6scTNjaN2CW2kreDV6BnCAahI=
   # NEXUSPASSWORD:
   - secure: j2DqijRCMuV5W3C25oiVEdgZvdN64Zvl13O+4B166E3dFGCQXTKNRgg0e9wineb7tPJekv0/QyZ58qpMaL4ep6epEulL9Ygg1YZn9OrL/DHR9ofce8VpQmhmISZ9HYb74/cckw9qvDxC8Q/g00DoTlV/A0elJxIpOA7DjxN9jCc=
+  # GH_TOKEN_STAN:
+  - secure: K6cSu61wVYODTcey5h/q+Empzbo0oZvxjxsSrIRAsLZJWZQXvqoFXsbd0pdjsGEJT65zz1oNT0GL/A3NXB+1ANS2H3SA1xfIKutSqNSEWcH4FyN22xMpNAk0J9J2BhQ+39E+9J+4+7/lRLy69wOmFbHvY0+1ayvpE1aaEorL0ew=
 
 before_install:
   - curl -3L -o wait_for_emulator https://github.com/embarkmobile/android-sdk-installer/raw/version-2/wait_for_emulator
@@ -30,19 +35,16 @@ before_script:
   - ./wait_for_emulator
 
 install:
-- echo yes | android update sdk --filter extra-google-m2repository --no-ui --force > /dev/null
 - true
 
 script:
 - gradle connectedCheck
-- if [[ $LINT == 'true' ]]; then gradle ; fi
+- if [[ $LINT == 'true' ]]; then gradle lint ; fi
 
 after_success:
-- if [[ $JAVADOC == 'true' ]]; then sudo apt-get install -qq ncftp ; fi
-- if [[ $JAVADOC == 'true' ]]; then gradle generateDebugJavadoc -PANDROID_HOME=$ANDROID_HOME -PTITLE="Stan for Android ($TRAVIS_BRANCH - $TRAVIS_BUILD-NUMBER)" -POUTPUT="$HOME/docs" ; fi
-- if [[ $JAVADOC == 'true' ]]; then ncftpput -R -m -u $FTP_USER -p $FTP_PASSWORD host3.label305.com /stan-for-android/$TRAVIS_BRANCH $HOME/docs/* ; fi
-
-- if [[ $MAVEN == 'true' && $TRAVIS_BRANCH == 'dev' ]]; then gradle uploadArchives -PnexusUsername=${NEXUSUSERNAME} -PnexusPassword=${NEXUSPASSWORD} ; fi
+- if [[ $JAVADOC == 'true' && $TRAVIS_PULL_REQUEST == 'false' ]]; then gradle generateReleaseJavadoc publishGhPages -PBRANCH=$TRAVIS_BRANCH ; fi
+- if [[ $MAVEN == 'true' && $TRAVIS_BRANCH == 'dev' && $TRAVIS_PULL_REQUEST == 'false ]]; then gradle uploadArchives -PnexusUsername=${NEXUSUSERNAME} 
+-PnexusPassword=${NEXUSPASSWORD} ; fi
 
 notifications: 
   email: false
