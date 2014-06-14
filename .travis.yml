@@ -5,6 +5,7 @@ android:
   components:
     - build-tools-19.1.0
     - doc-19
+    - extra-google-google_play_services
 
 env:
   matrix:
