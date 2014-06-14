@@ -1,6 +1,7 @@
 apply plugin: 'maven'
 apply plugin: 'signing'
 
+if(project.hasProperty('mavenProperties')) {
     def sonatypeRepositoryUrl
     if (isRelease == 'true') {
         sonatypeRepositoryUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
@@ -88,3 +89,4 @@ apply plugin: 'signing'
             archives coreLibJar
         }
     }
+}
