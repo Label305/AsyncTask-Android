@@ -5,7 +5,6 @@ android:
   components:
     - build-tools-19.1.0
     - doc-19
-    - extra-google-google_play_services
 
 env:
   matrix:
@@ -34,6 +33,7 @@ before_script:
   - ./wait_for_emulator
 
 install:
+  # Using the default component doesn't work.
   - echo yes | android update sdk --filter extra-google-m2repository --no-ui --force > /dev/null
 
 script:
