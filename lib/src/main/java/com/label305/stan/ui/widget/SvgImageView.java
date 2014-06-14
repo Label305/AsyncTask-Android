@@ -204,7 +204,7 @@ public class SvgImageView extends ImageView {
 
         Bitmap image = BitmapCache.getBitmapFromCache(getSvgCacheTag());
 
-        if (image == null) {
+        if (image == null && width > 0 && height > 0) {
             SVG svg = getSvgImage(mSvgResourceId);
 
             image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
@@ -227,7 +227,7 @@ public class SvgImageView extends ImageView {
 
         Bitmap image = BitmapCache.getBitmapFromCache(getPressedSvgCacheTag());
 
-        if (image == null) {
+        if (image == null && width > 0 && height > 0) {
             SVG svg = getSvgImage(mSvgResourceId);
 
             image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
