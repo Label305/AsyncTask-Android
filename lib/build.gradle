@@ -1,21 +1,10 @@
 apply plugin: 'android-library'
 
-apply from: 'generateJavadoc.gradle'
-apply from: 'maven_push.gradle'
+apply from: '../generateJavadoc.gradle'
+apply from: '../pushMaven.gradle'
 
 configurations{
     provided
-}
-
-buildscript {
-    repositories {
-        mavenCentral()
-        maven { url 'https://geonet.artifactoryonline.com/geonet/public-releases' }
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:0.9.+'
-        classpath group: 'nz.org.geonet', name: 'gradle-build-version-plugin', version: '1.0.1'
-    }
 }
 
 repositories {
@@ -53,7 +42,7 @@ dependencies {
 
 android {
     compileSdkVersion 19
-    buildToolsVersion '19.0.3'
+    buildToolsVersion '19.1.0'
 
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
