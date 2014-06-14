@@ -34,7 +34,7 @@ before_script:
   - ./wait_for_emulator
 
 install:
-- true
+  - echo yes | android update sdk --filter extra-google-m2repository --no-ui --force > /dev/null
 
 script:
 - gradle connectedCheck
