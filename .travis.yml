@@ -42,7 +42,7 @@ script:
 
 after_success:
 - if [[ $JAVADOC == 'true' && $TRAVIS_PULL_REQUEST == 'false' ]]; then gradle generateReleaseJavadoc publishGhPages -PBRANCH=$TRAVIS_BRANCH ; fi
-- if [[ $MAVEN == 'true' && $TRAVIS_BRANCH == 'dev' && $TRAVIS_PULL_REQUEST == 'false ]]; then gradle uploadArchives -PnexusUsername=${NEXUSUSERNAME} -PnexusPassword=${NEXUSPASSWORD} ; fi
+- if [[ $MAVEN == 'true' && $TRAVIS_BRANCH == 'dev' && $TRAVIS_PULL_REQUEST == 'false' ]]; then gradle uploadArchives -PnexusUsername=${NEXUSUSERNAME} -PnexusPassword=${NEXUSPASSWORD} ; fi
 
 notifications: 
   email: false
