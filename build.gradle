@@ -1,5 +1,16 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url 'https://geonet.artifactoryonline.com/geonet/public-releases' }
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.11.+'
+        classpath group: 'nz.org.geonet', name: 'gradle-build-version-plugin', version: '1.0.1'
+    }
+}
+
 allprojects {
     group=GROUP
     version=VERSION_NAME
