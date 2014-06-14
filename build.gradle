@@ -7,7 +7,6 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:0.11.+'
-        classpath group: 'nz.org.geonet', name: 'gradle-build-version-plugin', version: '1.0.1'
     }
 }
 
