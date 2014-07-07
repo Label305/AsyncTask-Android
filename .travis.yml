@@ -20,6 +20,8 @@ env:
   - secure: K6cSu61wVYODTcey5h/q+Empzbo0oZvxjxsSrIRAsLZJWZQXvqoFXsbd0pdjsGEJT65zz1oNT0GL/A3NXB+1ANS2H3SA1xfIKutSqNSEWcH4FyN22xMpNAk0J9J2BhQ+39E+9J+4+7/lRLy69wOmFbHvY0+1ayvpE1aaEorL0ew=
 
 before_install:
+  - android update sdk --filter extra-android-support --no-ui --force > /dev/null
+  - android update sdk --filter extra-android-m2repository --no-ui --force > /dev/null
   - curl -3L -o wait_for_emulator https://github.com/embarkmobile/android-sdk-installer/raw/version-2/wait_for_emulator
   - sudo chmod +x wait_for_emulator
 
