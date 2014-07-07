@@ -8,7 +8,7 @@ android:
 
 env:
   matrix:
-  - ANDROID_SDKS=sysimg-19            ANDROID_TARGET=android-19 ANDROID_ABI=armeabi-v7a LINT=true  MAVEN=true JAVADOC=true
+  - ANDROID_TARGET=android-19 ANDROID_ABI=armeabi-v7a LINT=true  MAVEN=true JAVADOC=true
 
   global:
   - TERM=dumb

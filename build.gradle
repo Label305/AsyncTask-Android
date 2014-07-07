@@ -6,7 +6,7 @@ buildscript {
         maven { url 'https://geonet.artifactoryonline.com/geonet/public-releases' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.11.+'
+        classpath 'com.android.tools.build:gradle:0.12.+'
     }
 }
 
