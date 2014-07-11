@@ -21,7 +21,7 @@ env:
 
 before_install:
   - android update sdk --filter extra-android-support --no-ui --force > /dev/null
-  - android update sdk --filter extra-android-m2repository --no-ui --force > /dev/null
+  - aandroid update sdk --filter extra-android-m2repository --no-ui --force > /dev/null
   - curl -3L -o wait_for_emulator https://github.com/embarkmobile/android-sdk-installer/raw/version-2/wait_for_emulator
   - sudo chmod +x wait_for_emulator
 

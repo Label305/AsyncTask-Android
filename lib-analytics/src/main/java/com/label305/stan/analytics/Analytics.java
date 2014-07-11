@@ -16,14 +16,15 @@
  * PARTICULAR PURPOSE.
  */
 
-package com.label305.stan.utils;
+package com.label305.stan.analytics;
 
 import android.content.Context;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
-import com.label305.stan.R;
+import com.label305.stan.utils.Dependency;
+import com.label305.stan.utils.Logger;
 
 @SuppressWarnings({"UnusedDeclaration", "StaticMethodOnlyUsedInOneClass"})
 /**
@@ -60,7 +61,9 @@ public class Analytics {
             Logger.setIsDebug(isDebug);
             getDefaultTracker(context);
         } else {
-            throw new NoClassDefFoundError("Could not find Analytics import, make sure the Google Play services (com.google.android.gms:play-services:4.4.+) are imported in the build.gradle file");
+            throw new NoClassDefFoundError(
+                    "Could not find Analytics import, make sure the Google Play services (com.google.android.gms:play-services:4.4.+) are imported in the build.gradle file"
+            );
         }
     }
 
@@ -74,7 +77,7 @@ public class Analytics {
     /**
      * Manually start the session.
      *
-     * @deprecated does nothing anymore since analytics v4 is supported
+     * @deprecated does nothing anymore since analytics v5 is supported
      */
     @Deprecated
     public static void startSession() {
@@ -86,7 +89,6 @@ public class Analytics {
      * @param screenName the screen to send.
      */
     public static void sendScreen(final String screenName) {
-
         sTracker.setScreenName(screenName);
         sTracker.send(new HitBuilders.AppViewBuilder().build());
         Logger.log(ANALYTICS + screenName);
@@ -101,19 +103,21 @@ public class Analytics {
      * @param value    (optional) the event value.
      */
     public static void sendEvent(final String category, final String action, final String label, final Long value) {
-
-        sTracker.send(new HitBuilders.EventBuilder()
-                .setCategory(category)
-                .setAction(action)
-                .setLabel(label)
-                .build());
+        sTracker.send(
+                new HitBuilders.EventBuilder()
+                        .setCategory(category)
+                        .setAction(action)
+                        .setLabel(label)
+                        .build()
+        );
 
         Logger.log(ANALYTICS + "Event( " + category + COMMA + action + COMMA + label + COMMA + value + COMMA); //NON-NLS
     }
 
 
     private static String getAnalyticsKey(final Context context, final boolean isDebug) {
-        if (context.getString(R.string.key_analytics).isEmpty()) {
+        //noinspection StringEqualsEmptyString,LiteralAsArgToStringEquals
+        if (context.getString(R.string.key_analytics).trim().equals("")) {
             throw new IllegalArgumentException("Add a string value for key_analytics!");
         }
 

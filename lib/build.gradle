@@ -18,7 +18,7 @@ android.libraryVariants.all {
 
 dependencies {
 
-    compile 'com.android.support:support-v4:19.1.+'
+    compile 'com.android.support:support-v4:20.0.+'
     compile 'com.nineoldandroids:library:2.4.0'
     compile 'com.j256.ormlite:ormlite-android:4.48'
     compile 'com.j256.ormlite:ormlite-core:4.48'
