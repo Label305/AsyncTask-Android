@@ -1,1 +1,1 @@
-include ':lib', ':lib-analytics', ':lib-async', ':lib-geofencing'
+include ':lib', ':lib-analytics', ':lib-async', ':lib-geofencing', ':lib-widget', ':lib-svg'

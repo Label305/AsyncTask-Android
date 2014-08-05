@@ -10,3 +10,4 @@
 /.idea/workspace.xml
 .DS_Store
 .metadata/*
+**/*.hprof
