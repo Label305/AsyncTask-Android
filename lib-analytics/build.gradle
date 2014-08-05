@@ -15,6 +15,10 @@ android {
         versionName VERSION_NAME
     }
 
+    lintOptions {
+        lintConfig file("../lint.xml")
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
         targetCompatibility JavaVersion.VERSION_1_7

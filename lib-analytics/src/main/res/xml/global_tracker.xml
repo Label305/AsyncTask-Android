@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<resources >
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="UnusedResources">
 
     <string name="ga_logLevel">verbose</string>
     <integer name="ga_dispatchPeriod">5</integer>
