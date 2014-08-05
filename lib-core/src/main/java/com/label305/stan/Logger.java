@@ -1,4 +1,4 @@
-package com.label305.stan.utils;
+package com.label305.stan;
 
 import android.content.Context;
 import android.util.Log;

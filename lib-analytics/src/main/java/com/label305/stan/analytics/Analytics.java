@@ -23,8 +23,8 @@ import android.content.Context;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
-import com.label305.stan.utils.Dependency;
-import com.label305.stan.utils.Logger;
+import com.label305.stan.Dependency;
+import com.label305.stan.Logger;
 
 @SuppressWarnings({"UnusedDeclaration", "StaticMethodOnlyUsedInOneClass"})
 /**
@@ -41,10 +41,13 @@ import com.label305.stan.utils.Logger;
 public class Analytics {
 
     private static final String ANALYTICS = "Analytics: ";
+
     private static final String START = "start";
+
     private static final char COMMA = ',';
 
     private static boolean sIsDebug;
+
     private static Tracker sTracker;
 
     private Analytics() {
@@ -56,7 +59,7 @@ public class Analytics {
      * Initialize the Analytics Tracker. Resolves the key based on isDebug.
      */
     public static void init(final Context context, final boolean isDebug) {
-        if (Dependency.isPresent("com.google.android.gms.analytics.GoogleAnalytics")) {
+        if (Dependency.isPresent(GoogleAnalytics.class.getName())) {
             sIsDebug = isDebug;
             Logger.setIsDebug(isDebug);
             getDefaultTracker(context);

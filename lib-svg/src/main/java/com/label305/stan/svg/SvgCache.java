@@ -23,7 +23,7 @@ import android.support.v4.util.LruCache;
 
 import com.caverock.androidsvg.SVG;
 import com.caverock.androidsvg.SVGParseException;
-import com.label305.stan.utils.Logger;
+import com.label305.stan.Logger;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

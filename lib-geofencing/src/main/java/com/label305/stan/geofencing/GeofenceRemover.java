@@ -11,11 +11,12 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
 import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
+import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationClient.OnRemoveGeofencesResultListener;
 import com.google.android.gms.location.LocationStatusCodes;
-import com.label305.stan.utils.Dependency;
-import com.label305.stan.utils.Logger;
+import com.label305.stan.Dependency;
+import com.label305.stan.Logger;
 
 import java.util.List;
 
@@ -62,7 +63,7 @@ public class GeofenceRemover implements ConnectionCallbacks, OnConnectionFailedL
      * @param activity A valid Context
      */
     public GeofenceRemover(Activity activity) {
-        if (Dependency.isPresent("com.google.android.gms.location.Geofence")) {
+        if (Dependency.isPresent(Geofence.class.getName())) {
             mActivity = activity;
 
             // Initialize the globals to null

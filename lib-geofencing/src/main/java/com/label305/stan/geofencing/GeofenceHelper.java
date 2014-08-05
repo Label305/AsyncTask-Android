@@ -9,9 +9,9 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 
 import com.google.android.gms.location.Geofence;
+import com.label305.stan.Dependency;
+import com.label305.stan.Logger;
 import com.label305.stan.geofencing.GeofenceUtils.REQUEST_TYPE;
-import com.label305.stan.utils.Dependency;
-import com.label305.stan.utils.Logger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,7 +64,7 @@ public class GeofenceHelper {
      */
     public GeofenceHelper(final Activity activity, final Class<? extends ReceiveTransitionsIntentService> receiverClass) {
 
-        if (Dependency.isPresent("com.google.android.gms.location.Geofence")) {
+        if (Dependency.isPresent(Geofence.class.getName())) {
             mActivity = activity;
 
             mGeofenceRequester = new GeofenceRequester(activity, receiverClass);

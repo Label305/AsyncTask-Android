@@ -1,4 +1,4 @@
-package com.label305.stan.utils;
+package com.label305.stan;
 
 public class GCMUtils {
 

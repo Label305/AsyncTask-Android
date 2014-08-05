@@ -15,7 +15,7 @@ import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationClient.OnAddGeofencesResultListener;
 import com.google.android.gms.location.LocationStatusCodes;
-import com.label305.stan.utils.Dependency;
+import com.label305.stan.Dependency;
 
 import java.util.List;
 
@@ -44,7 +44,7 @@ public class GeofenceRequester implements OnAddGeofencesResultListener, Connecti
     private boolean mInProgress;
 
     public GeofenceRequester(final Activity activity, final Class<? extends ReceiveTransitionsIntentService> receiverClass) {
-        if (Dependency.isPresent("com.google.android.gms.location.Geofence")) {
+        if (Dependency.isPresent(Geofence.class.getName())) {
             mActivity = activity;
             mReceiverClass = receiverClass;
 
@@ -171,7 +171,7 @@ public class GeofenceRequester implements OnAddGeofencesResultListener, Connecti
      * transitions.
      */
     private PendingIntent createRequestPendingIntent() {
-        if (null != mGeofencePendingIntent) {
+        if (mGeofencePendingIntent != null) {
             return mGeofencePendingIntent;
         } else {
             Intent intent = new Intent(mActivity, mReceiverClass);

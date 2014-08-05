@@ -79,14 +79,10 @@ if(project.hasProperty('mavenProperties')) {
             from android.sourceSets.main.java.sourceFiles
         }
 
-        task coreLibJar(type: Jar) {
-            from fileTree(dir: './build/intermediates/classes/release').matching { include 'com/label305/stan/**' }
-        }
 
         artifacts {
             archives androidSourcesJar
             archives androidJavadocsJar
-            archives coreLibJar
         }
     }
 }
