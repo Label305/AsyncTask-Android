@@ -8,7 +8,7 @@ android {
     buildToolsVersion "20.0.0"
 
     defaultConfig {
-        applicationId "com.label305.stan.analytics"
+        applicationId "com.label305.stan.async"
         minSdkVersion 10
         targetSdkVersion 20
         versionCode 1
@@ -24,5 +24,9 @@ android {
 dependencies {
     compile project(':lib')
 
-    compile 'com.google.android.gms:play-services:5.0.+'
+    /* Test dependencies */
+    androidTestCompile('org.mockito:mockito-core:1.9.5') { exclude group: 'org.hamcrest' }
+    androidTestCompile 'org.hamcrest:hamcrest-all:1.3'
+    androidTestCompile files('libs/dexmaker-1.1.jar')
+    androidTestCompile files('libs/dexmaker-mockito-1.1-custom.jar')
 }

@@ -1,4 +1,7 @@
-package com.label305.stan.asyncutils;
+package com.label305.stan.async;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 class ExponentialBackoffTask<ResultT> extends Task<ResultT> {
 
@@ -36,6 +39,7 @@ class ExponentialBackoffTask<ResultT> extends Task<ResultT> {
         }
     }
 
+    @Nullable
     private ResultT executeCall() throws CallExceptionThrownException {
         try {
             Thread.sleep(getTryDelayMs());
@@ -75,12 +79,13 @@ class ExponentialBackoffTask<ResultT> extends Task<ResultT> {
         mNextTryDelay = mNextTryDelay == 0 ? 500 : mNextTryDelay * 2;
     }
 
+    @NotNull
     @Override
     protected ExponentialBackoffAsyncTask<ResultT> getParent() {
         return (ExponentialBackoffAsyncTask<ResultT>) super.getParent();
     }
 
     private static class CallExceptionThrownException extends Exception {
-    }
 
+    }
 }

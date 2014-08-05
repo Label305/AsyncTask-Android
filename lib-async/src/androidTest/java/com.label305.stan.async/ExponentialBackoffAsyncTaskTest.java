@@ -1,27 +1,22 @@
-package com.label305.safeasynctasktest.test;
+package com.label305.stan.async;
 
 import android.os.Looper;
 
-import com.label305.stan.asyncutils.ExponentialBackoffAsyncTask;
-
 import junit.framework.TestCase;
 
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.mockito.*;
 
+import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.lessThan;
-import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
+import static org.hamcrest.MatcherAssert.*;
 
-@SuppressWarnings({"MagicNumber", "AnonymousInnerClass", "AnonymousInnerClassWithTooManyMethods"})
+@SuppressWarnings({"MagicNumber", "AnonymousInnerClass", "AnonymousInnerClassWithTooManyMethods", "ProhibitedExceptionThrown"})
 public class ExponentialBackoffAsyncTaskTest extends TestCase {
 
     @Mock
@@ -51,7 +46,7 @@ public class ExponentialBackoffAsyncTaskTest extends TestCase {
     }
 
     public void testDefaultExponentialBackoff() throws InterruptedException {
-        final Exception e = new Exception();
+        final Exception e = new Exception("");
 
         new TestExponentialBackoffAsyncTask(mExponentialBackoffAsyncTaskCallback, mCountDownLatch) {
             @Override
@@ -70,21 +65,19 @@ public class ExponentialBackoffAsyncTaskTest extends TestCase {
     }
 
     public void testCustomTryCountExponentialBackoff() throws InterruptedException {
-        final Exception e = new Exception();
+        final Exception e = new IOException("");
         final int maxTryCount = 5;
 
         new TestExponentialBackoffAsyncTask(mExponentialBackoffAsyncTaskCallback, mCountDownLatch) {
+
+            {
+                setMaxTryCount(maxTryCount);
+            }
 
             @Override
             public Object call() throws Exception {
                 super.call();
                 throw e;
-            }
-
-            @SuppressWarnings("RefusedBequest")
-            @Override
-            protected int getMaxTryCount() {
-                return maxTryCount;
             }
         }.execute();
 
@@ -101,16 +94,37 @@ public class ExponentialBackoffAsyncTaskTest extends TestCase {
         assertMaxTestDuration(calculateMinimumDuration(tryCount) + 100L);
     }
 
-    private static int calculateMinimumDuration(final int tryCount) {
-        return tryCount == 1 ? 0 : (int) (calculateMinimumDuration(tryCount - 1) + 500 * StrictMath.pow(2, tryCount - 2));
-    }
-
     private void assertMinTestDuration(final long maxDurationMs) {
         assertThat(System.currentTimeMillis() - mTestStartMillis, greaterThan(maxDurationMs));
     }
 
     private void assertMaxTestDuration(final long maxDurationMs) {
         assertThat(System.currentTimeMillis() - mTestStartMillis, lessThan(maxDurationMs));
+    }
+
+    private static int calculateMinimumDuration(final int tryCount) {
+        return tryCount == 1 ? 0 : (int) (calculateMinimumDuration(tryCount - 1) + 500 * StrictMath.pow(2, tryCount - 2));
+    }
+
+    @SuppressWarnings("InterfaceNeverImplemented")
+    /** A callback interface to validate method calls using Mockito. */
+    private interface ExponentialBackoffAsyncTaskCallback<T> {
+
+        void call();
+
+        void onPreExecute();
+
+        void onSuccess(T t);
+
+        void onInterrupted(Exception e);
+
+        void onCancelled();
+
+        void onBackoffFailedException(Exception e);
+
+        void onRuntimeException(RuntimeException e);
+
+        void onFinally();
     }
 
     /**
@@ -122,6 +136,7 @@ public class ExponentialBackoffAsyncTaskTest extends TestCase {
     private static class TestExponentialBackoffAsyncTask extends ExponentialBackoffAsyncTask<Object> {
 
         private final ExponentialBackoffAsyncTaskCallback<Object> mExponentialBackoffAsyncTask;
+
         private final CountDownLatch mCountDownLatch;
 
         private TestExponentialBackoffAsyncTask(final ExponentialBackoffAsyncTaskCallback<Object> exponentialBackoffAsyncTask, final CountDownLatch countDownLatch) {
@@ -129,6 +144,7 @@ public class ExponentialBackoffAsyncTaskTest extends TestCase {
             mCountDownLatch = countDownLatch;
         }
 
+        @Nullable
         @Override
         public Object call() throws Exception {
             mExponentialBackoffAsyncTask.call();
@@ -152,7 +168,7 @@ public class ExponentialBackoffAsyncTaskTest extends TestCase {
 
         @SuppressWarnings("RefusedBequest")
         @Override
-        protected void onInterrupted(final InterruptedException e) {
+        protected void onInterrupted(@NotNull final InterruptedException e) {
             assertThat(Looper.getMainLooper().getThread(), is(Thread.currentThread()));
             mExponentialBackoffAsyncTask.onInterrupted(e);
         }
@@ -164,7 +180,7 @@ public class ExponentialBackoffAsyncTaskTest extends TestCase {
         }
 
         @Override
-        protected void onException(final Exception e) {
+        protected void onException(@NotNull final Exception e) {
             assertThat(Looper.getMainLooper().getThread(), is(Thread.currentThread()));
             mExponentialBackoffAsyncTask.onBackoffFailedException(e);
         }
@@ -181,25 +197,5 @@ public class ExponentialBackoffAsyncTaskTest extends TestCase {
             mExponentialBackoffAsyncTask.onFinally();
             mCountDownLatch.countDown();
         }
-    }
-
-    @SuppressWarnings("InterfaceNeverImplemented")
-    /** A callback interface to validate method calls using Mockito. */
-    private interface ExponentialBackoffAsyncTaskCallback<T> {
-        public void call();
-
-        public void onPreExecute();
-
-        public void onSuccess(T t);
-
-        public void onInterrupted(Exception e);
-
-        public void onCancelled();
-
-        public void onBackoffFailedException(Exception e);
-
-        public void onRuntimeException(RuntimeException e);
-
-        public void onFinally();
     }
 }

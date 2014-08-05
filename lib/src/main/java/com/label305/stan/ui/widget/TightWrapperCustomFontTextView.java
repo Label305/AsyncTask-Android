@@ -9,39 +9,38 @@ import android.util.AttributeSet;
  */
 public class TightWrapperCustomFontTextView extends CustomFontTextView {
 
-	public TightWrapperCustomFontTextView(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
-	}
+    public TightWrapperCustomFontTextView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+    }
 
-	public TightWrapperCustomFontTextView(Context context, AttributeSet attrs) {
-		super(context, attrs);
-	}
+    public TightWrapperCustomFontTextView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
 
-	public TightWrapperCustomFontTextView(Context context, String fontPath, boolean shouldCapitalize, boolean shouldLowercase) {
-		super(context, fontPath, shouldCapitalize, shouldLowercase);
-	}
-	
-	@Override
-	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    public TightWrapperCustomFontTextView(Context context, String fontPath, boolean shouldCapitalize, boolean shouldLowercase) {
+        super(context, fontPath, shouldCapitalize, shouldLowercase);
+    }
 
-		Layout layout = getLayout();
-		if (layout != null) {
-			int width = (int) Math.ceil(getMaxLineWidth(layout)) + getCompoundPaddingLeft() + getCompoundPaddingRight();
-			int height = getMeasuredHeight();
-			setMeasuredDimension(width, height);
-		}
-	}
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
-	private float getMaxLineWidth(Layout layout) {
-		float max_width = 0.0f;
-		int lines = layout.getLineCount();
-		for (int i = 0; i < lines; i++) {
-			if (layout.getLineWidth(i) > max_width) {
-				max_width = layout.getLineWidth(i);
-			}
-		}
-		return max_width;
-	}
+        Layout layout = getLayout();
+        if (layout != null) {
+            int width = (int) Math.ceil(getMaxLineWidth(layout)) + getCompoundPaddingLeft() + getCompoundPaddingRight();
+            int height = getMeasuredHeight();
+            setMeasuredDimension(width, height);
+        }
+    }
 
+    private float getMaxLineWidth(Layout layout) {
+        float max_width = 0.0f;
+        int lines = layout.getLineCount();
+        for (int i = 0; i < lines; i++) {
+            if (layout.getLineWidth(i) > max_width) {
+                max_width = layout.getLineWidth(i);
+            }
+        }
+        return max_width;
+    }
 }

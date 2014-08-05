@@ -1,22 +1,18 @@
-package com.label305.safeasynctasktest.test;
+package com.label305.stan.async;
 
 import android.os.Looper;
 
-import com.label305.stan.asyncutils.AsyncTask;
-
 import junit.framework.TestCase;
 
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.jetbrains.annotations.NotNull;
+import org.mockito.*;
 
 import java.util.concurrent.CountDownLatch;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
+import static org.hamcrest.MatcherAssert.*;
 
 @SuppressWarnings({"AnonymousInnerClass", "AnonymousInnerClassWithTooManyMethods"})
 public class AsyncTaskTest extends TestCase {
@@ -258,7 +254,7 @@ public class AsyncTaskTest extends TestCase {
             }
 
             @Override
-            protected void onException(final Exception e) {
+            protected void onException(@NotNull final Exception e) {
                 super.onException(e);
                 throw rte;
             }
@@ -373,7 +369,7 @@ public class AsyncTaskTest extends TestCase {
 
         @SuppressWarnings("RefusedBequest")
         @Override
-        protected void onInterrupted(final InterruptedException e) {
+        protected void onInterrupted(@NotNull final InterruptedException e) {
             assertThat(Looper.getMainLooper().getThread(), is(Thread.currentThread()));
             mAsyncTaskCallback.onInterrupted(e);
         }
@@ -385,7 +381,7 @@ public class AsyncTaskTest extends TestCase {
         }
 
         @Override
-        protected void onException(final Exception e) {
+        protected void onException(@NotNull final Exception e) {
             assertThat(Looper.getMainLooper().getThread(), is(Thread.currentThread()));
             mAsyncTaskCallback.onException(e);
         }
