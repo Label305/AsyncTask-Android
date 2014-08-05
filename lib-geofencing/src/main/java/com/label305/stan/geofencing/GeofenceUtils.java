@@ -104,5 +104,4 @@ public final class GeofenceUtils {
     public static final String EMPTY_STRING = new String();
 
     public static final CharSequence GEOFENCE_ID_DELIMITER = ",";
-
 }

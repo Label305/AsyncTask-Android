@@ -1,4 +1,4 @@
-apply plugin: 'android-library'
+apply plugin: 'com.android.library'
 
 apply from: '../generateJavadoc.gradle'
 apply from: '../pushMaven.gradle'
@@ -19,15 +19,16 @@ android.libraryVariants.all {
 dependencies {
 
     compile 'com.android.support:support-v4:20.0.+'
+    compile 'com.intellij:annotations:+@jar'
+
     compile 'com.nineoldandroids:library:2.4.0'
+
     compile 'com.j256.ormlite:ormlite-android:4.48'
     compile 'com.j256.ormlite:ormlite-core:4.48'
     compile 'com.caverock:androidsvg:1.2.1'
-    compile 'com.intellij:annotations:+@jar'
     compile 'com.mcxiaoke.volley:library:1.0.+'
 
     provided 'com.crashlytics.android:crashlytics:1.+'
-    provided 'com.google.android.gms:play-services:5.0.+'
 
     /* Test dependencies */
     androidTestCompile('org.mockito:mockito-core:1.9.5') { exclude group: 'org.hamcrest' }

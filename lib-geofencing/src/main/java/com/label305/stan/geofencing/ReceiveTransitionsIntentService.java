@@ -6,7 +6,7 @@ import android.content.Intent;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.LocationClient;
 
-import java.lang.Override;import java.lang.String;import java.util.List;
+import java.util.List;
 
 /**
  * This class receives geofence transition events from Location Services, in the

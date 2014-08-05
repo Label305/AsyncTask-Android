@@ -17,7 +17,6 @@ import com.google.android.gms.location.LocationClient.OnAddGeofencesResultListen
 import com.google.android.gms.location.LocationStatusCodes;
 import com.label305.stan.utils.Dependency;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,15 +33,17 @@ public class GeofenceRequester implements OnAddGeofencesResultListener, Connecti
 
     private final Activity mActivity;
 
-    private PendingIntent mGeofencePendingIntent;
-    private ArrayList<Geofence> mCurrentGeofences;
-    private LocationClient mLocationClient;
+    private final Class<? extends ReceiveTransitionsIntentService> mReceiverClass;
 
-    private Class<? extends ReceiveTransitionsIntentService> mReceiverClass;
+    private PendingIntent mGeofencePendingIntent;
+
+    private List<Geofence> mCurrentGeofences;
+
+    private LocationClient mLocationClient;
 
     private boolean mInProgress;
 
-    public GeofenceRequester(Activity activity, Class<? extends ReceiveTransitionsIntentService> receiverClass) {
+    public GeofenceRequester(final Activity activity, final Class<? extends ReceiveTransitionsIntentService> receiverClass) {
         if (Dependency.isPresent("com.google.android.gms.location.Geofence")) {
             mActivity = activity;
             mReceiverClass = receiverClass;
@@ -51,18 +52,10 @@ public class GeofenceRequester implements OnAddGeofencesResultListener, Connecti
             mLocationClient = null;
             mInProgress = false;
         } else {
-            throw new NoClassDefFoundError("Could not find Geofencing import, make sure the Google Play services (com.google.android.gms:play-services:4.4.+) are imported in the build.gradle file");
+            throw new NoClassDefFoundError(
+                    "Could not find Geofencing import, make sure the Google Play services (com.google.android.gms:play-services:4.4.+) are imported in the build.gradle file"
+            );
         }
-    }
-
-    /**
-     * Set the "in progress" flag from a caller. This allows callers to re-set a
-     * request that failed but was later fixed.
-     *
-     * @param flag Turn the in progress flag on or off.
-     */
-    public void setInProgressFlag(boolean flag) {
-        mInProgress = flag;
     }
 
     /**
@@ -72,6 +65,16 @@ public class GeofenceRequester implements OnAddGeofencesResultListener, Connecti
      */
     public boolean getInProgressFlag() {
         return mInProgress;
+    }
+
+    /**
+     * Set the "in progress" flag from a caller. This allows callers to re-set a
+     * request that failed but was later fixed.
+     *
+     * @param flag Turn the in progress flag on or off.
+     */
+    public void setInProgressFlag(final boolean flag) {
+        mInProgress = flag;
     }
 
     /**
@@ -89,8 +92,8 @@ public class GeofenceRequester implements OnAddGeofencesResultListener, Connecti
      *
      * @param geofences A List of one or more geofences to add
      */
-    public void addGeofences(List<Geofence> geofences) throws UnsupportedOperationException {
-        mCurrentGeofences = (ArrayList<Geofence>) geofences;
+    public void addGeofences(final List<Geofence> geofences) {
+        mCurrentGeofences = geofences;
         if (!mInProgress) {
             mInProgress = true;
             requestConnection();
@@ -129,9 +132,9 @@ public class GeofenceRequester implements OnAddGeofencesResultListener, Connecti
     }
 
     @Override
-    public void onAddGeofencesResult(int statusCode, String[] geofenceRequestIds) {
+    public void onAddGeofencesResult(final int statusCode, final String[] geofenceRequestIds) {
         Intent broadcastIntent = new Intent();
-        if (LocationStatusCodes.SUCCESS == statusCode) {
+        if (statusCode == LocationStatusCodes.SUCCESS) {
             broadcastIntent.setAction(GeofenceUtils.ACTION_GEOFENCES_ADDED).addCategory(GeofenceUtils.CATEGORY_LOCATION_SERVICES);
         } else {
             broadcastIntent.setAction(GeofenceUtils.ACTION_GEOFENCE_ERROR).addCategory(GeofenceUtils.CATEGORY_LOCATION_SERVICES);
@@ -149,7 +152,7 @@ public class GeofenceRequester implements OnAddGeofencesResultListener, Connecti
     }
 
     @Override
-    public void onConnected(Bundle arg0) {
+    public void onConnected(final Bundle arg0) {
         continueAddGeofences();
     }
 
@@ -177,7 +180,7 @@ public class GeofenceRequester implements OnAddGeofencesResultListener, Connecti
     }
 
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
+    public void onConnectionFailed(final ConnectionResult connectionResult) {
         mInProgress = false;
         if (connectionResult.hasResolution()) {
             try {
@@ -187,10 +190,11 @@ public class GeofenceRequester implements OnAddGeofencesResultListener, Connecti
             }
         } else {
             Intent errorBroadcastIntent = new Intent(GeofenceUtils.ACTION_CONNECTION_ERROR);
-            errorBroadcastIntent.addCategory(GeofenceUtils.CATEGORY_LOCATION_SERVICES).putExtra(GeofenceUtils.EXTRA_CONNECTION_ERROR_CODE,
-                    connectionResult.getErrorCode());
+            errorBroadcastIntent.addCategory(GeofenceUtils.CATEGORY_LOCATION_SERVICES).putExtra(
+                    GeofenceUtils.EXTRA_CONNECTION_ERROR_CODE,
+                    connectionResult.getErrorCode()
+            );
             LocalBroadcastManager.getInstance(mActivity).sendBroadcast(errorBroadcastIntent);
         }
     }
-
 }

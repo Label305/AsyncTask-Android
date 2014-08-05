@@ -36,54 +36,27 @@ import java.util.List;
  */
 public class GeofenceHelper {
 
-    /**
-     * Create a {@link Geofence} with given id, latitude, longitude and radius.
-     * Will use {@link Geofence#GEOFENCE_TRANSITION_ENTER} and
-     * {@link Geofence#NEVER_EXPIRE}.</p>Does <i>not</i> register created
-     * Geofence.
-     *
-     * @param radius in meters.
-     */
-    public static Geofence createEnterGeofence(final String id, final double latitude, final double longitude, final float radius) {
-        if (Dependency.isPresent("com.google.android.gms.location.Geofence")) {
-            return new Geofence.Builder().setRequestId(id).setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER).setCircularRegion(latitude, longitude, radius).setExpirationDuration(Geofence.NEVER_EXPIRE).build();
-        } else {
-            throw new NoClassDefFoundError("Could not find Geofencing import, make sure the Google Play services (com.google.android.gms:play-services:4.4.+) are imported in the build.gradle file");
-        }
-    }
-
-    /**
-     * Create a {@link Geofence} with given id, latitude, longitude and radius.
-     * Will use {@link Geofence#GEOFENCE_TRANSITION_EXIT} and
-     * {@link Geofence#NEVER_EXPIRE}.</p>Does <i>not</i> register created
-     * Geofence.
-     *
-     * @param radius in meters.
-     */
-    public static Geofence createExitGeofence(final String id, final double latitude, final double longitude, final float radius) {
-        if (Dependency.isPresent("com.google.android.gms.location.Geofence")) {
-            return new Geofence.Builder().setRequestId(id).setTransitionTypes(Geofence.GEOFENCE_TRANSITION_EXIT).setCircularRegion(latitude, longitude, radius).setExpirationDuration(Geofence.NEVER_EXPIRE).build();
-        } else {
-            throw new NoClassDefFoundError("Could not find Geofencing import, make sure the Google Play services (com.google.android.gms:play-services:4.4.+) are imported in the build.gradle file");
-        }
-    }
-
     private final Activity mActivity;
 
-    private GeofenceListener mGeofenceListener;
-
     private final GeofenceRequester mGeofenceRequester;
+
     private final GeofenceRemover mGeofenceRemover;
 
     private final GeofenceBroadcastReceiver mBroadcastReceiver;
+
     private final IntentFilter mBroadcastIntentFilter;
 
-    private REQUEST_TYPE mRequestType;
-
     private final List<String> mProcessingRemoveGeofenceIds;
+
     private final List<String> mPendingRemoveGeofenceIds;
+
     private final List<Geofence> mProcessingAddGeofences;
+
     private final List<Geofence> mPendingAddGeofences;
+
+    private GeofenceListener mGeofenceListener;
+
+    private REQUEST_TYPE mRequestType;
 
     /**
      * Create a new {@link GeofenceHelper} for given Activity and
@@ -110,7 +83,53 @@ public class GeofenceHelper {
             mProcessingAddGeofences = new ArrayList<>();
             mPendingAddGeofences = new ArrayList<>();
         } else {
-            throw new NoClassDefFoundError("Could not find Geofencing import, make sure the Google Play services (com.google.android.gms:play-services:4.4.+) are imported in the build.gradle file");
+            throw new NoClassDefFoundError(
+                    "Could not find Geofencing import, make sure the Google Play services (com.google.android.gms:play-services:4.4.+) are imported in the build.gradle file"
+            );
+        }
+    }
+
+    /**
+     * Create a {@link com.google.android.gms.location.Geofence} with given id, latitude, longitude and radius.
+     * Will use {@link com.google.android.gms.location.Geofence#GEOFENCE_TRANSITION_ENTER} and
+     * {@link com.google.android.gms.location.Geofence#NEVER_EXPIRE}.</p>Does <i>not</i> register created
+     * Geofence.
+     *
+     * @param radius in meters.
+     */
+    public static Geofence createEnterGeofence(final String id, final double latitude, final double longitude, final float radius) {
+        if (Dependency.isPresent("com.google.android.gms.location.Geofence")) {
+            return new Geofence.Builder().setRequestId(id)
+                                         .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
+                                         .setCircularRegion(latitude, longitude, radius)
+                                         .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                                         .build();
+        } else {
+            throw new NoClassDefFoundError(
+                    "Could not find Geofencing import, make sure the Google Play services (com.google.android.gms:play-services:4.4.+) are imported in the build.gradle file"
+            );
+        }
+    }
+
+    /**
+     * Create a {@link com.google.android.gms.location.Geofence} with given id, latitude, longitude and radius.
+     * Will use {@link com.google.android.gms.location.Geofence#GEOFENCE_TRANSITION_EXIT} and
+     * {@link com.google.android.gms.location.Geofence#NEVER_EXPIRE}.</p>Does <i>not</i> register created
+     * Geofence.
+     *
+     * @param radius in meters.
+     */
+    public static Geofence createExitGeofence(final String id, final double latitude, final double longitude, final float radius) {
+        if (Dependency.isPresent("com.google.android.gms.location.Geofence")) {
+            return new Geofence.Builder().setRequestId(id)
+                                         .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_EXIT)
+                                         .setCircularRegion(latitude, longitude, radius)
+                                         .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                                         .build();
+        } else {
+            throw new NoClassDefFoundError(
+                    "Could not find Geofencing import, make sure the Google Play services (com.google.android.gms:play-services:4.4.+) are imported in the build.gradle file"
+            );
         }
     }
 
@@ -191,6 +210,27 @@ public class GeofenceHelper {
         }
     }
 
+    /**
+     * An interface to get notified of adding / removing / error updates.
+     */
+    public interface GeofenceListener {
+
+        /**
+         * Called when all pending adding geofences have been processed.
+         */
+        void onGeofencesAdded();
+
+        /**
+         * Called when all pending removed geofences have been processed.
+         */
+        void onGeofencesRemoved();
+
+        /**
+         * Called when an error occured.
+         */
+        void onGeofenceError(Intent intent);
+    }
+
     private class GeofenceBroadcastReceiver extends BroadcastReceiver {
 
         @Override
@@ -235,26 +275,5 @@ public class GeofenceHelper {
                 mGeofenceListener.onGeofenceError(intent);
             }
         }
-    }
-
-    /**
-     * An interface to get notified of adding / removing / error updates.
-     */
-    public interface GeofenceListener {
-
-        /**
-         * Called when all pending adding geofences have been processed.
-         */
-        void onGeofencesAdded();
-
-        /**
-         * Called when all pending removed geofences have been processed.
-         */
-        void onGeofencesRemoved();
-
-        /**
-         * Called when an error occured.
-         */
-        void onGeofenceError(Intent intent);
     }
 }

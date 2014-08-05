@@ -33,7 +33,7 @@ import java.util.List;
 public class GeofenceRemover implements ConnectionCallbacks, OnConnectionFailedListener, OnRemoveGeofencesResultListener {
 
     // Storage for a context from the calling client
-    private Activity mActivity;
+    private final Activity mActivity;
 
     // Stores the current list of geofences
     private List<String> mCurrentGeofenceIds;
@@ -59,20 +59,30 @@ public class GeofenceRemover implements ConnectionCallbacks, OnConnectionFailedL
     /**
      * Construct a GeofenceRemover for the current Context
      *
-     * @param context A valid Context
+     * @param activity A valid Context
      */
-    public GeofenceRemover(Activity context) {
+    public GeofenceRemover(Activity activity) {
         if (Dependency.isPresent("com.google.android.gms.location.Geofence")) {
-            // Save the context
-            mActivity = context;
+            mActivity = activity;
 
             // Initialize the globals to null
             mCurrentGeofenceIds = null;
             mLocationClient = null;
             mInProgress = false;
         } else {
-            throw new NoClassDefFoundError("Could not find Geofencing import, make sure the Google Play services (com.google.android.gms:play-services:4.4.+) are imported in the build.gradle file");
+            throw new NoClassDefFoundError(
+                    "Could not find Geofencing import, make sure the Google Play services (com.google.android.gms:play-services:4.4.+) are imported in the build.gradle file"
+            );
         }
+    }
+
+    /**
+     * Get the current in progress status.
+     *
+     * @return The current value of the in progress flag.
+     */
+    public boolean getInProgressFlag() {
+        return mInProgress;
     }
 
     /**
@@ -84,15 +94,6 @@ public class GeofenceRemover implements ConnectionCallbacks, OnConnectionFailedL
     public void setInProgressFlag(boolean flag) {
         // Set the "In Progress" flag.
         mInProgress = flag;
-    }
-
-    /**
-     * Get the current in progress status.
-     *
-     * @return The current value of the in progress flag.
-     */
-    public boolean getInProgressFlag() {
-        return mInProgress;
     }
 
     /**
@@ -198,7 +199,6 @@ public class GeofenceRemover implements ConnectionCallbacks, OnConnectionFailedL
 
         if (LocationStatusCodes.SUCCESS == statusCode) {
             broadcastIntent.setAction(GeofenceUtils.ACTION_GEOFENCES_REMOVED).addCategory(GeofenceUtils.CATEGORY_LOCATION_SERVICES);
-
         } else {
             broadcastIntent.setAction(GeofenceUtils.ACTION_GEOFENCE_ERROR).addCategory(GeofenceUtils.CATEGORY_LOCATION_SERVICES);
         }
@@ -215,14 +215,13 @@ public class GeofenceRemover implements ConnectionCallbacks, OnConnectionFailedL
         getLocationClient().disconnect();
         /*
          * If the request was done by PendingIntent, cancel the Intent. This
-		 * prevents problems if the client gets disconnected before the
-		 * disconnection request finishes; the location updates will still be
-		 * cancelled.
-		 */
+        * prevents problems if the client gets disconnected before the
+         * disconnection request finishes; the location updates will still be
+         * cancelled.
+         */
         if (mRequestType == GeofenceUtils.REMOVE_TYPE.INTENT) {
             mCurrentIntent.cancel();
         }
-
     }
 
     /*
@@ -253,36 +252,37 @@ public class GeofenceRemover implements ConnectionCallbacks, OnConnectionFailedL
     public void onConnectionFailed(ConnectionResult connectionResult) {
         mInProgress = false;
 
-		/*
-		 * Google Play services can resolve some errors it detects. If the error
-		 * has a resolution, try sending an Intent to start a Google Play
-		 * services activity that can resolve error.
-		 */
+        /*
+         * Google Play services can resolve some errors it detects. If the error
+         * has a resolution, try sending an Intent to start a Google Play
+         * services activity that can resolve error.
+         */
         if (connectionResult.hasResolution()) {
 
             try {
                 // Start an Activity that tries to resolve the error
                 connectionResult.startResolutionForResult(mActivity, GeofenceUtils.CONNECTION_FAILURE_RESOLUTION_REQUEST);
 
-				/*
-				 * Thrown if Google Play services canceled the original
-				 * PendingIntent
-				 */
+                /*
+                 * Thrown if Google Play services canceled the original
+                 * PendingIntent
+                 */
             } catch (SendIntentException e) {
                 // Log the error
                 e.printStackTrace();
             }
 
-			/*
-			 * If no resolution is available, put the error code in an error
-			 * Intent and broadcast it back to the main Activity. The Activity
-			 * then displays an error dialog. is out of date.
-			 */
+            /*
+             * If no resolution is available, put the error code in an error
+             * Intent and broadcast it back to the main Activity. The Activity
+             * then displays an error dialog. is out of date.
+             */
         } else {
-
             Intent errorBroadcastIntent = new Intent(GeofenceUtils.ACTION_CONNECTION_ERROR);
-            errorBroadcastIntent.addCategory(GeofenceUtils.CATEGORY_LOCATION_SERVICES).putExtra(GeofenceUtils.EXTRA_CONNECTION_ERROR_CODE,
-                    connectionResult.getErrorCode());
+            errorBroadcastIntent.addCategory(GeofenceUtils.CATEGORY_LOCATION_SERVICES).putExtra(
+                    GeofenceUtils.EXTRA_CONNECTION_ERROR_CODE,
+                    connectionResult.getErrorCode()
+            );
             LocalBroadcastManager.getInstance(mActivity).sendBroadcast(errorBroadcastIntent);
         }
     }
