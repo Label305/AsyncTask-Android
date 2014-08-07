@@ -9,7 +9,7 @@ import java.io.IOException;
  */
 public abstract class ExponentialBackoffAsyncTask<ResultT> extends AsyncTask<ResultT> {
 
-    public static final int DEFAULT_MAX_TRY_COUNT = 1;
+    public static final int DEFAULT_MAX_TRY_COUNT = 3;
 
     private int mMaxTryCount;
 

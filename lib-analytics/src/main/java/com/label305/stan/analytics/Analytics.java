@@ -23,7 +23,6 @@ import android.content.Context;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
-import com.label305.stan.Dependency;
 import com.label305.stan.Logger;
 
 @SuppressWarnings({"UnusedDeclaration", "StaticMethodOnlyUsedInOneClass"})
@@ -59,15 +58,9 @@ public class Analytics {
      * Initialize the Analytics Tracker. Resolves the key based on isDebug.
      */
     public static void init(final Context context, final boolean isDebug) {
-        if (Dependency.isPresent(GoogleAnalytics.class.getName())) {
-            sIsDebug = isDebug;
-            Logger.setIsDebug(isDebug);
-            getDefaultTracker(context);
-        } else {
-            throw new NoClassDefFoundError(
-                    "Could not find Analytics import, make sure the Google Play services (com.google.android.gms:play-services:4.4.+) are imported in the build.gradle file"
-            );
-        }
+        sIsDebug = isDebug;
+        Logger.setIsDebug(isDebug);
+        getDefaultTracker(context);
     }
 
     /**
@@ -75,15 +68,6 @@ public class Analytics {
      */
     public static void setAppVersion(final String appVersion) {
         sTracker.setAppVersion(appVersion);
-    }
-
-    /**
-     * Manually start the session.
-     *
-     * @deprecated does nothing anymore since analytics v5 is supported
-     */
-    @Deprecated
-    public static void startSession() {
     }
 
     /**

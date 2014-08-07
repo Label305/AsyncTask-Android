@@ -9,7 +9,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 
 import com.google.android.gms.location.Geofence;
-import com.label305.stan.Dependency;
 import com.label305.stan.Logger;
 import com.label305.stan.geofencing.GeofenceUtils.REQUEST_TYPE;
 
@@ -63,30 +62,23 @@ public class GeofenceHelper {
      * {@link ReceiveTransitionsIntentService} class.
      */
     public GeofenceHelper(final Activity activity, final Class<? extends ReceiveTransitionsIntentService> receiverClass) {
+        mActivity = activity;
 
-        if (Dependency.isPresent(Geofence.class.getName())) {
-            mActivity = activity;
+        mGeofenceRequester = new GeofenceRequester(activity, receiverClass);
+        mGeofenceRemover = new GeofenceRemover(activity);
 
-            mGeofenceRequester = new GeofenceRequester(activity, receiverClass);
-            mGeofenceRemover = new GeofenceRemover(activity);
+        mBroadcastReceiver = new GeofenceBroadcastReceiver();
 
-            mBroadcastReceiver = new GeofenceBroadcastReceiver();
+        mBroadcastIntentFilter = new IntentFilter();
+        mBroadcastIntentFilter.addAction(GeofenceUtils.ACTION_GEOFENCES_ADDED);
+        mBroadcastIntentFilter.addAction(GeofenceUtils.ACTION_GEOFENCES_REMOVED);
+        mBroadcastIntentFilter.addAction(GeofenceUtils.ACTION_GEOFENCE_ERROR);
+        mBroadcastIntentFilter.addCategory(GeofenceUtils.CATEGORY_LOCATION_SERVICES);
 
-            mBroadcastIntentFilter = new IntentFilter();
-            mBroadcastIntentFilter.addAction(GeofenceUtils.ACTION_GEOFENCES_ADDED);
-            mBroadcastIntentFilter.addAction(GeofenceUtils.ACTION_GEOFENCES_REMOVED);
-            mBroadcastIntentFilter.addAction(GeofenceUtils.ACTION_GEOFENCE_ERROR);
-            mBroadcastIntentFilter.addCategory(GeofenceUtils.CATEGORY_LOCATION_SERVICES);
-
-            mProcessingRemoveGeofenceIds = new ArrayList<>();
-            mPendingRemoveGeofenceIds = new ArrayList<>();
-            mProcessingAddGeofences = new ArrayList<>();
-            mPendingAddGeofences = new ArrayList<>();
-        } else {
-            throw new NoClassDefFoundError(
-                    "Could not find Geofencing import, make sure the Google Play services (com.google.android.gms:play-services:4.4.+) are imported in the build.gradle file"
-            );
-        }
+        mProcessingRemoveGeofenceIds = new ArrayList<>();
+        mPendingRemoveGeofenceIds = new ArrayList<>();
+        mProcessingAddGeofences = new ArrayList<>();
+        mPendingAddGeofences = new ArrayList<>();
     }
 
     /**
@@ -98,17 +90,11 @@ public class GeofenceHelper {
      * @param radius in meters.
      */
     public static Geofence createEnterGeofence(final String id, final double latitude, final double longitude, final float radius) {
-        if (Dependency.isPresent("com.google.android.gms.location.Geofence")) {
-            return new Geofence.Builder().setRequestId(id)
-                                         .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
-                                         .setCircularRegion(latitude, longitude, radius)
-                                         .setExpirationDuration(Geofence.NEVER_EXPIRE)
-                                         .build();
-        } else {
-            throw new NoClassDefFoundError(
-                    "Could not find Geofencing import, make sure the Google Play services (com.google.android.gms:play-services:4.4.+) are imported in the build.gradle file"
-            );
-        }
+        return new Geofence.Builder().setRequestId(id)
+                                     .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
+                                     .setCircularRegion(latitude, longitude, radius)
+                                     .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                                     .build();
     }
 
     /**
@@ -120,17 +106,11 @@ public class GeofenceHelper {
      * @param radius in meters.
      */
     public static Geofence createExitGeofence(final String id, final double latitude, final double longitude, final float radius) {
-        if (Dependency.isPresent("com.google.android.gms.location.Geofence")) {
-            return new Geofence.Builder().setRequestId(id)
-                                         .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_EXIT)
-                                         .setCircularRegion(latitude, longitude, radius)
-                                         .setExpirationDuration(Geofence.NEVER_EXPIRE)
-                                         .build();
-        } else {
-            throw new NoClassDefFoundError(
-                    "Could not find Geofencing import, make sure the Google Play services (com.google.android.gms:play-services:4.4.+) are imported in the build.gradle file"
-            );
-        }
+        return new Geofence.Builder().setRequestId(id)
+                                     .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_EXIT)
+                                     .setCircularRegion(latitude, longitude, radius)
+                                     .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                                     .build();
     }
 
     /**
