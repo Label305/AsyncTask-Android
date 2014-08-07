@@ -4,7 +4,7 @@ apply from: '../generateJavadoc.gradle'
 apply from: '../pushMaven.gradle'
 
 dependencies {
-    compile project(':lib-core')
+    compile project(':lib-utils')
     compile 'com.android.support:support-v4:20.+'
     compile('com.caverock:androidsvg:1.2.1')
 

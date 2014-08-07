@@ -4,9 +4,9 @@ Stan is a toolkit library for Android which consists of the following modules:
 
   * `lib-analytics`
   * `lib-async`
-  * `lib-core`
   * `lib-geofencing`
   * `lib-svg`
+  * `lib-utils`
   * `lib-widget`
 
 ## Usage
