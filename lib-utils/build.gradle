@@ -1,7 +1,9 @@
 apply plugin: 'com.android.library'
+apply plugin: 'github-pages'
 
 apply from: '../generateJavadoc.gradle'
 apply from: '../pushMaven.gradle'
+apply from: '../publishGhPages.gradle'
 
 configurations {
     provided

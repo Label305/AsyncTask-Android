@@ -5,7 +5,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'org.ajoberstar:gradle-git:0.8.+'
+        classpath 'org.ajoberstar:gradle-git:0.9.+'
     }
 
 }
@@ -26,7 +26,7 @@ android.libraryVariants.all { variant ->
         ext.androidJar = "${android.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar"
 
         def folder = branch == 'master' ? VERSION_NAME : branch
-        destinationDir file("./build/docs/javadoc/" + folder)
+        destinationDir file("./build/docs/javadoc/" + folder + "/" + project.name + "/javadoc/" + branch)
         classpath = files(variant.javaCompile.classpath.files) + files(ext.androidJar)
         options.links("http://docs.oracle.com/javase/7/docs/api/");
         options.linksOffline("http://d.android.com/reference", System.getenv('ANDROID_HOME') + "docs/reference")
