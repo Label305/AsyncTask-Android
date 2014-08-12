@@ -1,0 +1,30 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'org.ajoberstar:gradle-git:0.9.+'
+    }
+}
+
+import org.ajoberstar.grgit.*
+def repo = Grgit.open(".")
+
+def branch = repo.branch.current.name
+if(project.hasProperty('BRANCH')) {
+    branch = BRANCH
+}
+
+githubPages {
+
+    repoUri = 'git@github.com:Label305/Stan-for-Android.git'
+    commitMessage = 'Updated docs for branch ' + branch + ', module ' + project.name
+    pages {
+        from './build/docs/javadoc/' + branch + '/'
+    }
+    credentials {
+        username = System.getenv('GH_TOKEN_STAN')
+        password = '\n'
+    }
+}

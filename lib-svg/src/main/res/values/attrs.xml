@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="SvgImageView" >
+        <attr name="svg" format="reference"/>
+        <attr name="invertSvg" format="boolean" />
+        <attr name="svgColor" format="color" />
+        <attr name="pressedSvgColor" format="color" />
+    </declare-styleable>
+
+</resources>

@@ -1,69 +1,86 @@
 # Stan for Android [![Build Status](https://travis-ci.org/Label305/Stan-for-Android.svg?branch=master)](https://travis-ci.org/Label305/Stan-for-Android)
 
-Android library with various extensions to android views and various helpers, used at Label305 for app development
+Stan is a toolkit library for Android which consists of the following modules:
 
-## Features
+  * `lib-analytics`
+  * `lib-async`
+  * `lib-geofencing`
+  * `lib-svg`
+  * `lib-utils`
+  * `lib-widget`
 
-* all kinds of views which support custom fonts
-   * Fonts need to be placed in assets
-   * A string needs to point to the location of the asset
-   * This string is used in the xml to define the font used for the custom font view
-* a safe AsyncTask
-  * Which has callbacks for exceptions, but does throw RTE
-  * Also an ExponentialBackoffAsyncTask is included, which retries failed Tasks several times (can be defined)
-* Http functions
-  * Getter/Poster/Deleter/Putter functions supported
-* extensions on the Imageview
-  * SimpleNetworkImageView uses Volley to load an image from url
-  * SvgImageView is an Imageview which supports svg images
-* an AbstractExpandableTitleView
-  * animated
-* Memory management
-  * BitmapCache
-  * SvgCache
-* Several utils
-  * Analytics
-  * Logger
-  * ArrayAdapter
-  * PixelUtils
-  * StringUtils
+## Usage
 
-## Usage - Gradle
+Add the following to your dependencies:
 
-Add the following lines to the settings.gradle when using Stan as submodule
-```
-include ':stan'
+    compile 'com.label305.stan:lib-analytics:x.x.x'
+    compile 'com.label305.stan:lib-async:x.x.x'
+    compile 'com.label305.stan:lib-geofencing:x.x.x'
+    compile 'com.label305.stan:lib-svg:x.x.x'
+    compile 'com.label305.stan:lib-utils:x.x.x'
+    compile 'com.label305.stan:lib-widget:x.x.x'
+    
+Replace `x.x.x` with the latest version name. See [the releases page][1].
+    
+## Documentation
 
-project (':stan').projectDir = new File(settingsDir, '/$PATH_TO_SUBMODULE/stan/app')
-```
+The javadocs can be found [here][2]
 
-Then in app/build.gradle add the following line:
-```
-dependencies {
+## Modules
 
-    ...
+### Analytics
 
-    compile project(':stan')
+The `lib-analytics` module provides a bridge between you and Google Analytics with various quick access functions.
+To use this class, initialize it on startup using `Analytics.init(Context, boolean)`, and add the following to your `strings.xml`, replacing the values:
 
-    ...
-}
-```
+	<string name="key_analytics">MY_ANALYTICS_KEY</string>
+	<string name="key_analytics_debug">MY_DEBUG_ANALYTICS_KEY</string> <!-- optional -->
+	
+The string `key_analytics_debug` is optional, and provides a way to send analytics events to a separate profile.
 
+### Async
 
-## Libraries used
- * [NineOldAndroids](http://nineoldandroids.com/)
- * [OrmLite](http://ormlite.com/)
- * [Crashlytics](http://www.crashlytics.com)
- * [androidsvg](https://code.google.com/p/androidsvg/)
- * [volley](https://android.googlesource.com/platform/frameworks/volley/)
- * [Mockito](https://code.google.com/p/mockito/)
- * [Hamcrest](https://code.google.com/p/hamcrest/)
+The `lib-async` module provides an `AsyncTask` which provides proper exception handling, and easy event handling.
+It is loosely based on RoboGuice's `AsyncTask`.
+
+The `ExponentialBackoffAsyncTask` provides a way to keep retrying the requests when an `Exception` occurs, up to a maximum number of times. When subclassing this class, override `shouldRetry(Exception, int)` to determine whether to retry the request. By default, this class only retries if an `IOException` is thrown, upto a maximum of 3 times.
+
+### Geofencing
+
+The `lib-geofencing` module provides easy geofencing utilities.
+
+### SVG
+
+The `lib-svg` module contains an `SvgImageView`, which can show SVG images. SVG images should be stored in the `raw` folder.
+
+### Utils
+
+The `lib-utils` module provides a couple of utility classes. The `Logger` class provides logging, but only if the application is in a debug state. To initialize this class, call `Logger.setIsDebug(boolean)`.
+
+### Widget
+
+The `lib-widget` module contains several extensions to Android's `View` classes to use custom fonts, and more.
+To use one of the `CustomFont` view classes, place the fonts in the `assets` directory, and add the following to your layout xml:
+
+    <com.label305.stan.widget.CustomFontTextView
+        ...
+        xmlns:stan="http://schemas.android.com/apk/res-auto"
+        stan:font="myfont.ttf" />
 
 ## License
-Copyright 2014 Label305 B.V.
+	Copyright 2014 Label305 B.V.
+	
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
 
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+	http://www.apache.org/licenses/LICENSE-2.0
 
-http://www.apache.org/licenses/LICENSE-2.0
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
 
-Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+[1]: https://github.com/Label305/Stan-for-Android/releases
+[2]: http://label305.github.io/Stan-for-Android/javadoc/

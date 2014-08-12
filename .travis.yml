@@ -1,52 +1,40 @@
-language: java
+language: android
 jdk: oraclejdk7
 
 env:
   matrix:
-  - ANDROID_SDKS=android-17,sysimg-17 ANDROID_TARGET=android-17 ANDROID_ABI=armeabi-v7a LINT=false MAVEN=false JAVADOC=false
-  - ANDROID_SDKS=android-18,sysimg-18 ANDROID_TARGET=android-18 ANDROID_ABI=armeabi-v7a LINT=false MAVEN=false JAVADOC=false
-  - ANDROID_SDKS=sysimg-19            ANDROID_TARGET=android-19 ANDROID_ABI=armeabi-v7a LINT=true  MAVEN=true JAVADOC=true
-
+    - ANDROID_TARGET=19 LINT=true MAVEN=true
   global:
-  - TERM=dumb
-  - secure: kFutepOJXnSNuEj+w3HVT61qt4f1rSMXNMSOwd5KP+40j3xnVaJZzT85GRzZ4PsYaCvxR88DUMZ/aruEC2eao09++XvFpIeCmjMhLgH8WJY8cGNCGvWsMLNvDCcPxxyf9yEiQh/vXxqVR3nGODoVrUuGMN7lTTUeONOQrWrVnu8=
-  - secure: bGISHuqYtLEWjnyjvtc0RUV7QBA7d5Na0aUxlURN8OoMfmpMvTAH8tLuQVKIgSMSHO5qiKH/m570eGyLIg49V7J+Ipm/7eEgVIKS4xYMLAGEiqul2wx2sUONcTSYmyTW3oZTLsUwNpeYfyKQEofNBKQwmAtOB4OuYhwWWcaEx/I=
-  # NEXUSUSERNAME:
-  - secure: BRK3XtgO9eZKWq6JI6p6ZK3mI1WOgh3ACo5iGXS01Z4LOuFovXkL8xFiGswKuA4C+NeYHH9EKAbdWTAIL/KhWlWM1f/+yDL8fRVxWcMaTQYk0CUQJl2dyEMjLI6z4ziiv5QVzAEFjYAdNNb/CL6scTNjaN2CW2kreDV6BnCAahI=
-  # NEXUSPASSWORD:
-  - secure: j2DqijRCMuV5W3C25oiVEdgZvdN64Zvl13O+4B166E3dFGCQXTKNRgg0e9wineb7tPJekv0/QyZ58qpMaL4ep6epEulL9Ygg1YZn9OrL/DHR9ofce8VpQmhmISZ9HYb74/cckw9qvDxC8Q/g00DoTlV/A0elJxIpOA7DjxN9jCc=
+    - TERM=dumb
+    - COMPONENTS=build-tools-20.0.0,android-20,extra-android-m2repository,extra-android-support,extra-google-m2repository
+    - LICENSES="android-sdk-license-5be876d5|android-sdk-preview-license-52d11cd2"
+    - secure: Fo/btrr+HpwmQL6TNxZuh/TWRMouz9Z1RCo77tf3crNP4OHq9EAkduLc/b4i6HCGFM3fyfJ7AM5XMa3OQvXfF84FQnew7NGE6zB/CKFfKBIZyzntvrDg4VqWEAHzunT6+eBnGtxtrAE0bBo4MmUCklXWP8j5UAyjfFpSeJdOywY=
+    - secure: s56rqSiiwX40CQWeHTcbyVLRtwLP/pcHWqaVCKuXtZ/m9SgRI/SHp9o8ITI2dzr3syEeAkHjkJOkHQSpH0bHi1xKY4M9ODcCugwv+yDEELw1qmI6Cvwjvj1cKsG7ebt39OnCkz+TqhtI/iOEkxq7mTizFjNIxIImMkKxeQwcFgE=
+    - secure: UOQ9keLBuJw5Ed/eYtXarwoGuJSSvgGTob+D9aU8hVRoTUXpSDuHtk9TdS4MNXQ33jgFZEsmkpwRmV54XVEGe6xcri1uys1JDzjc+SqTEgbEh1QktfIWGvOx49YZtI2Zei0324S2qXRtemKMw4N+1XRRMP/IXEogr26Xi5JLVcI=
 
 before_install:
-- sudo chmod +x gradlew
-- sudo apt-get update -qq
-- sudo apt-get install -qq libstdc++6:i386 lib32z1 expect
-- export COMPONENTS=extra-android-m2repository,build-tools-19.0.3,android-19,doc-19,$ANDROID_SDKS
-- curl -3L https://raw.github.com/embarkmobile/android-sdk-installer/version-2/android-sdk-installer | bash /dev/stdin --install=$COMPONENTS
-- source ~/.android-sdk-installer/env
+  - curl -3L https://raw.github.com/embarkmobile/android-sdk-installer/version-2/android-sdk-installer | bash /dev/stdin --install=$COMPONENTS,android-$ANDROID_TARGET,sys-img-armeabi-v7a-android-$ANDROID_TARGET --accept=$LICENSES && source ~/.android-sdk-installer/env
+  - curl -3L -o wait_for_emulator https://github.com/embarkmobile/android-sdk-installer/raw/version-2/wait_for_emulator
+  - sudo chmod +x wait_for_emulator
 
-- echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
-- emulator -avd test -no-skin -no-audio -no-window &
+  # Start the emulator
+  - echo no | android create avd --force -n test -t android-$ANDROID_TARGET --abi armeabi-v7a
+  - emulator -avd test -no-audio -no-window &
 
 before_script:
-- wait_for_emulator
+  # Downloads gradle stuff
+  - gradle
+  - ./wait_for_emulator
 
 install:
-- true
+ - true
 
 script:
-- ./gradlew connectedCheck
-- if [[ $LINT == 'true' ]]; then ./gradlew lint ; fi
+  - gradle connectedCheck
+  - if [[ $LINT == 'true' ]]; then gradle lint ; fi
 
 after_success:
-- if [[ $JAVADOC == 'true' ]]; then sudo apt-get install -qq ncftp ; fi
-- if [[ $JAVADOC == 'true' ]]; then ./gradlew generateDebugJavadoc -PANDROID_HOME=$ANDROID_HOME -PTITLE="Stan for Android ($TRAVIS_BRANCH - $TRAVIS_BUILD-NUMBER)" -POUTPUT="$HOME/docs" ; fi
-- if [[ $JAVADOC == 'true' ]]; then ncftpput -R -m -u $FTP_USER -p $FTP_PASSWORD host3.label305.com /stan-for-android/$TRAVIS_BRANCH $HOME/docs/* ; fi
+  - if [[ $MAVEN == 'true' && $TRAVIS_BRANCH == 'dev' && $TRAVIS_PULL_REQUEST == 'false' ]]; then gradle uploadArchives -PnexusUsername="${nexusUsername}" -PnexusPassword="${nexusPassword}" ; fi
 
-- if [[ $MAVEN == 'true' ]]; then ./gradlew uploadArchives -PnexusUsername=${NEXUSUSERNAME} -PnexusPassword=${NEXUSPASSWORD} ; fi
-
-notifications: 
+notifications:
   email: false
-
-hipchat:
-  rooms:
-    secure: XDkzejt7ImugegYsgdkzS8gg8/DUVML+1BOmoRyuuJqDyVvm1mkXZct7OOAYxJO5BYVettHIB2ZmTvChLrxRWMsAkKjuX3EFfG1E6+onthfwB2hpaESkQl8MbQRfa3T/ogqf+E1eyU137Xojsvx/URiZEBokYnJ9p3WmnSzfx0Y=
