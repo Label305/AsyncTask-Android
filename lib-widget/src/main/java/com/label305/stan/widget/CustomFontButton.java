@@ -7,8 +7,11 @@ import android.widget.Button;
 
 import org.jetbrains.annotations.NotNull;
 
-
 public class CustomFontButton extends Button {
+
+    public CustomFontButton(@NotNull final Context context) {
+        super(context);
+    }
 
     public CustomFontButton(@NotNull final Context context, @NotNull final AttributeSet attrs) {
         super(context, attrs);
@@ -25,9 +28,13 @@ public class CustomFontButton extends Button {
 
         String font = a.getString(R.styleable.CustomFontButton_font);
         if (font != null) {
-            setTypeface(FontCache.getFont(getContext(), font));
+            setFont(font);
         }
 
         a.recycle();
+    }
+
+    public void setFont(@NotNull final String font) {
+        setTypeface(FontCache.getFont(getContext(), font));
     }
 }

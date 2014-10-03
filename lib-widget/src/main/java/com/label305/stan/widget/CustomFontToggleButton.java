@@ -9,6 +9,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class CustomFontToggleButton extends ToggleButton {
 
+    public CustomFontToggleButton(@NotNull final Context context) {
+        super(context);
+    }
+
     public CustomFontToggleButton(@NotNull final Context context, @NotNull final AttributeSet attrs) {
         super(context, attrs);
         init(attrs);
@@ -24,9 +28,13 @@ public class CustomFontToggleButton extends ToggleButton {
 
         String font = a.getString(R.styleable.CustomFontToggleButton_font);
         if (font != null) {
-            setTypeface(FontCache.getFont(getContext(), font));
+            setFont(font);
         }
 
         a.recycle();
+    }
+
+    public void setFont(@NotNull final String font) {
+        setTypeface(FontCache.getFont(getContext(), font));
     }
 }
