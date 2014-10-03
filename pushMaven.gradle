@@ -49,11 +49,6 @@ if(project.hasProperty('mavenProperties')) {
                                 id POM_DEVELOPER_ID1
                                 name POM_DEVELOPER_NAME1
                             }
-
-                            developer {
-                                id POM_DEVELOPER_ID2
-                                name POM_DEVELOPER_NAME2
-                            }
                         }
                     }
                 }
