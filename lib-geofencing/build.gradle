@@ -19,13 +19,12 @@ dependencies {
 }
 
 android {
-    compileSdkVersion 20
-    buildToolsVersion "20.0.0"
+    compileSdkVersion 21
+    buildToolsVersion "21.1.2"
 
     defaultConfig {
-        applicationId "com.label305.stan.geofencing"
         minSdkVersion 10
-        targetSdkVersion 20
+        targetSdkVersion 21
         versionCode 1
         versionName VERSION_NAME
     }
