@@ -16,26 +16,26 @@
 
 package com.label305.asynctask;
 
-import android.support.annotation.MainThread;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
-import android.support.annotation.WorkerThread;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 /**
- * An {@link AsyncTask}, but does not allow Exceptions to be thrown in {@link #doInBackground()}.
- *
- * @param <T> the type of the result.
+ * An AsyncTaskExecutor that runs AsyncTasks in a thread pool and executes callbacks on the main thread.
  *
  * @author Niek Haarman <niek@label305.com>
  */
-public abstract class SimpleAsyncTask<T> extends AsyncTask<T, Exception> {
+class DefaultAsyncTaskExecutor implements AsyncTaskExecutor {
+
+  @SuppressWarnings("MagicNumber")
+  private final Executor mExecutor = Executors.newFixedThreadPool(25);
+
+  private final Handler mHandler = new Handler(Looper.getMainLooper());
 
   @Override
-  @WorkerThread
-  protected abstract T doInBackground();
-
-  @Override
-  @MainThread
-  protected final void onException(@NonNull final Exception e) {
-    throw new AssertionError(e);
+  public <T, E extends Exception, A extends AsyncTask<T, E>> A execute(@NonNull final A task) {
+    return (A) task.execute(mExecutor, mHandler);
   }
 }

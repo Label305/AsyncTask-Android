@@ -16,26 +16,16 @@
 
 package com.label305.asynctask;
 
-import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
-import android.support.annotation.WorkerThread;
 
 /**
- * An {@link AsyncTask}, but does not allow Exceptions to be thrown in {@link #doInBackground()}.
- *
- * @param <T> the type of the result.
+ * A delegate interface that can execute AsyncTasks.
  *
  * @author Niek Haarman <niek@label305.com>
  */
-public abstract class SimpleAsyncTask<T> extends AsyncTask<T, Exception> {
+public interface AsyncTaskExecutor {
 
-  @Override
-  @WorkerThread
-  protected abstract T doInBackground();
+  AsyncTaskExecutor DEFAULT_EXECUTOR = new DefaultAsyncTaskExecutor();
 
-  @Override
-  @MainThread
-  protected final void onException(@NonNull final Exception e) {
-    throw new AssertionError(e);
-  }
+  <T, E extends Exception, A extends AsyncTask<T, E>> A execute(@NonNull A task);
 }
