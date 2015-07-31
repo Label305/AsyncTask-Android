@@ -1,1 +1,4 @@
 include ':asynctask'
+include ':asynctask-test'
+
+include ':asynctask-example'
