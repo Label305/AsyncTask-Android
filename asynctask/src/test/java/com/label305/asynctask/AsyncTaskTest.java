@@ -21,6 +21,8 @@ import org.junit.Test;
 import org.mockito.InOrder;
 import org.mockito.Matchers;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.never;
@@ -32,8 +34,11 @@ public class AsyncTaskTest {
 
   @Test
   public void emptyExecution() throws Exception {
+    /* Given */
+    TestAsyncTask task = spy(new TestAsyncTask());
+
     /* When */
-    TestAsyncTask task = TestAsyncTaskExecutor.instance().execute(spy(new TestAsyncTask()));
+    execute(task);
 
     /* Then */
     InOrder inOrder = inOrder(task);
@@ -53,14 +58,15 @@ public class AsyncTaskTest {
   public void resultExecution() throws Exception {
     /* Given */
     final String result = "result";
-
-    /* When */
-    TestAsyncTask task = TestAsyncTaskExecutor.instance().execute(spy(new TestAsyncTask() {
+    TestAsyncTask task = spy(new TestAsyncTask() {
       @Override
       protected Object doInBackground() {
         return result;
       }
-    }));
+    });
+
+    /* When */
+    execute(task);
 
     /* Then */
     InOrder inOrder = inOrder(task);
@@ -78,13 +84,16 @@ public class AsyncTaskTest {
 
   @Test
   public void cancelledExecution() throws Exception {
-    /* When */
-    TestAsyncTask task = TestAsyncTaskExecutor.instance().execute(spy(new TestAsyncTask() {
+    /* Given */
+    TestAsyncTask task = spy(new TestAsyncTask() {
       @Override
       protected void onPreExecute() {
         cancel();
       }
-    }));
+    });
+
+    /* When */
+    execute(task);
 
     /* Then */
     InOrder inOrder = inOrder(task);
@@ -102,8 +111,8 @@ public class AsyncTaskTest {
 
   @Test
   public void interruptCancelledExecution() throws Exception {
-    /* When */
-    TestAsyncTask task = TestAsyncTaskExecutor.instance().execute(spy(new TestAsyncTask() {
+    /* Given */
+    TestAsyncTask task = spy(new TestAsyncTask() {
       @Override
       protected void onPreExecute() {
         cancelInterrupt();
@@ -112,7 +121,10 @@ public class AsyncTaskTest {
       @Override
       protected void onInterrupted(@NonNull final InterruptedException e) {
       }
-    }));
+    });
+
+    /* When */
+    execute(task);
 
     /* Then */
     InOrder inOrder = inOrder(task);
@@ -132,14 +144,15 @@ public class AsyncTaskTest {
   public void doInBackgroundExceptionThrown() throws Exception {
     /* Given */
     final Exception ex = new Exception();
-
-    /* When */
-    TestAsyncTask task = TestAsyncTaskExecutor.instance().execute(spy(new TestAsyncTask() {
+    TestAsyncTask task = spy(new TestAsyncTask() {
       @Override
       protected Object doInBackground() throws Exception {
         throw ex;
       }
-    }));
+    });
+
+    /* When */
+    execute(task);
 
     /* Then */
     InOrder inOrder = inOrder(task);
@@ -159,14 +172,20 @@ public class AsyncTaskTest {
   public void preExecuteRuntimeExceptionThrown() throws Exception {
     /* Given */
     final RuntimeException rte = new RuntimeException();
-
-    /* When */
-    TestAsyncTask task = TestAsyncTaskExecutor.instance().execute(spy(new TestAsyncTask() {
+    TestAsyncTask task = spy(new TestAsyncTask() {
       @Override
       protected void onPreExecute() {
         throw rte;
       }
-    }));
+    });
+
+    /* When */
+    try {
+      execute(task);
+      assertThat("Execute didn't throw", false, is(true));
+    } catch (RuntimeException e) {
+      assertThat(e, is(rte));
+    }
 
     /* Then */
     InOrder inOrder = inOrder(task);
@@ -186,14 +205,20 @@ public class AsyncTaskTest {
   public void successRuntimeExceptionThrown() throws Exception {
     /* Given */
     final RuntimeException rte = new RuntimeException();
-
-    /* When */
-    TestAsyncTask task = TestAsyncTaskExecutor.instance().execute(spy(new TestAsyncTask() {
+    TestAsyncTask task = spy(new TestAsyncTask() {
       @Override
       protected Object doInBackground() throws Exception {
         throw rte;
       }
-    }));
+    });
+
+    /* When */
+    try {
+      execute(task);
+      assertThat("Execute didn't throw", false, is(true));
+    } catch (RuntimeException e) {
+      assertThat(e, is(rte));
+    }
 
     /* Then */
     InOrder inOrder = inOrder(task);
@@ -209,44 +234,10 @@ public class AsyncTaskTest {
   }
 
   @Test
-  public void cancelledRuntimeExceptionThrown() throws Exception {
-    /* Given */
-    final RuntimeException rte = new RuntimeException();
-
-    /* When */
-    TestAsyncTask task = TestAsyncTaskExecutor.instance().execute(spy(new TestAsyncTask() {
-
-      @Override
-      protected void onPreExecute() {
-        cancel();
-      }
-
-      @Override
-      protected void onCancelled() {
-        throw rte;
-      }
-    }));
-
-    /* Then */
-    InOrder inOrder = inOrder(task);
-
-    inOrder.verify(task).onPreExecute();
-    inOrder.verify(task).onCancelled();
-    inOrder.verify(task).onRuntimeException(rte);
-    inOrder.verify(task).onFinally();
-
-    verify(task, never()).onSuccess(any(Void.class));
-    verify(task, never()).onException(any(InterruptedException.class));
-    verify(task, never()).onInterrupted(any(InterruptedException.class));
-  }
-
-  @Test
   public void exceptionRuntimeExceptionThrown() throws Exception {
     /* Given */
     final RuntimeException rte = new RuntimeException();
-
-    /* When */
-    TestAsyncTask task = TestAsyncTaskExecutor.instance().execute(spy(new TestAsyncTask() {
+    TestAsyncTask task = spy(new TestAsyncTask() {
       @Override
       protected Object doInBackground() throws Exception {
         throw new Exception();
@@ -256,7 +247,15 @@ public class AsyncTaskTest {
       protected void onException(@NonNull final Exception e) {
         throw rte;
       }
-    }));
+    });
+
+    /* When */
+    try {
+      execute(task);
+      assertThat("Execute didn't throw", false, is(true));
+    } catch (RuntimeException e) {
+      assertThat(e, is(rte));
+    }
 
     /* Then */
     InOrder inOrder = inOrder(task);
@@ -276,14 +275,20 @@ public class AsyncTaskTest {
   public void finallyRuntimeExceptionThrown() throws Exception {
     /* Given */
     final RuntimeException rte = new RuntimeException();
-
-    /* When */
-    TestAsyncTask task = TestAsyncTaskExecutor.instance().execute(spy(new TestAsyncTask() {
+    TestAsyncTask task = spy(new TestAsyncTask() {
       @Override
       protected void onFinally() {
         throw rte;
       }
-    }));
+    });
+
+    /* When */
+    try {
+      execute(task);
+      assertThat("Execute didn't throw", false, is(true));
+    } catch (RuntimeException e) {
+      assertThat(e, is(rte));
+    }
 
     /* Then */
     InOrder inOrder = inOrder(task);
@@ -301,23 +306,77 @@ public class AsyncTaskTest {
 
   @Test
   public void doInBackgroundRuntimeExceptionThrown() throws Exception {
+    /* Given */
     final RuntimeException rte = new RuntimeException();
-    TestAsyncTask task = TestAsyncTaskExecutor.instance().execute(spy(new TestAsyncTask() {
+    TestAsyncTask task = spy(new TestAsyncTask() {
       @Override
       protected Object doInBackground() throws Exception {
         throw rte;
       }
-    }));
+    });
 
-    verify(task).onPreExecute();
-    verify(task).doInBackground();
-    verify(task).onRuntimeException(rte);
-    verify(task).onFinally();
+    /* When */
+    try {
+      execute(task);
+      assertThat("Execute didn't throw", false, is(true));
+    } catch (RuntimeException e) {
+      assertThat(e, is(rte));
+    }
+
+    /* Then */
+    InOrder inOrder = inOrder(task);
+
+    inOrder.verify(task).onPreExecute();
+    inOrder.verify(task).doInBackground();
+    inOrder.verify(task).onRuntimeException(rte);
+    inOrder.verify(task).onFinally();
 
     verify(task, never()).onException(any(Exception.class));
     verify(task, never()).onCancelled();
     verify(task, never()).onSuccess(any());
     verify(task, never()).onInterrupted(any(InterruptedException.class));
+  }
+
+  @Test
+  public void onRuntimeException_RuntimeExceptionThrown() throws Exception {
+    /* Given */
+    final RuntimeException rte = new RuntimeException();
+    TestAsyncTask task = spy(new TestAsyncTask() {
+
+      @Override
+      protected void onPreExecute() {
+        throw rte;
+      }
+
+      @Override
+      protected void onRuntimeException(final RuntimeException e) {
+        throw e;
+      }
+    });
+
+    /* When */
+    try {
+      execute(task);
+      assertThat("Execute didn't throw", false, is(true));
+    } catch (RuntimeException e) {
+      assertThat(e, is(rte));
+    }
+
+    /* Then */
+    InOrder inOrder = inOrder(task);
+
+    inOrder.verify(task).onPreExecute();
+    inOrder.verify(task).onRuntimeException(rte);
+    inOrder.verify(task).onFinally();
+
+    verify(task, never()).onException(any(Exception.class));
+    verify(task, never()).onCancelled();
+    verify(task, never()).onSuccess(any());
+    verify(task, never()).onInterrupted(any(InterruptedException.class));
+  }
+
+  private static void execute(final TestAsyncTask task) {
+    TestAsyncTaskExecutor.instance().execute(task);
   }
 
   private static class TestAsyncTask<T, E extends Exception> extends AsyncTask<T, E> {
