@@ -18,7 +18,9 @@ package com.label305.asynctask;
 
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
+import java.util.concurrent.FutureTask;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -48,11 +50,36 @@ public class TestAsyncTaskExecutor implements AsyncTaskExecutor {
 
   @Override
   public <T, E extends Exception, A extends AsyncTask<T, E>> A execute(@NonNull final A task) {
-    return task.execute(mExecutor, mHandler);
+    return task.execute(mExecutor, new TestFutureTask<Void>(new Task<>(task, mHandler), null));
   }
 
   public static AsyncTaskExecutor instance() {
     return INSTANCE;
+  }
+
+  private static class TestFutureTask<V> extends FutureTask<V> {
+
+    TestFutureTask(final Runnable runnable, final V result) {
+      super(runnable, result);
+    }
+
+    @Override
+    protected void done() {
+      try {
+        if (!super.isCancelled()) {
+          get();
+        }
+      } catch (ExecutionException e) {
+        if (e.getCause() instanceof RuntimeException) {
+          throw (RuntimeException) e.getCause();
+        } else {
+          throw (Error) e.getCause();
+        }
+      } catch (InterruptedException e) {
+        // Shouldn't happen, we're invoked when computation is finished
+        throw new AssertionError(e);
+      }
+    }
   }
 
   private static class TestExecutor implements Executor {

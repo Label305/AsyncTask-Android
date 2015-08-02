@@ -72,6 +72,21 @@ public abstract class AsyncTask<T, E extends Exception> {
   }
 
   /**
+   * Executes this AsyncTask, using given Executor and Handler.
+   *
+   * @param executor The Executor to perform background operations on.
+   * @return this instance.
+   */
+  @NonNull
+  <A extends AsyncTask<T, E>> A execute(@NonNull final Executor executor,
+                                        @NonNull final FutureTask<Void> futureTask) {
+    mLaunchLocation = Thread.currentThread().getStackTrace();
+    mFutureTask = futureTask;
+    executor.execute(futureTask);
+    return (A) this;
+  }
+
+  /**
    * Attempts to cancel execution of this task.  This attempt will
    * fail if the task has already completed, has already been cancelled,
    * or could not be cancelled for some other reason. If successful,
@@ -157,6 +172,16 @@ public abstract class AsyncTask<T, E extends Exception> {
   }
 
   /**
+   * Override this method to do heavy work on a background thread.
+   *
+   * @return A result, passed to {@link #onSuccess(T)}.
+   *
+   * @throws E
+   */
+  @WorkerThread
+  protected abstract T doInBackground() throws E;
+
+  /**
    * Override this method to perform a computation on a background thread. The
    * specified parameters are the parameters passed to {@link #execute}
    * by the caller of this task.
@@ -172,16 +197,6 @@ public abstract class AsyncTask<T, E extends Exception> {
    * @see #onPostExecute
    * @see #publishProgress
    */
-
-  /**
-   * Override this method to do heavy work on a background thread.
-   *
-   * @return A result, passed to {@link #onSuccess(T)}.
-   *
-   * @throws E
-   */
-  @WorkerThread
-  protected abstract T doInBackground() throws E;
 
   /**
    * Called after the asynchronous {@link #doInBackground()} method, on the original thread, iff
